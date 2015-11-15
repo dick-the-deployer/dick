@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mariusz
  */
 @RestController
-@RequestMapping("/stacks")
+@RequestMapping("/builds")
 public class BuildController {
 
     @Autowired
