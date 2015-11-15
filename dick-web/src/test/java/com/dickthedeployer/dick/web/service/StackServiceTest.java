@@ -16,7 +16,9 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.domain.StackEntity;
+import com.dickthedeployer.dick.web.dao.ProjectDao;
+import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.model.StackModel;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
@@ -26,26 +28,31 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author mariusz
  */
-public class StackServiceTest extends ContextTestBase{
-   
+public class StackServiceTest extends ContextTestBase {
+
     @Autowired
     StackService stackService;
-    
+
+    @Autowired
+    ProjectDao projectDao;
+
     @Test
     public void shouldCreateStack() {
+        Project project = new Project();
+        project.setProjectName("foo");
+        project.setRepository("bar");
+        projectDao.save(project);
         StackModel model = new StackModel();
-        model.setRepository("foo/bar");
-        model.setProjectName("git@some.com:foo/bar.git");
+        model.setProjectId(project.getId());
         model.setServer("128.0.0.1");
         model.setRef("master");
-        
-        StackEntity entity = stackService.createStack(model);
+
+        Stack entity = stackService.createStack(model);
         assertThat(entity.getId()).isNotNull();
         assertThat(entity.getRef()).isEqualTo("master");
-        assertThat(entity.getRepository()).isEqualTo("foo/bar");
-        assertThat(entity.getProjectName()).isEqualTo("git@some.com:foo/bar.git");
+        assertThat(entity.getProject().getId()).isEqualTo(project.getId());
         assertThat(entity.getServer()).isEqualTo("128.0.0.1");
         assertThat(entity.getCreationDate()).isNotNull();
-        
+
     }
 }

@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.dao;
 
-import javax.validation.constraints.NotNull;
-import lombok.Data;
+import com.dickthedeployer.dick.web.domain.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-@Data
-public class StackModel {
+public interface ProjectDao extends JpaRepository<Project, Long> {
 
-    @NotNull
-    String server;
-    @NotNull
-    String ref;
-    @NotNull
-    Long projectId;
+    Project findByProjectName(String projectName);
+
+    Project findByProjectNameOrRepository(String projectName, String repository);
 
 }

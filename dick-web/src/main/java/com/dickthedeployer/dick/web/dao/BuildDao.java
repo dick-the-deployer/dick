@@ -15,14 +15,14 @@
  */
 package com.dickthedeployer.dick.web.dao;
 
-import com.dickthedeployer.dick.web.domain.BuildEntity;
-import com.dickthedeployer.dick.web.domain.StackEntity;
+import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.Stack;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-public interface BuildDao extends JpaRepository<BuildEntity, Long> {
+public interface BuildDao extends JpaRepository<Build, Long> {
 
 }

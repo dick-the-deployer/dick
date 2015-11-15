@@ -15,7 +15,7 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.BuildEntity;
+import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.service.BuildService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class BuildController {
     BuildService buildService;
 
     @RequestMapping(method = GET)
-    public Page<BuildEntity> getBuilds(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public Page<Build> getBuilds(@RequestParam("page") int page, @RequestParam("size") int size) {
         return buildService.getBuilds(page, size);
     }
 }

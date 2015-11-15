@@ -23,13 +23,11 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-public class StackModel {
+public class ProjectModel {
 
     @NotNull
-    String server;
-    @NotNull
-    String ref;
-    @NotNull
-    Long projectId;
+    String projectName;
 
+    @NotNull
+    String repository;
 }

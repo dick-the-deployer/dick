@@ -16,10 +16,9 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.ProjectDao;
-import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.Project;
-import com.dickthedeployer.dick.web.domain.Stack;
-import com.dickthedeployer.dick.web.model.StackModel;
+import com.dickthedeployer.dick.web.exception.ProjectAlredyExistsException;
+import com.dickthedeployer.dick.web.model.ProjectModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,25 +29,24 @@ import org.springframework.stereotype.Service;
  * @author mariusz
  */
 @Service
-public class StackService {
-
-    @Autowired
-    StackDao stackDao;
+public class ProjectService {
 
     @Autowired
     ProjectDao projectDao;
 
-    public Stack createStack(StackModel model) {
-        Project project = projectDao.findOne(model.getProjectId());
-        return stackDao.save(new Stack.Builder()
-                .withRef(model.getRef())
-                .withProject(project)
-                .withServer(model.getServer())
+    public Project createProject(ProjectModel model) throws ProjectAlredyExistsException {
+        Project project = projectDao.findByProjectNameOrRepository(model.getProjectName(), model.getRepository());
+        if (project != null) {
+            throw new ProjectAlredyExistsException();
+        }
+        return projectDao.save(new Project.Builder()
+                .withRepository(model.getRepository())
+                .withProjectName(model.getProjectName())
                 .build()
         );
     }
 
-    public Page<Stack> getStacks(int page, int size) {
-        return stackDao.findAll(new PageRequest(page, size));
+    public Page<Project> getProjects(int page, int size) {
+        return projectDao.findAll(new PageRequest(page, size));
     }
 }

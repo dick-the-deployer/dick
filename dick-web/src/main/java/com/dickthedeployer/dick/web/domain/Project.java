@@ -15,10 +15,12 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 import lombok.Data;
 
 /**
@@ -27,25 +29,27 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class BuildEntity {
-    
+public class Project {
+
     @Id
     @GeneratedValue
     private Long id;
-    
-    @ManyToOne
-    private StackEntity stackEntity;
-    
-    private String buildUrl;
-    
-    private String commitUrl;
+
+    @Column(unique = true)
+    private String projectName;
+
+    @Column(unique = true)
+    private String repository;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date creationDate = new Date();
 
     public static class Builder {
-        
-        private final BuildEntity item;
+
+        private final Project item;
 
         public Builder() {
-            this.item = new BuildEntity();
+            this.item = new Project();
         }
 
         public Builder withId(final Long id) {
@@ -53,25 +57,24 @@ public class BuildEntity {
             return this;
         }
 
-        public Builder withStackEntity(final StackEntity stackEntity) {
-            this.item.stackEntity = stackEntity;
+        public Builder withProjectName(final String projectName) {
+            this.item.projectName = projectName;
             return this;
         }
 
-        public Builder withBuildUrl(final String buildUrl) {
-            this.item.buildUrl = buildUrl;
+        public Builder withRepository(final String repository) {
+            this.item.repository = repository;
             return this;
         }
 
-        public Builder withCommitUrl(final String commitUrl) {
-            this.item.commitUrl = commitUrl;
+        public Builder withCreationDate(final Date creationDate) {
+            this.item.creationDate = creationDate;
             return this;
         }
 
-        public BuildEntity build() {
+        public Project build() {
             return this.item;
         }
     }
-    
-    
+
 }
