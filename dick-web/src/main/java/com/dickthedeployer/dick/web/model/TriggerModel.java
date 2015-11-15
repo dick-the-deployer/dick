@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.model;
 
-import com.dickthedeployer.dick.web.domain.StackEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.Data;
 
 /**
  *
  * @author mariusz
  */
-public interface StackDao extends JpaRepository<StackEntity, Long> {
-
-    StackEntity findByProjectName(String projectName);
-
-}
+@Data
+public class TriggerModel {
     
-
+    String buildUrl;
+    String commitUrl;
+    String ref;
+    String projectName;
+}

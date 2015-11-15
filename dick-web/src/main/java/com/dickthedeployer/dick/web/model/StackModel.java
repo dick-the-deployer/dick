@@ -24,10 +24,9 @@ import lombok.Data;
 @Data
 public class StackModel {
     
-    private String repositoryName;
-    
-    private String repository;
-    
-    private String server;
+    String projectName;
+    String repository;
+    String server;
+    String ref;
     
 }

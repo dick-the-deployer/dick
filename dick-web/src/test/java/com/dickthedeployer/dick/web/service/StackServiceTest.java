@@ -35,13 +35,15 @@ public class StackServiceTest extends ContextTestBase{
     public void shouldCreateStack() {
         StackModel model = new StackModel();
         model.setRepository("foo/bar");
-        model.setRepositoryName("git@some.com:foo/bar.git");
+        model.setProjectName("git@some.com:foo/bar.git");
         model.setServer("128.0.0.1");
+        model.setRef("master");
         
         StackEntity entity = stackService.createStack(model);
         assertThat(entity.getId()).isNotNull();
+        assertThat(entity.getRef()).isEqualTo("master");
         assertThat(entity.getRepository()).isEqualTo("foo/bar");
-        assertThat(entity.getRepositoryName()).isEqualTo("git@some.com:foo/bar.git");
+        assertThat(entity.getProjectName()).isEqualTo("git@some.com:foo/bar.git");
         assertThat(entity.getServer()).isEqualTo("128.0.0.1");
         assertThat(entity.getCreationDate()).isNotNull();
         

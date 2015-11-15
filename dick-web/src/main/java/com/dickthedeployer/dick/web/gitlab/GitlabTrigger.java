@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.gitlab;
 
-import com.dickthedeployer.dick.web.domain.StackEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.Data;
 
 /**
  *
  * @author mariusz
  */
-public interface StackDao extends JpaRepository<StackEntity, Long> {
-
-    StackEntity findByProjectName(String projectName);
-
-}
+@Data
+public class GitlabTrigger {
     
-
+    String build_id;
+    String build_status;
+    String project_name;
+    String gitlab_url;
+    String ref;
+    String sha;
+}

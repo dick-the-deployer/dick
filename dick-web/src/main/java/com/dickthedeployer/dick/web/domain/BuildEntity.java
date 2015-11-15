@@ -15,11 +15,10 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Temporal;
+import javax.persistence.ManyToOne;
 import lombok.Data;
 
 /**
@@ -28,29 +27,25 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class StackEntity {
+public class BuildEntity {
     
     @Id
     @GeneratedValue
     private Long id;
     
-    private String projectName;
+    @ManyToOne
+    private StackEntity stackEntity;
     
-    private String repository;
+    private String buildUrl;
     
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
-    
-    private String server;
-    
-    private String ref;
+    private String commitUrl;
 
     public static class Builder {
-
-        private final StackEntity item;
         
+        private final BuildEntity item;
+
         public Builder() {
-            this.item = new StackEntity();
+            this.item = new BuildEntity();
         }
 
         public Builder withId(final Long id) {
@@ -58,35 +53,25 @@ public class StackEntity {
             return this;
         }
 
-        public Builder withProjectName(final String projectName) {
-            this.item.projectName = projectName;
+        public Builder withStackEntity(final StackEntity stackEntity) {
+            this.item.stackEntity = stackEntity;
             return this;
         }
 
-        public Builder withRepository(final String repository) {
-            this.item.repository = repository;
+        public Builder withBuildUrl(final String buildUrl) {
+            this.item.buildUrl = buildUrl;
             return this;
         }
 
-        public Builder withCreationDate(final Date creationDate) {
-            this.item.creationDate = creationDate;
+        public Builder withCommitUrl(final String commitUrl) {
+            this.item.commitUrl = commitUrl;
             return this;
         }
 
-        public Builder withServer(final String server) {
-            this.item.server = server;
-            return this;
-        }
-
-        public Builder withRef(final String ref) {
-            this.item.ref = ref;
-            return this;
-        }
-
-        public StackEntity build() {
+        public BuildEntity build() {
             return this.item;
         }
     }
-
+    
     
 }

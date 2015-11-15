@@ -19,6 +19,8 @@ import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.StackEntity;
 import com.dickthedeployer.dick.web.model.StackModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,10 +35,15 @@ public class StackService {
 
     public StackEntity createStack(StackModel model) {
         return stackDao.save(new StackEntity.Builder()
+                .withRef(model.getRef())
                 .withRepository(model.getRepository())
-                .withRepositoryName(model.getRepositoryName())
+                .withProjectName(model.getProjectName())
                 .withServer(model.getServer())
                 .build()
         );
+    }
+
+    public Page<StackEntity> getStacks(int page, int size) {
+        return stackDao.findAll(new PageRequest(page, size));
     }
 }

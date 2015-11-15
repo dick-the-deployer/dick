@@ -13,38 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.controller;
+package com.dickthedeployer.dick.web.gitlab;
 
-import com.dickthedeployer.dick.web.domain.StackEntity;
-import com.dickthedeployer.dick.web.model.StackModel;
-import com.dickthedeployer.dick.web.service.StackService;
+import com.dickthedeployer.dick.web.model.TriggerModel;
+import com.dickthedeployer.dick.web.service.BuildService;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author mariusz
  */
+@Slf4j
 @RestController
-@RequestMapping("/stacks")
-public class StackController {
-
+public class GitlabHookController {
+    
     @Autowired
-    StackService stackService;
-
-    @RequestMapping(method = POST)
-    public StackEntity createStack(@RequestBody StackModel stackModel) {
-        return stackService.createStack(stackModel);
+    GitlabService gitlabService;
+    
+    @RequestMapping(method = POST, value = "/hooks/gitlab")
+    public void receiveHook(@RequestBody GitlabTrigger trigger) {
+        gitlabService.onTrigger(trigger);
     }
-
-    @RequestMapping(method = GET)
-    public Page<StackEntity> getStacks(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return stackService.getStacks(page, size);
-    }
+    
 }
