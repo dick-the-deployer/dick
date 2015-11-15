@@ -20,6 +20,7 @@ import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.BuildEntity;
 import com.dickthedeployer.dick.web.domain.StackEntity;
 import com.dickthedeployer.dick.web.model.TriggerModel;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,16 +46,18 @@ public class BuildService {
     //store in db
     //if should deploy -> delegate with dick.yml to deploy service
     public void onTrigger(TriggerModel model) {
-        StackEntity stackEntity = stackDao.findByProjectName(model.getProjectName());
-        log.info("Found stack {} for project {}", stackEntity, model.getProjectName());
-        if (stackEntity != null) {
-            buildDao.save(new BuildEntity.Builder()
-                    .withBuildUrl(model.getBuildUrl())
-                    .withCommitUrl(model.getCommitUrl())
-                    .withStackEntity(stackEntity)
-                    .build()
-            );
-        }
+        List<StackEntity> stacks = stackDao.findByProjectNameAndRef(model.getProjectName(), model.getRef());
+        stacks.forEach(stack -> {
+            log.info("Found stack {} for project {}", stack, model.getProjectName());
+            if (stack != null) {
+                buildDao.save(new BuildEntity.Builder()
+                        .withBuildUrl(model.getBuildUrl())
+                        .withCommitUrl(model.getCommitUrl())
+                        .withStackEntity(stack)
+                        .build()
+                );
+            }
+        });
     }
 
     public Page<BuildEntity> getBuilds(int page, int size) {
