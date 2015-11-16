@@ -20,6 +20,7 @@ import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.model.StackModel;
+import java.util.UUID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ public class StackServiceTest extends ContextTestBase {
     @Test
     public void shouldCreateStack() {
         Project project = new Project();
-        project.setProjectName("foo");
-        project.setRepository("bar");
+        project.setProjectName(UUID.randomUUID().toString());
+        project.setRepository(UUID.randomUUID().toString());
         projectDao.save(project);
         StackModel model = new StackModel();
         model.setProjectId(project.getId());
