@@ -1,1 +1,9 @@
-foo: bar
+auto: true
+
+deploy:
+  - echo foo
+  - echo bar
+  
+rollback:
+  - echo bar
+  - echo foo
