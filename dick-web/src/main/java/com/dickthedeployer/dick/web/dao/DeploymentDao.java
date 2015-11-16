@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.dao;
 
-import lombok.Data;
+import com.dickthedeployer.dick.web.domain.Deployment;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-@Data
-public class TriggerModel {
+public interface DeploymentDao extends JpaRepository<Deployment, Long> {
 
-    String buildUrl;
-    String commitUrl;
-    String ref;
-    String projectName;
-    String sha;
 }

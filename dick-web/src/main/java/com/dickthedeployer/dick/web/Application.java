@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Pivotal Software, Inc..
+ * Copyright 2015 dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.dickthedeployer.dick.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author mariusz
  */
-@SpringBootApplication
+@EnableAsync
 @RestController
+@SpringBootApplication
 public class Application {
 
     @RequestMapping("/")

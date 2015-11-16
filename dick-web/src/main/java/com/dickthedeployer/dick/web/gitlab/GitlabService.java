@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Pivotal Software, Inc..
+ * Copyright 2015 dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class GitlabService {
             model.setCommitUrl(getCommitUrl(trigger));
             model.setProjectName(getProjectName(trigger));
             model.setRef(trigger.getRef());
+            model.setSha(trigger.getSha());
             buildService.onTrigger(model);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import lombok.Data;
 
@@ -29,58 +31,21 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class Stack {
+public class Deployment {
 
     @Id
     @GeneratedValue
     private Long id;
 
     @ManyToOne
-    private Project project;
+    private Build build;
+
+    @OneToOne
+    private Deployment rollback;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    private String server;
-
-    private String ref;
-
-    public static class Builder {
-
-        private final Stack item;
-
-        public Builder() {
-            this.item = new Stack();
-        }
-
-        public Builder withId(final Long id) {
-            this.item.id = id;
-            return this;
-        }
-
-        public Builder withProject(final Project project) {
-            this.item.project = project;
-            return this;
-        }
-
-        public Builder withCreationDate(final Date creationDate) {
-            this.item.creationDate = creationDate;
-            return this;
-        }
-
-        public Builder withServer(final String server) {
-            this.item.server = server;
-            return this;
-        }
-
-        public Builder withRef(final String ref) {
-            this.item.ref = ref;
-            return this;
-        }
-
-        public Stack build() {
-            return this.item;
-        }
-    }
-
+    @Lob
+    private String deploymentLog = "";
 }

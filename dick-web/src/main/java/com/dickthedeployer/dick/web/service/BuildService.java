@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Pivotal Software, Inc..
+ * Copyright 2015 dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,11 @@ import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.BuildStatus;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
+import com.dickthedeployer.dick.web.exception.DickFileMissingException;
+import com.dickthedeployer.dick.web.model.Dickfile;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -46,22 +49,35 @@ public class BuildService {
     @Autowired
     ProjectDao projectDao;
 
-    //build url in trigger; commit url in trigger,
-    //get .dick.yml for this commit
-    //store in db
-    //if should deploy -> delegate with dick.yml to deploy service
+    @Autowired
+    DickYmlService dickYmlService;
+
+    @Autowired
+    DeploymentService deploymentService;
+
     public void onTrigger(TriggerModel model) {
         Project project = projectDao.findByProjectName(model.getProjectName());
         List<Stack> stacks = stackDao.findByProjectAndRef(project, model.getRef());
         stacks.forEach(stack -> {
             log.info("Found stack {} for project {}", stack, model.getProjectName());
             if (stack != null) {
-                buildDao.save(new Build.Builder()
+                Build build = buildDao.save(new Build.Builder()
                         .withBuildUrl(model.getBuildUrl())
                         .withCommitUrl(model.getCommitUrl())
                         .withStack(stack)
+                        .withSha(model.getSha())
                         .build()
                 );
+                try {
+                    Dickfile dickfile = dickYmlService.loadDickFile(build);
+                    if (dickfile.isAuto()) {
+                        deploymentService.deploy(build, dickfile);
+                    }
+                } catch (DickFileMissingException ex) {
+                    log.info("Dickfile is missing", ex);
+                    build.setBuildStatus(BuildStatus.MISSING_DICKFILE);
+                    buildDao.save(build);
+                }
             }
         });
     }

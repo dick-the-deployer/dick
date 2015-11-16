@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Pivotal Software, Inc..
+ * Copyright 2015 dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,14 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
+import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 import lombok.Data;
 
 /**
@@ -36,9 +40,17 @@ public class Build {
     @ManyToOne
     private Stack stack;
 
+    @Enumerated(EnumType.STRING)
+    private BuildStatus buildStatus = BuildStatus.READY;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date creationDate = new Date();
+
     private String buildUrl;
 
     private String commitUrl;
+
+    private String sha;
 
     public static class Builder {
 
@@ -65,6 +77,11 @@ public class Build {
 
         public Builder withCommitUrl(final String commitUrl) {
             this.item.commitUrl = commitUrl;
+            return this;
+        }
+
+        public Builder withSha(final String sha) {
+            this.item.sha = sha;
             return this;
         }
 

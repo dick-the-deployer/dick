@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Pivotal Software, Inc..
+ * Copyright 2015 dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.dao;
 
 import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.BuildStatus;
 import com.dickthedeployer.dick.web.domain.Stack;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -25,4 +26,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BuildDao extends JpaRepository<Build, Long> {
 
+    Build findByStackAndBuildStatus(Stack stack, BuildStatus buildStatus);
 }

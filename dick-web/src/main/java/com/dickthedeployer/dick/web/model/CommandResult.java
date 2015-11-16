@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-public class TriggerModel {
+public class CommandResult {
 
-    String buildUrl;
-    String commitUrl;
-    String ref;
-    String projectName;
-    String sha;
+    String output;
+    int result;
+
 }

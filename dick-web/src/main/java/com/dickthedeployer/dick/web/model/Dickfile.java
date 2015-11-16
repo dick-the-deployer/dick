@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package com.dickthedeployer.dick.web.model;
 
+import java.util.Collections;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -22,11 +24,11 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-public class TriggerModel {
+public class Dickfile {
 
-    String buildUrl;
-    String commitUrl;
-    String ref;
-    String projectName;
-    String sha;
+    private boolean auto;
+
+    private List<String> deploy = Collections.emptyList();
+
+    private List<String> rollback = Collections.emptyList();
 }

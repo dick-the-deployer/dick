@@ -1,4 +1,5 @@
 dick.db.file: ./dickdb
+dick.repos.dir: /tmp
 
 spring:
   datasource.url: jdbc:h2:file:${dick.db.file}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
-
-import lombok.Data;
+package com.dickthedeployer.dick.web.exception;
 
 /**
  *
  * @author mariusz
  */
-@Data
-public class TriggerModel {
+public class DickFileMissingException extends Exception {
 
-    String buildUrl;
-    String commitUrl;
-    String ref;
-    String projectName;
-    String sha;
 }
