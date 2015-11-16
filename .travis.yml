@@ -6,4 +6,4 @@ jdk:
 install: mvn clean install
 
 after_success:
-  - mvn -Ptravis surefire-report:report jacoco:report coveralls:jacoco
+  - mvn -Ptravis clean surefire-report:report jacoco:report coveralls:jacoco
