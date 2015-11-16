@@ -1,11 +1,9 @@
 [![][travis img]][travis]
-[![][coverage img]][coverage]
+[![Coverage Status](https://coveralls.io/repos/dick-the-deployer/dick/badge.svg?branch=master&service=github)](https://coveralls.io/github/dick-the-deployer/dick?branch=master)
 
 Dick The Deployer
 =====================
 
 
-[coverage]:https://coveralls.io/r/dick-the-deployer/dick
-[coverage img]:https://img.shields.io/coveralls/dick-the-deployer/dick.png
 [travis]:https://travis-ci.org/dick-the-deployer/dick
 [travis img]:https://travis-ci.org/dick-the-deployer/dick.svg?branch=master
