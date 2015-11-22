@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
+        <skipGit>false</skipGit>
     </properties>
     
     
@@ -61,6 +62,9 @@
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
+                <configuration>
+                    <skip>${skipGit}</skip>
+                </configuration>
             </plugin>
 <!--            <plugin>
                 <groupId>com.spotify</groupId>
