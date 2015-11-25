@@ -1,9 +1,35 @@
-auto: true
+pipeline.stages:
+  - name: first
+    autorun: true
+  - name: second
+    autorun: true
+  - name: third
+    autorun: false
 
-deploy:
-  - echo foo
-  - echo bar
+jobs: 
+  - stage: first
+    name: echo foo
+    environmentVariables: 
+      - key: FOOKEY
+        value: foo
+    deploy:
+      - echo ${FOOKEY}
+      - echo foo
+  - stage: first
+    name: echo foo2
+    environmentVariables: 
+      - key: FOOKEY
+        value: foo2
+    deploy:
+      - echo ${FOOKEY}
+      - echo foo2
+  - stage: second
+    name: echo bar
+    deploy:
+      - echo bar
+  - stage: third
+    name: echo foobar
+    deploy:
+      - echo foobar
   
-rollback:
-  - echo bar
-  - echo foo
+
