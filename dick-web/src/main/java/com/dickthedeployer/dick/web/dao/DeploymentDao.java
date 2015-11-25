@@ -15,7 +15,9 @@
  */
 package com.dickthedeployer.dick.web.dao;
 
+import com.dickthedeployer.dick.web.domain.DeployStatus;
 import com.dickthedeployer.dick.web.domain.Deployment;
+import com.dickthedeployer.dick.web.domain.Stack;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -24,4 +26,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface DeploymentDao extends JpaRepository<Deployment, Long> {
 
+    DeploymentDao findByStackAndBuildStatus(Stack stack, DeployStatus buildStatus);
 }

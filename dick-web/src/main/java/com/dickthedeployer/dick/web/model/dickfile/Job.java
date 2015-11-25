@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.model.dickfile;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.DeployStatus;
-import com.dickthedeployer.dick.web.domain.Stack;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Collections;
+import java.util.List;
+import lombok.Data;
 
 /**
  *
  * @author mariusz
  */
-public interface BuildDao extends JpaRepository<Build, Long> {
+@Data
+public class Job {
 
-    Build findByStackAndBuildStatus(Stack stack, DeployStatus buildStatus);
+    private String stage;
+
+    private String name;
+
+    private List<EnvironmentVariable> environmentVariables;
+
+    private List<String> deploy = Collections.emptyList();
+
+    private List<String> rollback = Collections.emptyList();
 }

@@ -2,6 +2,14 @@ dick.db.file: ./dickdb
 dick.repos.dir: /tmp
 
 spring:
-  datasource.url: jdbc:h2:file:${dick.db.file}
-  jpa.hibernate.ddl-auto: update
+  jpa:
+    database: POSTGRESQL
+    hibernate.ddl-auto: update
+    show-sql: true
+  database.driverClassName: org.postgresql.Driver
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/blood
+    username: postgres
+    password: postgres
     

@@ -1,6 +1,9 @@
 dick.db.file: ./target/dickdb
+dick.repos.dir: /tmp
+
 
 spring:
   datasource.url: jdbc:h2:file:${dick.db.file}
-  jpa.hibernate.ddl-auto: update
-    
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true

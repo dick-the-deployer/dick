@@ -52,6 +52,8 @@ public class Build {
 
     private String sha;
 
+    private String currentStage;
+
     public static class Builder {
 
         private final Build item;

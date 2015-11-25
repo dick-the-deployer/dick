@@ -19,7 +19,7 @@ package com.dickthedeployer.dick.web.domain;
  *
  * @author mariusz
  */
-public enum BuildStatus {
+public enum DeployStatus {
 
-    FAILED, DEPLOYED, READY, IN_PROGRESS, MISSING_DICKFILE
+    FAILED, DEPLOYED, READY, IN_PROGRESS
 }

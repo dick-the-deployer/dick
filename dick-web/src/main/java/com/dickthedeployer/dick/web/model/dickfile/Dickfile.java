@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.model.dickfile;
 
-import java.util.Collections;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import lombok.Data;
 
 /**
@@ -26,9 +26,35 @@ import lombok.Data;
 @Data
 public class Dickfile {
 
-    private boolean auto;
+    private Pipeline pipeline;
 
-    private List<String> deploy = Collections.emptyList();
+    private List<Job> jobs;
 
-    private List<String> rollback = Collections.emptyList();
+    public Stage getFirstStage() {
+        return pipeline.getStages().stream()
+                .findFirst()
+                .get();
+    }
+
+    public Stage getStage(String name) {
+        return pipeline.getStages().stream()
+                .filter(stage -> stage.getName().equals(name))
+                .findAny()
+                .get();
+    }
+
+    public List<Job> getJobs(Stage firstStage) {
+        return jobs.stream().filter(job -> job.getStage()
+                .equals(firstStage.getName()))
+                .collect(toList());
+    }
+
+    public Stage getNextStage(Stage stage) {
+        int indexOfStage = pipeline.getStages().indexOf(stage);
+        if (pipeline.getStages().size() < indexOfStage + 1) {
+            return pipeline.getStages().get(indexOfStage + 1);
+        }
+        return null;
+    }
+
 }

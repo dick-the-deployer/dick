@@ -19,9 +19,12 @@ import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.DeploymentDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.BuildStatus;
+import com.dickthedeployer.dick.web.domain.DeployStatus;
 import com.dickthedeployer.dick.web.domain.Deployment;
 import com.dickthedeployer.dick.web.model.CommandResult;
-import com.dickthedeployer.dick.web.model.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.Job;
+import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.google.common.base.Throwables;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,31 +57,35 @@ public class DeploymentService {
     BuildDao buildDao;
 
     @Async
-    public void deploy(Build build, Dickfile dickfile) {
-        blockingDeploy(build, dickfile);
+    public void deploy(Build build, Dickfile dickfile, Stage stage) {
+        blockingDeploy(build, dickfile, stage);
     }
 
-    public Deployment blockingDeploy(Build build, Dickfile dickfile) {
-        Build previous = buildDao.findByStackAndBuildStatus(build.getStack(), BuildStatus.DEPLOYED);
+    public Build blockingDeploy(Build build, Dickfile dickfile, Stage stage) {
+        List<Job> jobs = dickfile.getJobs(stage);
+        boolean atLeastOneFailed = jobs.stream()
+                .map(job -> deployJob(build, job))
+                .anyMatch(status -> DeployStatus.FAILED.equals(status));
+        if (atLeastOneFailed) {
+            build.setBuildStatus(BuildStatus.FAILED);
+        } else {
+            build.setBuildStatus(BuildStatus.DEPLOYED);
+        }
+        build.setCurrentStage(stage.getName());
+        buildDao.save(build);
+
+        Stage nextStage = dickfile.getNextStage(stage);
+        if (!atLeastOneFailed && nextStage != null && nextStage.isAutorun()) {
+            blockingDeploy(build, dickfile, nextStage);
+        }
+        return build;
+    }
+
+    private DeployStatus deployJob(Build build, Job job) {
         Deployment deployment = new Deployment();
         deployment.setBuild(build);
         deploymentDao.save(deployment);
-        int status = performDeploy(deployment, build, dickfile.getDeploy(), getEnvironment(build));
-        if (status == 0) {
-            if (previous != null) {
-                previous.setBuildStatus(BuildStatus.READY);
-                buildDao.save(previous);
-            }
-            return deployment;
-        } else {
-            Deployment rollback = new Deployment();
-            rollback.setBuild(previous);
-            deploymentDao.save(rollback);
-            deployment.setRollback(rollback);
-            deploymentDao.save(deployment);
-            performDeploy(rollback, previous, dickfile.getRollback(), getEnvironment(previous));
-            return rollback;
-        }
+        return performDeploy(deployment, job.getDeploy(), getEnvironment(build));
     }
 
     private Map<String, String> getEnvironment(Build build) {
@@ -88,9 +95,9 @@ public class DeploymentService {
         return environment;
     }
 
-    private int performDeploy(Deployment deployment, Build build, List<String> deploy, Map<String, String> environment) {
-        build.setBuildStatus(BuildStatus.IN_PROGRESS);
-        buildDao.save(build);
+    private DeployStatus performDeploy(Deployment deployment, List<String> deploy, Map<String, String> environment) {
+        deployment.setDeployStatus(DeployStatus.IN_PROGRESS);
+        deploymentDao.save(deployment);
 
         for (String command : deploy) {
             try {
@@ -100,17 +107,17 @@ public class DeploymentService {
                 deployment.setDeploymentLog(builder.append(result.getOutput()).toString());
                 deploymentDao.save(deployment);
                 if (result.getResult() != 0) {
-                    build.setBuildStatus(BuildStatus.FAILED);
-                    buildDao.save(build);
-                    return result.getResult();
+                    deployment.setDeployStatus(DeployStatus.FAILED);
+                    deploymentDao.save(deployment);
+                    return DeployStatus.FAILED;
                 }
             } catch (IOException ex) {
                 throw Throwables.propagate(ex);
             }
         }
-        build.setBuildStatus(BuildStatus.DEPLOYED);
-        buildDao.save(build);
-        return 0;
+        deployment.setDeployStatus(DeployStatus.DEPLOYED);
+        deploymentDao.save(deployment);
+        return DeployStatus.DEPLOYED;
     }
 
     public Page<Deployment> getDeployments(int page, int size) {

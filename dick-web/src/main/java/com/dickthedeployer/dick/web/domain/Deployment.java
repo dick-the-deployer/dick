@@ -17,6 +17,8 @@ package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -48,4 +50,9 @@ public class Deployment {
 
     @Lob
     private String deploymentLog = "";
+
+    private String job;
+
+    @Enumerated(EnumType.STRING)
+    private DeployStatus deployStatus = DeployStatus.READY;
 }

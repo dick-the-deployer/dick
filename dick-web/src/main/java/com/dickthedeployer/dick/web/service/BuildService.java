@@ -23,8 +23,9 @@ import com.dickthedeployer.dick.web.domain.BuildStatus;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
-import com.dickthedeployer.dick.web.model.Dickfile;
 import com.dickthedeployer.dick.web.model.TriggerModel;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +71,9 @@ public class BuildService {
                 );
                 try {
                     Dickfile dickfile = dickYmlService.loadDickFile(build);
-                    if (dickfile.isAuto()) {
-                        deploymentService.deploy(build, dickfile);
+                    Stage firstStage = dickfile.getFirstStage();
+                    if (firstStage.isAutorun()) {
+                        deploymentService.deploy(build, dickfile, firstStage);
                     }
                 } catch (DickFileMissingException ex) {
                     log.info("Dickfile is missing", ex);
@@ -80,6 +82,20 @@ public class BuildService {
                 }
             }
         });
+    }
+
+    public void buildStage(Long buildId, String stageName) {
+        Build build = buildDao.findOne(buildId);
+        try {
+            Dickfile dickfile = dickYmlService.loadDickFile(build);
+            Stage stage = dickfile.getStage(stageName);
+            deploymentService.deploy(build, dickfile, stage);
+        } catch (DickFileMissingException ex) {
+            log.info("Dickfile is missing", ex);
+            build.setBuildStatus(BuildStatus.MISSING_DICKFILE);
+            buildDao.save(build);
+        }
+
     }
 
     public Page<Build> getBuilds(int page, int size) {

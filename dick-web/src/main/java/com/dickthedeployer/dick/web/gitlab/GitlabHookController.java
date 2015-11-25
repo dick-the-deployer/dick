@@ -15,9 +15,6 @@
  */
 package com.dickthedeployer.dick.web.gitlab;
 
-import com.dickthedeployer.dick.web.model.TriggerModel;
-import com.dickthedeployer.dick.web.service.BuildService;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,13 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 public class GitlabHookController {
-    
+
     @Autowired
     GitlabService gitlabService;
-    
+
     @RequestMapping(method = POST, value = "/hooks/gitlab")
     public void receiveHook(@RequestBody GitlabTrigger trigger) {
         gitlabService.onTrigger(trigger);
     }
-    
+
 }

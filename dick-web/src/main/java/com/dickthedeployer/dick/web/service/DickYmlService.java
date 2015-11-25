@@ -17,7 +17,7 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
-import com.dickthedeployer.dick.web.model.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.google.common.base.Throwables;
 import java.io.IOException;
 import java.io.InputStream;
