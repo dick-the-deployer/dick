@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.model.dickfile;
 
+import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import lombok.Data;
@@ -26,9 +27,9 @@ import lombok.Data;
 @Data
 public class Dickfile {
 
-    private Pipeline pipeline;
+    private Pipeline pipeline = new Pipeline();
 
-    private List<Job> jobs;
+    private List<Job> jobs = Collections.emptyList();
 
     public Stage getFirstStage() {
         return pipeline.getStages().stream()
@@ -51,7 +52,7 @@ public class Dickfile {
 
     public Stage getNextStage(Stage stage) {
         int indexOfStage = pipeline.getStages().indexOf(stage);
-        if (pipeline.getStages().size() < indexOfStage + 1) {
+        if (pipeline.getStages().size() > indexOfStage + 1) {
             return pipeline.getStages().get(indexOfStage + 1);
         }
         return null;

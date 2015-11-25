@@ -85,13 +85,14 @@ public class DeploymentService {
         Deployment deployment = new Deployment();
         deployment.setBuild(build);
         deploymentDao.save(deployment);
-        return performDeploy(deployment, job.getDeploy(), getEnvironment(build));
+        return performDeploy(deployment, job.getDeploy(), getEnvironment(build, job));
     }
 
-    private Map<String, String> getEnvironment(Build build) {
+    private Map<String, String> getEnvironment(Build build, Job job) {
         Map<String, String> environment = new HashMap<>();
         environment.put("SHA", build.getSha());
         environment.put("SERVER", build.getStack().getServer());
+        job.getEnvironmentVariables().forEach(variable -> environment.put(variable.getKey(), variable.getValue()));
         return environment;
     }
 

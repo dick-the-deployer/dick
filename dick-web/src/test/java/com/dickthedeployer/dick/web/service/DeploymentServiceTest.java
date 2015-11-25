@@ -16,15 +16,22 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.dao.BuildDao;
-import com.dickthedeployer.dick.web.dao.ProjectDao;
-import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.BuildStatus;
+import com.dickthedeployer.dick.web.domain.DeployStatus;
+import com.dickthedeployer.dick.web.domain.Deployment;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
+import com.dickthedeployer.dick.web.model.dickfile.Job;
+import com.dickthedeployer.dick.web.model.dickfile.Pipeline;
+import com.dickthedeployer.dick.web.model.dickfile.Stage;
+import static java.util.Arrays.asList;
+import java.util.List;
 import java.util.UUID;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,44 +44,78 @@ public class DeploymentServiceTest extends ContextTestBase {
     @Autowired
     DeploymentService deploymentService;
 
-    @Autowired
-    ProjectDao projectDao;
-
-    @Autowired
-    StackDao stackDao;
-
-    @Autowired
-    BuildDao buildDao;
-
     @Test
     public void shouldPerformDeployment() throws DickFileMissingException {
+        Build build = prepareBuild();
+        Stage firstStage = new Stage("first", true);
+        Dickfile dickfile = prepareDickfile(firstStage);
+
+        build = deploymentService.blockingDeploy(build, dickfile, firstStage);
+        List<Deployment> deployments = deploymentDao.findByBuild(build);
+
+        assertThat(build).isNotNull();
+        assertThat(build.getBuildStatus()).isEqualTo(BuildStatus.DEPLOYED);
+        assertThat(deployments).asList().hasSize(2).extracting("deployStatus").containsOnly(DeployStatus.DEPLOYED);
+    }
+
+    private Dickfile prepareDickfile(Stage firstStage) {
+        Dickfile dickfile = new Dickfile();
+        Pipeline pipeline = new Pipeline();
+        pipeline.setStages(asList(
+                firstStage,
+                new Stage("second", true)
+        ));
+        dickfile.setPipeline(pipeline);
+        Job first = new Job();
+        first.setEnvironmentVariables(asList(
+                new EnvironmentVariable("FOOKEY", "foo")
+        ));
+        first.setName("first job");
+        first.setStage("first");
+        first.setDeploy(getOsSpecificGenericCommand());
+        Job second = new Job();
+        second.setEnvironmentVariables(asList(
+                new EnvironmentVariable("FOOKEY", "foo")
+        ));
+        second.setName("second job");
+        second.setStage("second");
+        second.setDeploy(getOsSpecificEnvironemntCommand());
+        dickfile.setJobs(asList(first, second));
+        return dickfile;
+    }
+
+    private List<String> getOsSpecificGenericCommand() {
+        if (isWindows()) {
+            return asList("cmd.exe /c echo %SHA%", "cmd.exe /c echo %SERVER%");
+        } else {
+            return asList("echo $SHA", "echo $SERVER");
+        }
+    }
+
+    private List<String> getOsSpecificEnvironemntCommand() {
+        if (isWindows()) {
+            return asList("cmd.exe /c echo %FOOKEY%");
+        } else {
+            return asList("echo FOOKEY");
+        }
+    }
+
+    private Build prepareBuild() {
         final Project project = new Project.Builder()
                 .withProjectName(UUID.randomUUID().toString())
                 .withRepository(UUID.randomUUID().toString())
                 .build();
         projectDao.save(project);
-
         final Stack stack = new Stack.Builder()
                 .withRef("master")
                 .withServer("not localhost")
                 .withProject(project).build();
         stackDao.save(stack);
-
         Build build = new Build.Builder()
                 .withSha("somesha")
                 .withStack(stack).build();
         buildDao.save(build);
-
-        Dickfile dickfile = new Dickfile();
-//        if (isWindows()) {
-//            dickfile.setDeploy(asList("cmd.exe /c echo %SHA%", "cmd.exe /c echo %SERVER%"));
-//        } else {
-//            dickfile.setDeploy(asList("echo $SHA", "echo $SERVER"));
-//        }
-//        Deployment deployment = deploymentService.blockingDeploy(build, dickfile);
-//
-//        assertThat(deployment).isNotNull();
-//        System.err.println(deployment.getDeploymentLog());
+        return build;
     }
 
     public static boolean isWindows() {

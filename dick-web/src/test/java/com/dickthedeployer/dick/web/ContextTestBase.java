@@ -15,7 +15,13 @@
  */
 package com.dickthedeployer.dick.web;
 
+import com.dickthedeployer.dick.web.dao.BuildDao;
+import com.dickthedeployer.dick.web.dao.DeploymentDao;
+import com.dickthedeployer.dick.web.dao.ProjectDao;
+import com.dickthedeployer.dick.web.dao.StackDao;
+import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,4 +35,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringBootApplication
 public class ContextTestBase {
 
+    @Autowired
+    protected ProjectDao projectDao;
+
+    @Autowired
+    protected StackDao stackDao;
+
+    @Autowired
+    protected BuildDao buildDao;
+
+    @Autowired
+    protected DeploymentDao deploymentDao;
+
+    @Before
+    public void init() {
+        deploymentDao.deleteAll();
+        buildDao.deleteAll();
+        stackDao.deleteAll();
+        projectDao.deleteAll();
+    }
 }

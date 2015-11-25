@@ -21,6 +21,7 @@ import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +37,7 @@ public class DickYmlServiceTest extends ContextTestBase {
     @Test
     public void shouldLoadDickfile() throws DickFileMissingException {
         Dickfile dickfile = dickYmlService.loadDickFile(new Build.Builder()
-                .withSha("885d6530c1a2d8dcfbd78b7c0e7ae757f4447629")
+                .withSha("2b1e9ab0207e91d3135163030d7c7ca05a40798f")
                 .withStack(new Stack.Builder()
                         .withRef("master")
                         .withProject(new Project.Builder()
@@ -47,8 +48,8 @@ public class DickYmlServiceTest extends ContextTestBase {
                 ).build()
         );
 
-//        assertThat(dickfile).isNotNull();
-//        assertThat(dickfile.isAuto()).isTrue();
-//        assertThat(dickfile.getDeploy()).asList().hasSize(2);
+        assertThat(dickfile).isNotNull();
+        assertThat(dickfile.getPipeline().getStages()).asList().hasSize(3).extracting("name").containsExactly("first", "second", "third");
+        assertThat(dickfile.getJobs()).asList().hasSize(4);
     }
 }

@@ -30,9 +30,7 @@ public class Job {
 
     private String name;
 
-    private List<EnvironmentVariable> environmentVariables;
+    private List<EnvironmentVariable> environmentVariables = Collections.emptyList();
 
     private List<String> deploy = Collections.emptyList();
-
-    private List<String> rollback = Collections.emptyList();
 }

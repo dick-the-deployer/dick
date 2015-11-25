@@ -27,4 +27,13 @@ public class Stage {
     private String name;
 
     private boolean autorun;
+
+    public Stage() {
+    }
+
+    public Stage(String name, boolean autorun) {
+        this.name = name;
+        this.autorun = autorun;
+    }
+
 }

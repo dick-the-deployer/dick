@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.model.dickfile;
 
+import java.util.Collections;
 import java.util.List;
 import lombok.Data;
 
@@ -25,5 +26,5 @@ import lombok.Data;
 @Data
 public class Pipeline {
 
-    private List<Stage> stages;
+    private List<Stage> stages = Collections.emptyList();
 }
