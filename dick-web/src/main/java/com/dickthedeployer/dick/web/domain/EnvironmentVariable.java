@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.domain;
 
-import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
-import static java.util.Collections.emptyList;
-import java.util.List;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import lombok.Data;
 
 /**
@@ -26,13 +25,22 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-public class StackModel {
+@Entity
+public class EnvironmentVariable {
 
-    @NotNull
-    String ref;
-    @NotNull
-    Long projectId;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    List<EnvironmentVariable> environmentVariables = emptyList();
+    private String variableKey;
+    private String variableValue;
+
+    public EnvironmentVariable() {
+    }
+
+    public EnvironmentVariable(String variableKey, String variableValue) {
+        this.variableKey = variableKey;
+        this.variableValue = variableValue;
+    }
 
 }

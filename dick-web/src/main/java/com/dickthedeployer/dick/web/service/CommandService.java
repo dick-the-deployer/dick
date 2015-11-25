@@ -44,11 +44,14 @@ public class CommandService {
             ProcessBuilder builder = new ProcessBuilder(command);
             builder.directory(workingDir.toFile());
             builder.redirectErrorStream(true);
+            StringBuilder text = new StringBuilder();
+            environemnt.forEach((key, value)
+                    -> text.append("Setting environment variable: ").append(key).append("=").append(value).append("\n")
+            );
             builder.environment().putAll(environemnt);
             Process process = builder.start();
 
             try (Scanner s = new Scanner(process.getInputStream())) {
-                StringBuilder text = new StringBuilder();
                 while (s.hasNextLine()) {
                     text.append(s.nextLine());
                     text.append("\n");

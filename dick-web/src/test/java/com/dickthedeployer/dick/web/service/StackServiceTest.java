@@ -45,14 +45,12 @@ public class StackServiceTest extends ContextTestBase {
         projectDao.save(project);
         StackModel model = new StackModel();
         model.setProjectId(project.getId());
-        model.setServer("128.0.0.1");
         model.setRef("master");
 
         Stack entity = stackService.createStack(model);
         assertThat(entity.getId()).isNotNull();
         assertThat(entity.getRef()).isEqualTo("master");
         assertThat(entity.getProject().getId()).isEqualTo(project.getId());
-        assertThat(entity.getServer()).isEqualTo("128.0.0.1");
         assertThat(entity.getCreationDate()).isNotNull();
 
     }

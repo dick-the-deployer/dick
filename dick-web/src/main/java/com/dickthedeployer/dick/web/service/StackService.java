@@ -17,9 +17,11 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
+import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.model.StackModel;
+import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,8 +45,10 @@ public class StackService {
         return stackDao.save(new Stack.Builder()
                 .withRef(model.getRef())
                 .withProject(project)
-                .withServer(model.getServer())
-                .build()
+                .withEnvironmentVariables(model.getEnvironmentVariables().stream()
+                        .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
+                        .collect(toList())
+                ).build()
         );
     }
 

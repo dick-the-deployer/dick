@@ -94,9 +94,9 @@ public class DeploymentServiceTest extends ContextTestBase {
 
     private List<String> getOsSpecificEnvironemntCommand() {
         if (isWindows()) {
-            return asList("cmd.exe /c echo %FOOKEY%");
+            return asList("cmd.exe /c echo %FOOKEY%", "cmd.exe /c echo %BARKEY%");
         } else {
-            return asList("echo FOOKEY");
+            return asList("echo $FOOKEY", "echo $BARKEY");
         }
     }
 
@@ -108,8 +108,9 @@ public class DeploymentServiceTest extends ContextTestBase {
         projectDao.save(project);
         final Stack stack = new Stack.Builder()
                 .withRef("master")
-                .withServer("not localhost")
-                .withProject(project).build();
+                .withEnvironmentVariables(asList(
+                                new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
+                        )).withProject(project).build();
         stackDao.save(stack);
         Build build = new Build.Builder()
                 .withSha("somesha")

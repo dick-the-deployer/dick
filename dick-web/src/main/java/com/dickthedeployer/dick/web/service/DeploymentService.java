@@ -91,7 +91,8 @@ public class DeploymentService {
     private Map<String, String> getEnvironment(Build build, Job job) {
         Map<String, String> environment = new HashMap<>();
         environment.put("SHA", build.getSha());
-        environment.put("SERVER", build.getStack().getServer());
+        environment.put("REF", build.getStack().getRef());
+        build.getStack().getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
         job.getEnvironmentVariables().forEach(variable -> environment.put(variable.getKey(), variable.getValue()));
         return environment;
     }

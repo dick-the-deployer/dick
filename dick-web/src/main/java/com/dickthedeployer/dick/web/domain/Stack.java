@@ -16,10 +16,13 @@
 package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import lombok.Data;
 
@@ -41,7 +44,8 @@ public class Stack {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    private String server;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<EnvironmentVariable> environmentVariables;
 
     private String ref;
 
@@ -68,8 +72,8 @@ public class Stack {
             return this;
         }
 
-        public Builder withServer(final String server) {
-            this.item.server = server;
+        public Builder withEnvironmentVariables(final List<EnvironmentVariable> environmentVariables) {
+            this.item.environmentVariables = environmentVariables;
             return this;
         }
 
