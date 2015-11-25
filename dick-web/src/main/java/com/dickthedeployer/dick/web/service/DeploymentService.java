@@ -105,7 +105,7 @@ public class DeploymentService {
             try {
                 Path temp = Files.createTempDirectory("deployment-" + deployment.getId());
                 CommandResult result = commandService.invokeWithEnvironment(temp, environment, command.split(" "));
-                StringBuilder builder = new StringBuilder(deployment.getDeploymentLog());
+                StringBuilder builder = new StringBuilder(deployment.getDeploymentLog()).append("\n");
                 deployment.setDeploymentLog(builder.append(result.getOutput()).toString());
                 deploymentDao.save(deployment);
                 if (result.getResult() != 0) {

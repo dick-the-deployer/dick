@@ -38,17 +38,18 @@ public class CommandService {
         return invokeWithEnvironment(workingDir, emptyMap(), command).getResult();
     }
 
-    public CommandResult invokeWithEnvironment(Path workingDir, Map<String, String> environemnt, String... command) throws RuntimeException {
+    public CommandResult invokeWithEnvironment(Path workingDir, Map<String, String> environment, String... command) throws RuntimeException {
         try {
             log.info("Executing command {} in path {}", Arrays.toString(command), workingDir.toString());
+            StringBuilder text = new StringBuilder();
+            text.append("Executing command ").append(Arrays.toString(command)).append("\n");
             ProcessBuilder builder = new ProcessBuilder(command);
             builder.directory(workingDir.toFile());
             builder.redirectErrorStream(true);
-            StringBuilder text = new StringBuilder();
-            environemnt.forEach((key, value)
+            environment.forEach((key, value)
                     -> text.append("Setting environment variable: ").append(key).append("=").append(value).append("\n")
             );
-            builder.environment().putAll(environemnt);
+            builder.environment().putAll(environment);
             Process process = builder.start();
 
             try (Scanner s = new Scanner(process.getInputStream())) {
