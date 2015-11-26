@@ -36,24 +36,13 @@ public class GitlabService {
         log.info("Received gitlab trigger for {} with status {}", trigger.getProject_name(), trigger.getBuild_status());
         if (trigger.getBuild_status().equals("success")) {
             TriggerModel model = new TriggerModel();
-            model.setBuildUrl(getBuildUrl(trigger));
-            model.setCommitUrl(getCommitUrl(trigger));
-            model.setProjectName(getProjectName(trigger));
+            model.setBuildUrl(GitlabUtils.getBuildUrl(trigger));
+            model.setCommitUrl(GitlabUtils.getCommitUrl(trigger));
+            model.setProjectName(GitlabUtils.getProjectName(trigger));
             model.setRef(trigger.getRef());
             model.setSha(trigger.getSha());
             buildService.onTrigger(model);
         }
     }
 
-    private static String getBuildUrl(GitlabTrigger trigger) {
-        return trigger.getGitlab_url() + "/builds/" + trigger.getBuild_id();
-    }
-
-    private static String getCommitUrl(GitlabTrigger trigger) {
-        return trigger.getGitlab_url() + "/commit/" + trigger.getSha();
-    }
-
-    private static String getProjectName(GitlabTrigger trigger) {
-        return trigger.getProject_name().replaceAll(" ", "");
-    }
 }
