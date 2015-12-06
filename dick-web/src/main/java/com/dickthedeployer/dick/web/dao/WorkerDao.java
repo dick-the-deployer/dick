@@ -15,8 +15,7 @@
  */
 package com.dickthedeployer.dick.web.dao;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Deployment;
+import com.dickthedeployer.dick.web.domain.Worker;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -24,7 +23,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author mariusz
  */
-public interface DeploymentDao extends JpaRepository<Deployment, Long> {
+public interface WorkerDao extends JpaRepository<Worker, Long> {
 
-    List<Deployment> findByBuild(Build build);
+    Worker findByName(String name);
+
+    List<Worker> findByStatus(Worker.Status status);
 }

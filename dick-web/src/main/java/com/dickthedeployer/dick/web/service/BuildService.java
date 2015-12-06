@@ -19,7 +19,6 @@ import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.BuildStatus;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
@@ -54,7 +53,7 @@ public class BuildService {
     DickYmlService dickYmlService;
 
     @Autowired
-    DeploymentService deploymentService;
+    JobBuildService jobBuildService;
 
     public void onTrigger(TriggerModel model) {
         Project project = projectDao.findByProjectName(model.getProjectName());
@@ -73,11 +72,11 @@ public class BuildService {
                     Dickfile dickfile = dickYmlService.loadDickFile(build);
                     Stage firstStage = dickfile.getFirstStage();
                     if (firstStage.isAutorun()) {
-                        deploymentService.deploy(build, dickfile, firstStage);
+                        jobBuildService.buildStage(build, dickfile, firstStage);
                     }
                 } catch (DickFileMissingException ex) {
                     log.info("Dickfile is missing", ex);
-                    build.setBuildStatus(BuildStatus.MISSING_DICKFILE);
+                    build.setStatus(Build.Status.MISSING_DICKFILE);
                     buildDao.save(build);
                 }
             }
@@ -89,10 +88,10 @@ public class BuildService {
         try {
             Dickfile dickfile = dickYmlService.loadDickFile(build);
             Stage stage = dickfile.getStage(stageName);
-            deploymentService.deploy(build, dickfile, stage);
+            jobBuildService.buildStage(build, dickfile, stage);
         } catch (DickFileMissingException ex) {
             log.info("Dickfile is missing", ex);
-            build.setBuildStatus(BuildStatus.MISSING_DICKFILE);
+            build.setStatus(Build.Status.MISSING_DICKFILE);
             buildDao.save(build);
         }
 

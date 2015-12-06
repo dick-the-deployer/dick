@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.model;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Stack;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author mariusz
  */
-public interface BuildDao extends JpaRepository<Build, Long> {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class BuildOrder {
 
-    Build findByStackAndStatus(Stack stack, Build.Status status);
+    private Long buildId;
+    private List<String> commands;
+    private Map<String, String> environment;
 }

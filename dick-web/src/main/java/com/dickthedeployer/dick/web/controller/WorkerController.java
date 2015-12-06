@@ -15,13 +15,12 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.Deployment;
-import com.dickthedeployer.dick.web.service.DeploymentService;
+import com.dickthedeployer.dick.web.model.RegistrationData;
+import com.dickthedeployer.dick.web.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -29,14 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mariusz
  */
 @RestController
-@RequestMapping("/deployment")
-public class DeploymentController {
+@RequestMapping("/workers")
+public class WorkerController {
 
     @Autowired
-    DeploymentService deploymentService;
+    WorkerService workerService;
 
-    @RequestMapping(method = GET)
-    public Page<Deployment> getDeployments(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return deploymentService.getDeployments(page, size);
+    @RequestMapping(value = "/register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    RegistrationData register() {
+        String workerName = workerService.registerWorker();
+        return new RegistrationData(workerName);
     }
 }

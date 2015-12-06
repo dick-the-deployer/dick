@@ -16,15 +16,12 @@
 package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import javax.persistence.Version;
 import lombok.Data;
 
 /**
@@ -33,26 +30,28 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class Deployment {
+public class Worker {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Build build;
-
-    @OneToOne
-    private Deployment rollback;
+    @Column(unique = true)
+    private String name;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    private Date registrationDate = new Date();
 
-    @Lob
-    private String deploymentLog = "";
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date lastHeartbeat = new Date();
 
-    private String job;
+    @Version
+    private int versionNo = 0;
 
-    @Enumerated(EnumType.STRING)
-    private DeployStatus deployStatus = DeployStatus.READY;
+    private Status status = Status.READY;
+
+    public static enum Status {
+
+        READY, BUSY, DEAD
+    }
 }

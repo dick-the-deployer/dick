@@ -16,9 +16,10 @@
 package com.dickthedeployer.dick.web;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
-import com.dickthedeployer.dick.web.dao.DeploymentDao;
+import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
+import com.dickthedeployer.dick.web.dao.WorkerDao;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,13 +46,17 @@ public class ContextTestBase {
     protected BuildDao buildDao;
 
     @Autowired
-    protected DeploymentDao deploymentDao;
+    protected JobBuildDao jobBuildDao;
+
+    @Autowired
+    protected WorkerDao workerDao;
 
     @Before
     public void init() {
-        deploymentDao.deleteAll();
+        jobBuildDao.deleteAll();
         buildDao.deleteAll();
         stackDao.deleteAll();
         projectDao.deleteAll();
+        workerDao.deleteAll();
     }
 }

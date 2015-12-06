@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.domain;
+package com.dickthedeployer.dick.web.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author mariusz
  */
-public enum DeployStatus {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class BuildForm {
 
-    FAILED, DEPLOYED, READY, IN_PROGRESS
+    private String log;
 }

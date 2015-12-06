@@ -15,24 +15,25 @@
  */
 package com.dickthedeployer.dick.web;
 
+import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  *
  * @author mariusz
  */
 @EnableAsync
-@RestController
+@EnableScheduling
 @SpringBootApplication
 public class Application {
 
-    @RequestMapping("/")
-    public String home() {
-        return "Hello Docker World 2";
+    @Bean
+    public RandomNameGenerator randomNameGenerator() {
+        return new RandomNameGenerator();
     }
 
     public static void main(String[] args) {
