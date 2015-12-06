@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
+import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.model.BuildOrder;
@@ -36,15 +37,9 @@ public class JobBuildServiceTest extends ContextTestBase {
 
     @Test
     public void shouldReturnBuildOrder() {
-        Worker worker = new Worker();
-        worker.setName("testingWorker");
-        workerDao.save(worker);
-        JobBuild jobBuild = new JobBuild();
-        jobBuild.setWorker(worker);
-        jobBuild.setStatus(JobBuild.Status.READY);
-        jobBuild.setDeploy(asList("echo bar"));
-        jobBuild.setEnvironment(singletonMap("FOO", "bar"));
-        jobBuildDao.save(jobBuild);
+        Worker worker = produceWorker(Worker.Status.READY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build);
 
         BuildOrder buildOrder = jobBuildService.peekBuildFor("testingWorker");
 
@@ -56,6 +51,48 @@ public class JobBuildServiceTest extends ContextTestBase {
         buildOrder = jobBuildService.peekBuildFor("testingWorker");
 
         assertThat(buildOrder).isNull();
+    }
+
+    @Test
+    public void shouldStopBuild() {
+        Worker worker = produceWorker(Worker.Status.BUSY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build);
+
+        jobBuildService.stop(jobBuild.getId());
+
+        jobBuild = jobBuildDao.findOne(jobBuild.getId());
+
+        assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.STOPPED);
+        assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
+        assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.STOPPED);
+
+    }
+
+    private JobBuild produceJobBuild(Worker worker, Build build) {
+        JobBuild jobBuild = new JobBuild();
+        jobBuild.setWorker(worker);
+        jobBuild.setBuild(build);
+        jobBuild.setStatus(JobBuild.Status.READY);
+        jobBuild.setDeploy(asList("echo bar"));
+        jobBuild.setEnvironment(singletonMap("FOO", "bar"));
+        jobBuildDao.save(jobBuild);
+        return jobBuild;
+    }
+
+    private Build produceBuild() {
+        Build build = new Build();
+        build.setStatus(Build.Status.IN_PROGRESS);
+        buildDao.save(build);
+        return build;
+    }
+
+    private Worker produceWorker(Worker.Status status) {
+        Worker worker = new Worker();
+        worker.setStatus(status);
+        worker.setName("testingWorker");
+        workerDao.save(worker);
+        return worker;
     }
 
 }

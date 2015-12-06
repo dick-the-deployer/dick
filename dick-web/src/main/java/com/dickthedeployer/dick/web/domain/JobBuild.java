@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -49,7 +50,7 @@ public class JobBuild {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Build build;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -63,7 +64,7 @@ public class JobBuild {
     @Enumerated(EnumType.STRING)
     private Status status = Status.READY;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Worker worker;
 
     @Version
@@ -80,6 +81,6 @@ public class JobBuild {
 
     public static enum Status {
 
-        FAILED, DEPLOYED, READY, IN_PROGRESS
+        FAILED, DEPLOYED, READY, IN_PROGRESS, STOPPED
     }
 }

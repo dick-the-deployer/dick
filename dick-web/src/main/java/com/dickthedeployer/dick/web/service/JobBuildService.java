@@ -76,6 +76,13 @@ public class JobBuildService {
         return jobBuild == null ? null : prepareBuildOrder(jobBuild, worker);
     }
 
+    public void stop(Long id) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        jobBuild.setStatus(JobBuild.Status.STOPPED);
+        jobBuild.getBuild().setStatus(Build.Status.STOPPED);
+        jobBuild.getWorker().setStatus(Worker.Status.READY);
+        jobBuildDao.save(jobBuild);
+    }
     /*
      if (atLeastOneFailed) {
      build.setBuildStatus(BuildStatus.FAILED);
@@ -115,6 +122,7 @@ public class JobBuildService {
 //        deploymentDao.save(jobBuild);
 //        return Status.DEPLOYED;
 //    }
+
     private BuildOrder prepareBuildOrder(JobBuild jobBuild, Worker worker) {
         jobBuild.setStatus(JobBuild.Status.IN_PROGRESS);
         jobBuildDao.save(jobBuild);
@@ -123,4 +131,5 @@ public class JobBuildService {
 
         return new BuildOrder(jobBuild.getId(), jobBuild.getDeploy(), jobBuild.getEnvironment());
     }
+
 }

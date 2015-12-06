@@ -53,8 +53,14 @@ public class JobBuildController {
         workerService.onHeartbeat(workerName);
         return jobBuildService.peekBuildFor(workerName);
     }
-//    @RequestMapping(value = "/{id}/kill", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    void killJobBuild(@PathVariable String id) {
+
+    @RequestMapping(value = "/{id}/kill", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    void stopJobBuild(@PathVariable Long id) {
+        jobBuildService.stop(id);
+    }
+
+//    @RequestMapping(value = "/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    BuildStatus checkStatus(@PathVariable("id") Long id) {
 //
 //    }
 //
@@ -63,10 +69,6 @@ public class JobBuildController {
 //
 //    }
 //
-//    @RequestMapping(value = "/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    BuildStatus checkStatus(@PathVariable("id") String id) {
-//
-//    }
 //
 //    @RequestMapping(value = "/{id}/failure", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 //    void reportFailure(@PathVariable String id, @RequestBody BuildForm form) {
@@ -75,11 +77,6 @@ public class JobBuildController {
 //
 //    @RequestMapping(value = "/{id}/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 //    void reportSuccess(@PathVariable String id, @RequestBody BuildForm form) {
-//
-//    }
-//
-//    @RequestMapping(value = "/peek/{dickWorkerName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    BuildOrder peekBuild(@PathVariable("dickWorkerName") String dickWorkerName) {
 //
 //    }
 }
