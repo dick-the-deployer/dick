@@ -95,7 +95,7 @@ public class Build {
 
     public static enum Status {
 
-        FAILED, DEPLOYED, READY, IN_PROGRESS, MISSING_DICKFILE, STOPPED
+        FAILED, DEPLOYED_STAGE, DEPLOYED, READY, IN_PROGRESS, MISSING_DICKFILE, STOPPED
     }
 
 }

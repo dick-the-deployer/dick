@@ -72,6 +72,11 @@ public class JobBuildController {
     void reportFailure(@PathVariable Long id, @RequestBody BuildForm form) {
         jobBuildService.reportFailure(id, form.getLog());
     }
+
+    @RequestMapping(value = "/{id}/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    void reportSuccess(@PathVariable Long id, @RequestBody BuildForm form) {
+        jobBuildService.reportSuccess(id, form.getLog());
+    }
 //
 //    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 //    void reportProgress(@PathVariable String id, @RequestBody BuildForm form) {
@@ -79,13 +84,4 @@ public class JobBuildController {
 //    }
 //
 //
-//    @RequestMapping(value = "/{id}/failure", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    void reportFailure(@PathVariable String id, @RequestBody BuildForm form) {
-//
-//    }
-//
-//    @RequestMapping(value = "/{id}/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    void reportSuccess(@PathVariable String id, @RequestBody BuildForm form) {
-//
-//    }
 }

@@ -21,10 +21,12 @@ import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
+import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
+import com.google.common.base.Throwables;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -60,10 +62,14 @@ public class JobBuildService {
     @Autowired
     BuildDao buildDao;
 
+    @Autowired
+    DickYmlService dickYmlService;
+
     @Async
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
         build.setStatus(Build.Status.IN_PROGRESS);
+        build.setCurrentStage(stage.getName());
         buildDao.save(build);
         jobs.stream()
                 .forEach(job -> workerService.sheduleJobBuild(build, job));
@@ -105,9 +111,36 @@ public class JobBuildService {
         updateBuildStatus(jobBuild.getBuild());
     }
 
-    private void updateBuildStatus(Build build) {
-        build.setStatus(determineBuildStatus(build));
+    public void reportSuccess(Long id, String log) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        jobBuild.setStatus(JobBuild.Status.DEPLOYED);
+        jobBuild.getWorker().setStatus(Worker.Status.READY);
+        jobBuild.setDeploymentLog(log);
+        jobBuildDao.save(jobBuild);
+
+        Build build = jobBuild.getBuild();
+        Build.Status status = updateBuildStatus(build);
+        if (status.equals(Build.Status.DEPLOYED_STAGE)) {
+            try {
+                Dickfile dickfile = dickYmlService.loadDickFile(build);
+                Stage nextStage = dickfile.getNextStage(dickfile.getStage(build.getCurrentStage()));
+                if (nextStage == null) {
+                    build.setStatus(Build.Status.DEPLOYED);
+                    buildDao.save(build);
+                } else if (nextStage.isAutorun()) {
+                    buildStage(build, dickfile, nextStage);
+                }
+            } catch (DickFileMissingException ex) {
+                throw Throwables.propagate(ex);
+            }
+        }
+    }
+
+    private Build.Status updateBuildStatus(Build build) {
+        Build.Status buildStatus = determineBuildStatus(build);
+        build.setStatus(buildStatus);
         buildDao.save(build);
+        return buildStatus;
     }
 
     private Build.Status determineBuildStatus(Build build) {
@@ -121,51 +154,12 @@ public class JobBuildService {
             } else if (statuses.containsKey(JobBuild.Status.STOPPED)) {
                 return Build.Status.STOPPED;
             } else {
-                return Build.Status.DEPLOYED;
+                return Build.Status.DEPLOYED_STAGE;
             }
         } else {
             return Build.Status.IN_PROGRESS;
         }
     }
-    /*
-     if (atLeastOneFailed) {
-     build.setBuildStatus(BuildStatus.FAILED);
-     } else {
-     build.setBuildStatus(BuildStatus.DEPLOYED);
-     }
-     build.setCurrentStage(stage.getName());
-     buildDao.save(build);
-
-     Stage nextStage = dickfile.getNextStage(stage);
-     if (!atLeastOneFailed && nextStage != null && nextStage.isAutorun()) {
-     buildStageBlocking(build, dickfile, nextStage);
-     }
-     */
-//
-//    private Status performJobBuild(JobBuild jobBuild, List<String> deploy, Map<String, String> environment) {
-//        jobBuild.setJobBuildStatus(Status.IN_PROGRESS);
-//        deploymentDao.save(jobBuild);
-//
-//        for (String command : deploy) {
-//            try {
-//                Path temp = Files.createTempDirectory("deployment-" + jobBuild.getId());
-//                CommandResult result = commandService.invokeWithEnvironment(temp, environment, command.split(" "));
-//                StringBuilder builder = new StringBuilder(jobBuild.getDeploymentLog()).append("\n");
-//                jobBuild.setDeploymentLog(builder.append(result.getOutput()).toString());
-//                deploymentDao.save(jobBuild);
-//                if (result.getResult() != 0) {
-//                    jobBuild.setJobBuildStatus(Status.FAILED);
-//                    deploymentDao.save(jobBuild);
-//                    return Status.FAILED;
-//                }
-//            } catch (IOException ex) {
-//                throw Throwables.propagate(ex);
-//            }
-//        }
-//        jobBuild.setJobBuildStatus(Status.DEPLOYED);
-//        deploymentDao.save(jobBuild);
-//        return Status.DEPLOYED;
-//    }
 
     private BuildOrder prepareBuildOrder(JobBuild jobBuild, Worker worker) {
         jobBuild.setStatus(JobBuild.Status.IN_PROGRESS);
