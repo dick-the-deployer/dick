@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.model.BuildForm;
 import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.model.BuildStatus;
 import com.dickthedeployer.dick.web.service.JobBuildService;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -64,6 +66,11 @@ public class JobBuildController {
     BuildStatus checkStatus(@PathVariable("id") Long id) {
         boolean isStopped = jobBuildService.isStopped(id);
         return new BuildStatus(isStopped);
+    }
+
+    @RequestMapping(value = "/{id}/failure", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    void reportFailure(@PathVariable Long id, @RequestBody BuildForm form) {
+        jobBuildService.reportFailure(id, form.getLog());
     }
 //
 //    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

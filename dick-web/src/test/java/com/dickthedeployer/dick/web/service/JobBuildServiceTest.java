@@ -90,6 +90,35 @@ public class JobBuildServiceTest extends ContextTestBase {
         assertThat(stopped).isFalse();
     }
 
+    @Test
+    public void shouldSetFailureStatus() {
+        Worker worker = produceWorker(Worker.Status.BUSY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
+
+        jobBuildService.reportFailure(jobBuild.getId(), "foo");
+
+        jobBuild = jobBuildDao.findOne(jobBuild.getId());
+        assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
+        assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
+        assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.FAILED);
+    }
+
+    @Test
+    public void shouldNotSetFailureStatusBecauseJobNotCompleted() {
+        Worker worker = produceWorker(Worker.Status.BUSY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
+        produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
+
+        jobBuildService.reportFailure(jobBuild.getId(), "foo");
+
+        jobBuild = jobBuildDao.findOne(jobBuild.getId());
+        assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
+        assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
+        assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.IN_PROGRESS);
+    }
+
     private JobBuild produceJobBuild(Worker worker, Build build, JobBuild.Status status) {
         JobBuild jobBuild = new JobBuild();
         jobBuild.setWorker(worker);

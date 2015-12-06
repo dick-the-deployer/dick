@@ -26,6 +26,9 @@ import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -86,9 +89,43 @@ public class JobBuildService {
     public void stop(Long id) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
         jobBuild.setStatus(JobBuild.Status.STOPPED);
-        jobBuild.getBuild().setStatus(Build.Status.STOPPED);
         jobBuild.getWorker().setStatus(Worker.Status.READY);
         jobBuildDao.save(jobBuild);
+
+        updateBuildStatus(jobBuild.getBuild());
+    }
+
+    public void reportFailure(Long id, String log) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        jobBuild.setStatus(JobBuild.Status.FAILED);
+        jobBuild.getWorker().setStatus(Worker.Status.READY);
+        jobBuild.setDeploymentLog(log);
+        jobBuildDao.save(jobBuild);
+
+        updateBuildStatus(jobBuild.getBuild());
+    }
+
+    private void updateBuildStatus(Build build) {
+        build.setStatus(determineBuildStatus(build));
+        buildDao.save(build);
+    }
+
+    private Build.Status determineBuildStatus(Build build) {
+        Map<JobBuild.Status, List<JobBuild.Status>> statuses = jobBuildDao.findByBuild(build)
+                .stream()
+                .map(jobBuild -> jobBuild.getStatus())
+                .collect(Collectors.groupingBy(Function.identity()));
+        if (!statuses.containsKey(JobBuild.Status.IN_PROGRESS) && !statuses.containsKey(JobBuild.Status.READY)) {
+            if (statuses.containsKey(JobBuild.Status.FAILED)) {
+                return Build.Status.FAILED;
+            } else if (statuses.containsKey(JobBuild.Status.STOPPED)) {
+                return Build.Status.STOPPED;
+            } else {
+                return Build.Status.DEPLOYED;
+            }
+        } else {
+            return Build.Status.IN_PROGRESS;
+        }
     }
     /*
      if (atLeastOneFailed) {
