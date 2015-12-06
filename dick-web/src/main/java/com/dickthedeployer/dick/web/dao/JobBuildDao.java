@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.domain;
+package com.dickthedeployer.dick.web.dao;
+
+import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.JobBuild;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-public enum DeployStatus {
+public interface JobBuildDao extends JpaRepository<JobBuild, Long> {
 
-    FAILED, DEPLOYED, READY, IN_PROGRESS
+    List<JobBuild> findByBuild(Build build);
 }

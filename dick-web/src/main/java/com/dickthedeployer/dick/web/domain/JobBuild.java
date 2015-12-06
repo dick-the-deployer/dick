@@ -33,7 +33,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class Deployment {
+public class JobBuild {
 
     @Id
     @GeneratedValue
@@ -43,7 +43,7 @@ public class Deployment {
     private Build build;
 
     @OneToOne
-    private Deployment rollback;
+    private JobBuild rollback;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
@@ -54,5 +54,5 @@ public class Deployment {
     private String job;
 
     @Enumerated(EnumType.STRING)
-    private DeployStatus deployStatus = DeployStatus.READY;
+    private JobBuildStatus jobBuildStatus = JobBuildStatus.READY;
 }

@@ -54,7 +54,7 @@ public class BuildService {
     DickYmlService dickYmlService;
 
     @Autowired
-    DeploymentService deploymentService;
+    JobBuildService jobBuildService;
 
     public void onTrigger(TriggerModel model) {
         Project project = projectDao.findByProjectName(model.getProjectName());
@@ -73,7 +73,7 @@ public class BuildService {
                     Dickfile dickfile = dickYmlService.loadDickFile(build);
                     Stage firstStage = dickfile.getFirstStage();
                     if (firstStage.isAutorun()) {
-                        deploymentService.deploy(build, dickfile, firstStage);
+                        jobBuildService.buildStage(build, dickfile, firstStage);
                     }
                 } catch (DickFileMissingException ex) {
                     log.info("Dickfile is missing", ex);
@@ -89,7 +89,7 @@ public class BuildService {
         try {
             Dickfile dickfile = dickYmlService.loadDickFile(build);
             Stage stage = dickfile.getStage(stageName);
-            deploymentService.deploy(build, dickfile, stage);
+            jobBuildService.buildStage(build, dickfile, stage);
         } catch (DickFileMissingException ex) {
             log.info("Dickfile is missing", ex);
             build.setBuildStatus(BuildStatus.MISSING_DICKFILE);

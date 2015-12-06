@@ -16,11 +16,11 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
-import com.dickthedeployer.dick.web.dao.DeploymentDao;
+import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.BuildStatus;
-import com.dickthedeployer.dick.web.domain.DeployStatus;
-import com.dickthedeployer.dick.web.domain.Deployment;
+import com.dickthedeployer.dick.web.domain.JobBuildStatus;
+import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.model.CommandResult;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
@@ -45,27 +45,27 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class DeploymentService {
+public class JobBuildService {
 
     @Autowired
     CommandService commandService;
 
     @Autowired
-    DeploymentDao deploymentDao;
+    JobBuildDao deploymentDao;
 
     @Autowired
     BuildDao buildDao;
 
     @Async
-    public void deploy(Build build, Dickfile dickfile, Stage stage) {
-        blockingDeploy(build, dickfile, stage);
+    public void buildStage(Build build, Dickfile dickfile, Stage stage) {
+        buildStageBlocking(build, dickfile, stage);
     }
 
-    public Build blockingDeploy(Build build, Dickfile dickfile, Stage stage) {
+    public Build buildStageBlocking(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
         boolean atLeastOneFailed = jobs.stream()
-                .map(job -> deployJob(build, job))
-                .anyMatch(status -> DeployStatus.FAILED.equals(status));
+                .map(job -> buildJob(build, job))
+                .anyMatch(status -> JobBuildStatus.FAILED.equals(status));
         if (atLeastOneFailed) {
             build.setBuildStatus(BuildStatus.FAILED);
         } else {
@@ -76,16 +76,16 @@ public class DeploymentService {
 
         Stage nextStage = dickfile.getNextStage(stage);
         if (!atLeastOneFailed && nextStage != null && nextStage.isAutorun()) {
-            blockingDeploy(build, dickfile, nextStage);
+            buildStageBlocking(build, dickfile, nextStage);
         }
         return build;
     }
 
-    private DeployStatus deployJob(Build build, Job job) {
-        Deployment deployment = new Deployment();
-        deployment.setBuild(build);
-        deploymentDao.save(deployment);
-        return performDeploy(deployment, job.getDeploy(), getEnvironment(build, job));
+    private JobBuildStatus buildJob(Build build, Job job) {
+        JobBuild jobBuild = new JobBuild();
+        jobBuild.setBuild(build);
+        deploymentDao.save(jobBuild);
+        return performJobBuild(jobBuild, job.getDeploy(), getEnvironment(build, job));
     }
 
     private Map<String, String> getEnvironment(Build build, Job job) {
@@ -97,32 +97,32 @@ public class DeploymentService {
         return environment;
     }
 
-    private DeployStatus performDeploy(Deployment deployment, List<String> deploy, Map<String, String> environment) {
-        deployment.setDeployStatus(DeployStatus.IN_PROGRESS);
-        deploymentDao.save(deployment);
+    private JobBuildStatus performJobBuild(JobBuild jobBuild, List<String> deploy, Map<String, String> environment) {
+        jobBuild.setJobBuildStatus(JobBuildStatus.IN_PROGRESS);
+        deploymentDao.save(jobBuild);
 
         for (String command : deploy) {
             try {
-                Path temp = Files.createTempDirectory("deployment-" + deployment.getId());
+                Path temp = Files.createTempDirectory("deployment-" + jobBuild.getId());
                 CommandResult result = commandService.invokeWithEnvironment(temp, environment, command.split(" "));
-                StringBuilder builder = new StringBuilder(deployment.getDeploymentLog()).append("\n");
-                deployment.setDeploymentLog(builder.append(result.getOutput()).toString());
-                deploymentDao.save(deployment);
+                StringBuilder builder = new StringBuilder(jobBuild.getDeploymentLog()).append("\n");
+                jobBuild.setDeploymentLog(builder.append(result.getOutput()).toString());
+                deploymentDao.save(jobBuild);
                 if (result.getResult() != 0) {
-                    deployment.setDeployStatus(DeployStatus.FAILED);
-                    deploymentDao.save(deployment);
-                    return DeployStatus.FAILED;
+                    jobBuild.setJobBuildStatus(JobBuildStatus.FAILED);
+                    deploymentDao.save(jobBuild);
+                    return JobBuildStatus.FAILED;
                 }
             } catch (IOException ex) {
                 throw Throwables.propagate(ex);
             }
         }
-        deployment.setDeployStatus(DeployStatus.DEPLOYED);
-        deploymentDao.save(deployment);
-        return DeployStatus.DEPLOYED;
+        jobBuild.setJobBuildStatus(JobBuildStatus.DEPLOYED);
+        deploymentDao.save(jobBuild);
+        return JobBuildStatus.DEPLOYED;
     }
 
-    public Page<Deployment> getDeployments(int page, int size) {
+    public Page<JobBuild> getJobBuilds(int page, int size) {
         return deploymentDao.findAll(new PageRequest(page, size));
     }
 

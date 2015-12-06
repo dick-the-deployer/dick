@@ -18,8 +18,8 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.BuildStatus;
-import com.dickthedeployer.dick.web.domain.DeployStatus;
-import com.dickthedeployer.dick.web.domain.Deployment;
+import com.dickthedeployer.dick.web.domain.JobBuildStatus;
+import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
@@ -39,10 +39,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author mariusz
  */
-public class DeploymentServiceTest extends ContextTestBase {
+public class JobBuildServiceTest extends ContextTestBase {
 
     @Autowired
-    DeploymentService deploymentService;
+    JobBuildService deploymentService;
 
     @Test
     public void shouldPerformDeployment() throws DickFileMissingException {
@@ -50,12 +50,12 @@ public class DeploymentServiceTest extends ContextTestBase {
         Stage firstStage = new Stage("first", true);
         Dickfile dickfile = prepareDickfile(firstStage);
 
-        build = deploymentService.blockingDeploy(build, dickfile, firstStage);
-        List<Deployment> deployments = deploymentDao.findByBuild(build);
+        build = deploymentService.buildStageBlocking(build, dickfile, firstStage);
+        List<JobBuild> jobBuilds = deploymentDao.findByBuild(build);
 
         assertThat(build).isNotNull();
         assertThat(build.getBuildStatus()).isEqualTo(BuildStatus.DEPLOYED);
-        assertThat(deployments).asList().hasSize(2).extracting("deployStatus").containsOnly(DeployStatus.DEPLOYED);
+        assertThat(jobBuilds).asList().hasSize(2).extracting("jobBuildStatus").containsOnly(JobBuildStatus.DEPLOYED);
     }
 
     private Dickfile prepareDickfile(Stage firstStage) {

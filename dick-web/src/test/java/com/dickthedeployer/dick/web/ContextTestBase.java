@@ -16,7 +16,7 @@
 package com.dickthedeployer.dick.web;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
-import com.dickthedeployer.dick.web.dao.DeploymentDao;
+import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.dao.WorkerDao;
@@ -46,7 +46,7 @@ public class ContextTestBase {
     protected BuildDao buildDao;
 
     @Autowired
-    protected DeploymentDao deploymentDao;
+    protected JobBuildDao deploymentDao;
 
     @Autowired
     protected WorkerDao workerDao;
