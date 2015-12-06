@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.model;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.JobBuild;
-import com.dickthedeployer.dick.web.domain.Worker;
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author mariusz
  */
-public interface JobBuildDao extends JpaRepository<JobBuild, Long> {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class BuildOrder {
 
-    List<JobBuild> findByBuild(Build build);
-
-    List<JobBuild> findByStatusAndWorkerNull(JobBuild.Status status);
-
-    JobBuild findByStatusAndWorker(JobBuild.Status status, Worker worker);
-
+    private Long buildId;
+    private List<String> commands;
+    private Map<String, String> environment;
 }

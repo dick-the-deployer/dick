@@ -16,14 +16,25 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
+import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.domain.Worker;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
+import com.dickthedeployer.dick.web.model.dickfile.Job;
+import com.dickthedeployer.dick.web.model.dickfile.Pipeline;
+import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.dickthedeployer.dick.web.service.util.OptymisticLockService;
 import static com.watchrabbit.commons.sleep.Sleep.sleep;
+import static java.util.Arrays.asList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -42,7 +53,6 @@ public class WorkerServiceTest extends ContextTestBase {
 
     @Test
     public void shouldRegisterNewWorker() {
-
         String workerName = workerService.registerWorker();
         Worker worker = workerDao.findByName(workerName);
 
@@ -52,6 +62,57 @@ public class WorkerServiceTest extends ContextTestBase {
 
     @Test
     public void shouldScheduleExecution() {
+        Build build = prepareBuild();
+        Stage firstStage = new Stage("first", true);
+        Dickfile dickfile = prepareDickfile(firstStage);
+
+        workerService.sheduleJobBuild(build, dickfile.getJobs(firstStage).get(0));
+
+        List<JobBuild> builds = jobBuildDao.findByBuild(build);
+        assertThat(builds).hasSize(1);
+        assertThat(builds.get(0).getEnvironment()).containsEntry("FOOKEY", "foo");
+        assertThat(builds.get(0).getDeploy()).containsExactly("echo foo");
+    }
+
+    private Build prepareBuild() {
+        final Project project = new Project.Builder()
+                .withProjectName(UUID.randomUUID().toString())
+                .withRepository(UUID.randomUUID().toString())
+                .build();
+        projectDao.save(project);
+        final Stack stack = new Stack.Builder()
+                .withRef("master")
+                .withEnvironmentVariables(asList(
+                                new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
+                        )).withProject(project).build();
+        stackDao.save(stack);
+        Build build = new Build.Builder()
+                .withSha("somesha")
+                .withStack(stack).build();
+        buildDao.save(build);
+        return build;
+    }
+
+    private Dickfile prepareDickfile(Stage firstStage) {
+        Dickfile dickfile = new Dickfile();
+        Pipeline pipeline = new Pipeline();
+        pipeline.setStages(asList(
+                firstStage
+        ));
+        dickfile.setPipeline(pipeline);
+        Job first = new Job();
+        first.setEnvironmentVariables(asList(
+                new EnvironmentVariable("FOOKEY", "foo")
+        ));
+        first.setName("first job");
+        first.setStage("first");
+        first.setDeploy(asList("echo foo"));
+        dickfile.setJobs(asList(first));
+        return dickfile;
+    }
+
+    @Test
+    public void shouldAssignWorker() {
         JobBuild jobBuild = jobBuildDao.save(new JobBuild());
         Worker worker = workerDao.save(new Worker());
 

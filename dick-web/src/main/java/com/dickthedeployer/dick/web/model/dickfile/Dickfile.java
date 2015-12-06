@@ -44,9 +44,9 @@ public class Dickfile {
                 .get();
     }
 
-    public List<Job> getJobs(Stage firstStage) {
+    public List<Job> getJobs(Stage stage) {
         return jobs.stream().filter(job -> job.getStage()
-                .equals(firstStage.getName()))
+                .equals(stage.getName()))
                 .collect(toList());
     }
 

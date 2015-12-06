@@ -17,8 +17,11 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
+import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.domain.Worker;
+import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
@@ -29,6 +32,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -48,6 +52,9 @@ public class JobBuildService {
     JobBuildDao jobBuildDao;
 
     @Autowired
+    WorkerDao workerDao;
+
+    @Autowired
     BuildDao buildDao;
 
     @Async
@@ -61,4 +68,59 @@ public class JobBuildService {
         return jobBuildDao.findAll(new PageRequest(page, size));
     }
 
+    @Transactional
+    public BuildOrder peekBuildFor(String workerName) {
+        Worker worker = workerDao.findByName(workerName);
+        JobBuild jobBuild = jobBuildDao.findByStatusAndWorker(JobBuild.Status.READY, worker);
+
+        return jobBuild == null ? null : prepareBuildOrder(jobBuild, worker);
+    }
+
+    /*
+     if (atLeastOneFailed) {
+     build.setBuildStatus(BuildStatus.FAILED);
+     } else {
+     build.setBuildStatus(BuildStatus.DEPLOYED);
+     }
+     build.setCurrentStage(stage.getName());
+     buildDao.save(build);
+
+     Stage nextStage = dickfile.getNextStage(stage);
+     if (!atLeastOneFailed && nextStage != null && nextStage.isAutorun()) {
+     buildStageBlocking(build, dickfile, nextStage);
+     }
+     */
+//
+//    private Status performJobBuild(JobBuild jobBuild, List<String> deploy, Map<String, String> environment) {
+//        jobBuild.setJobBuildStatus(Status.IN_PROGRESS);
+//        deploymentDao.save(jobBuild);
+//
+//        for (String command : deploy) {
+//            try {
+//                Path temp = Files.createTempDirectory("deployment-" + jobBuild.getId());
+//                CommandResult result = commandService.invokeWithEnvironment(temp, environment, command.split(" "));
+//                StringBuilder builder = new StringBuilder(jobBuild.getDeploymentLog()).append("\n");
+//                jobBuild.setDeploymentLog(builder.append(result.getOutput()).toString());
+//                deploymentDao.save(jobBuild);
+//                if (result.getResult() != 0) {
+//                    jobBuild.setJobBuildStatus(Status.FAILED);
+//                    deploymentDao.save(jobBuild);
+//                    return Status.FAILED;
+//                }
+//            } catch (IOException ex) {
+//                throw Throwables.propagate(ex);
+//            }
+//        }
+//        jobBuild.setJobBuildStatus(Status.DEPLOYED);
+//        deploymentDao.save(jobBuild);
+//        return Status.DEPLOYED;
+//    }
+    private BuildOrder prepareBuildOrder(JobBuild jobBuild, Worker worker) {
+        jobBuild.setStatus(JobBuild.Status.IN_PROGRESS);
+        jobBuildDao.save(jobBuild);
+        worker.setStatus(Worker.Status.BUSY);
+        workerDao.save(worker);
+
+        return new BuildOrder(jobBuild.getId(), jobBuild.getDeploy(), jobBuild.getEnvironment());
+    }
 }

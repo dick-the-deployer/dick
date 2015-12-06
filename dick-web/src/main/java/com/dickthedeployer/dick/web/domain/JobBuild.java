@@ -16,14 +16,22 @@
 package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
@@ -44,9 +52,6 @@ public class JobBuild {
     @ManyToOne
     private Build build;
 
-    @OneToOne
-    private JobBuild rollback;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
@@ -63,6 +68,15 @@ public class JobBuild {
 
     @Version
     private int versionNo = 0;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name = "entry_name")
+    @Column(name = "entry_value")
+    @CollectionTable(name = "job_build_attributes", joinColumns = @JoinColumn(name = "job_build_id"))
+    Map<String, String> environment = new HashMap<String, String>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    List<String> deploy;
 
     public static enum Status {
 
