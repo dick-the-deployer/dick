@@ -16,7 +16,6 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.model.StackModel;
@@ -33,9 +32,6 @@ public class StackServiceTest extends ContextTestBase {
 
     @Autowired
     StackService stackService;
-
-    @Autowired
-    ProjectDao projectDao;
 
     @Test
     public void shouldCreateStack() {

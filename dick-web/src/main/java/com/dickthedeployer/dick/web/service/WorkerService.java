@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web;
+package com.dickthedeployer.dick.web.service;
 
+import com.dickthedeployer.dick.web.dao.WorkerDao;
+import com.dickthedeployer.dick.web.domain.Worker;
 import org.kohsuke.randname.RandomNameGenerator;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author mariusz
  */
-@EnableAsync
-@SpringBootApplication
-public class Application {
+@Service
+public class WorkerService {
 
-    @Bean
-    public RandomNameGenerator randomNameGenerator() {
-        return new RandomNameGenerator();
-    }
+    @Autowired
+    RandomNameGenerator nameGenerator;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    @Autowired
+    WorkerDao workerDao;
+
+    public String registerWorker() {
+        String workerName = nameGenerator.next();
+        Worker worker = new Worker();
+        worker.setName(workerName);
+        workerDao.save(worker);
+        return workerName;
     }
 }

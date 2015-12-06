@@ -46,5 +46,4 @@ public class BuildController {
     public void buildStage(@PathVariable("buildId") Long buildId, @PathVariable("stageName") String stageName) {
         buildService.buildStage(buildId, stageName);
     }
-
 }
