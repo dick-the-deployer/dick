@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.dao;
 
 import com.dickthedeployer.dick.web.domain.Worker;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -25,4 +26,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface WorkerDao extends JpaRepository<Worker, Long> {
 
     Worker findByName(String name);
+
+    List<Worker> findByStatus(Worker.Status status);
 }

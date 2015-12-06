@@ -19,7 +19,6 @@ import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.BuildStatus;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
@@ -77,7 +76,7 @@ public class BuildService {
                     }
                 } catch (DickFileMissingException ex) {
                     log.info("Dickfile is missing", ex);
-                    build.setBuildStatus(BuildStatus.MISSING_DICKFILE);
+                    build.setStatus(Build.Status.MISSING_DICKFILE);
                     buildDao.save(build);
                 }
             }
@@ -92,7 +91,7 @@ public class BuildService {
             jobBuildService.buildStage(build, dickfile, stage);
         } catch (DickFileMissingException ex) {
             log.info("Dickfile is missing", ex);
-            build.setBuildStatus(BuildStatus.MISSING_DICKFILE);
+            build.setStatus(Build.Status.MISSING_DICKFILE);
             buildDao.save(build);
         }
 

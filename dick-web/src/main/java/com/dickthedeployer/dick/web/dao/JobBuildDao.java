@@ -27,4 +27,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface JobBuildDao extends JpaRepository<JobBuild, Long> {
 
     List<JobBuild> findByBuild(Build build);
+
+    List<JobBuild> findByStatusAndWorkerNull(JobBuild.Status status);
 }

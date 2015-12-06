@@ -21,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
+import javax.persistence.Version;
 import lombok.Data;
 
 /**
@@ -43,4 +44,14 @@ public class Worker {
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date lastHeartbeat = new Date();
+
+    @Version
+    private int versionNo = 0;
+
+    private Status status = Status.READY;
+
+    public static enum Status {
+
+        READY, BUSY, DEAD
+    }
 }

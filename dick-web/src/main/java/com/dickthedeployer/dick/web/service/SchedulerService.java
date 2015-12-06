@@ -15,19 +15,14 @@
  */
 package com.dickthedeployer.dick.web.service;
 
-import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
-import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.JobBuild;
-import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
-import com.dickthedeployer.dick.web.model.dickfile.Job;
-import com.dickthedeployer.dick.web.model.dickfile.Stage;
+import com.dickthedeployer.dick.web.domain.Worker;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,29 +31,24 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class JobBuildService {
-
-    @Autowired
-    CommandService commandService;
-
-    @Autowired
-    WorkerService workerService;
+public class SchedulerService {
 
     @Autowired
     JobBuildDao jobBuildDao;
 
     @Autowired
-    BuildDao buildDao;
+    WorkerDao workerDao;
 
-    @Async
-    public void buildStage(Build build, Dickfile dickfile, Stage stage) {
-        List<Job> jobs = dickfile.getJobs(stage);
-        jobs.stream()
-                .forEach(job -> workerService.sheduleJobBuild(build, job));
+    @Autowired
+    WorkerService workerService;
+
+    @Scheduled(fixedRateString = "${dock.web.scheduler.assign:1000}")
+    public void assignJobsToWorkers() {
+        List<JobBuild> jobBuilds = jobBuildDao.findByStatusAndWorkerNull(com.dickthedeployer.dick.web.domain.JobBuild.Status.READY);
+        List<Worker> availableWorkers = workerDao.findByStatus(Worker.Status.READY);
+        if (!availableWorkers.isEmpty()) {
+            log.info("Found available workers. Scheduling jobs");
+            jobBuilds.forEach(workerService::assignJobBuildToWorker);
+        }
     }
-
-    public Page<JobBuild> getJobBuilds(int page, int size) {
-        return jobBuildDao.findAll(new PageRequest(page, size));
-    }
-
 }

@@ -46,14 +46,14 @@ public class ContextTestBase {
     protected BuildDao buildDao;
 
     @Autowired
-    protected JobBuildDao deploymentDao;
+    protected JobBuildDao jobBuildDao;
 
     @Autowired
     protected WorkerDao workerDao;
 
     @Before
     public void init() {
-        deploymentDao.deleteAll();
+        jobBuildDao.deleteAll();
         buildDao.deleteAll();
         stackDao.deleteAll();
         projectDao.deleteAll();

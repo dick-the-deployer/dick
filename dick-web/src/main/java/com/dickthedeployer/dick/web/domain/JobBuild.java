@@ -25,6 +25,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import lombok.Data;
 
 /**
@@ -45,7 +47,7 @@ public class JobBuild {
     @OneToOne
     private JobBuild rollback;
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
     @Lob
@@ -54,5 +56,16 @@ public class JobBuild {
     private String job;
 
     @Enumerated(EnumType.STRING)
-    private JobBuildStatus jobBuildStatus = JobBuildStatus.READY;
+    private Status status = Status.READY;
+
+    @ManyToOne
+    private Worker worker;
+
+    @Version
+    private int versionNo = 0;
+
+    public static enum Status {
+
+        FAILED, DEPLOYED, READY, IN_PROGRESS
+    }
 }

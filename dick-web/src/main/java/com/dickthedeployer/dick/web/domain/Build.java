@@ -23,6 +23,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Data;
 
 /**
@@ -41,9 +42,9 @@ public class Build {
     private Stack stack;
 
     @Enumerated(EnumType.STRING)
-    private BuildStatus buildStatus = BuildStatus.READY;
+    private Status status = Status.READY;
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
     private String buildUrl;
@@ -90,6 +91,11 @@ public class Build {
         public Build build() {
             return this.item;
         }
+    }
+
+    public static enum Status {
+
+        FAILED, DEPLOYED, READY, IN_PROGRESS, MISSING_DICKFILE
     }
 
 }
