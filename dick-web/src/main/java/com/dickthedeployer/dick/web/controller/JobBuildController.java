@@ -17,6 +17,7 @@ package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.model.BuildOrder;
+import com.dickthedeployer.dick.web.model.BuildStatus;
 import com.dickthedeployer.dick.web.service.JobBuildService;
 import com.dickthedeployer.dick.web.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,11 @@ public class JobBuildController {
         jobBuildService.stop(id);
     }
 
-//    @RequestMapping(value = "/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    BuildStatus checkStatus(@PathVariable("id") Long id) {
-//
-//    }
+    @RequestMapping(value = "/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    BuildStatus checkStatus(@PathVariable("id") Long id) {
+        boolean isStopped = jobBuildService.isStopped(id);
+        return new BuildStatus(isStopped);
+    }
 //
 //    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 //    void reportProgress(@PathVariable String id, @RequestBody BuildForm form) {

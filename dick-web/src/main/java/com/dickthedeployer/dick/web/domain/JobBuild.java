@@ -79,6 +79,10 @@ public class JobBuild {
     @ElementCollection(fetch = FetchType.EAGER)
     List<String> deploy;
 
+    public boolean isStopped() {
+        return !status.equals(Status.IN_PROGRESS);
+    }
+
     public static enum Status {
 
         FAILED, DEPLOYED, READY, IN_PROGRESS, STOPPED

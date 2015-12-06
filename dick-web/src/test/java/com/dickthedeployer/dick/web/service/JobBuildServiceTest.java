@@ -39,7 +39,7 @@ public class JobBuildServiceTest extends ContextTestBase {
     public void shouldReturnBuildOrder() {
         Worker worker = produceWorker(Worker.Status.READY);
         Build build = produceBuild();
-        JobBuild jobBuild = produceJobBuild(worker, build);
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.READY);
 
         BuildOrder buildOrder = jobBuildService.peekBuildFor("testingWorker");
 
@@ -57,7 +57,7 @@ public class JobBuildServiceTest extends ContextTestBase {
     public void shouldStopBuild() {
         Worker worker = produceWorker(Worker.Status.BUSY);
         Build build = produceBuild();
-        JobBuild jobBuild = produceJobBuild(worker, build);
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
 
         jobBuildService.stop(jobBuild.getId());
 
@@ -66,14 +66,35 @@ public class JobBuildServiceTest extends ContextTestBase {
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.STOPPED);
         assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
         assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.STOPPED);
-
     }
 
-    private JobBuild produceJobBuild(Worker worker, Build build) {
+    @Test
+    public void shouldReturnStoppedStatus() {
+        Worker worker = produceWorker(Worker.Status.BUSY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.STOPPED);
+
+        boolean stopped = jobBuildService.isStopped(jobBuild.getId());
+
+        assertThat(stopped).isTrue();
+    }
+
+    @Test
+    public void shouldReturnNotStoppedStatus() {
+        Worker worker = produceWorker(Worker.Status.BUSY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
+
+        boolean stopped = jobBuildService.isStopped(jobBuild.getId());
+
+        assertThat(stopped).isFalse();
+    }
+
+    private JobBuild produceJobBuild(Worker worker, Build build, JobBuild.Status status) {
         JobBuild jobBuild = new JobBuild();
         jobBuild.setWorker(worker);
         jobBuild.setBuild(build);
-        jobBuild.setStatus(JobBuild.Status.READY);
+        jobBuild.setStatus(status);
         jobBuild.setDeploy(asList("echo bar"));
         jobBuild.setEnvironment(singletonMap("FOO", "bar"));
         jobBuildDao.save(jobBuild);

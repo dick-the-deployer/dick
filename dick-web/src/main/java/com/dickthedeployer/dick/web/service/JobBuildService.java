@@ -60,6 +60,8 @@ public class JobBuildService {
     @Async
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
+        build.setStatus(Build.Status.IN_PROGRESS);
+        buildDao.save(build);
         jobs.stream()
                 .forEach(job -> workerService.sheduleJobBuild(build, job));
     }
@@ -74,6 +76,11 @@ public class JobBuildService {
         JobBuild jobBuild = jobBuildDao.findByStatusAndWorker(JobBuild.Status.READY, worker);
 
         return jobBuild == null ? null : prepareBuildOrder(jobBuild, worker);
+    }
+
+    public boolean isStopped(Long id) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        return jobBuild.isStopped();
     }
 
     public void stop(Long id) {
