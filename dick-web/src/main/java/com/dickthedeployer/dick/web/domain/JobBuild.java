@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import static javax.persistence.FetchType.LAZY;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -57,6 +59,7 @@ public class JobBuild {
     private Date creationDate = new Date();
 
     @Lob
+    @Basic(fetch = LAZY)
     private String deploymentLog = "";
 
     private String job;

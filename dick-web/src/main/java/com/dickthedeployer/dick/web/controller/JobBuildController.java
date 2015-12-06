@@ -15,21 +15,17 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.model.BuildForm;
 import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.model.BuildStatus;
 import com.dickthedeployer.dick.web.service.JobBuildService;
 import com.dickthedeployer.dick.web.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -45,11 +41,6 @@ public class JobBuildController {
 
     @Autowired
     WorkerService workerService;
-
-    @RequestMapping(method = GET)
-    public Page<JobBuild> getJobBuilds(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return jobBuildService.getJobBuilds(page, size);
-    }
 
     @RequestMapping(value = "/peek/{workerName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     BuildOrder peekBuild(@PathVariable("workerName") String workerName) {
@@ -77,11 +68,10 @@ public class JobBuildController {
     void reportSuccess(@PathVariable Long id, @RequestBody BuildForm form) {
         jobBuildService.reportSuccess(id, form.getLog());
     }
-//
-//    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    void reportProgress(@PathVariable String id, @RequestBody BuildForm form) {
-//
-//    }
-//
-//
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    void reportProgress(@PathVariable Long id, @RequestBody BuildForm form) {
+        jobBuildService.reportProgress(id, form.getLog());
+    }
+
 }

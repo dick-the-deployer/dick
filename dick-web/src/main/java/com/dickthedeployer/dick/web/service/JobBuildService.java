@@ -101,6 +101,16 @@ public class JobBuildService {
         updateBuildStatus(jobBuild.getBuild());
     }
 
+    public void reportProgress(Long id, String log) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        String deploymentLog = jobBuild.getDeploymentLog();
+        jobBuild.setDeploymentLog(new StringBuilder(deploymentLog)
+                .append(log)
+                .toString()
+        );
+        jobBuildDao.save(jobBuild);
+    }
+
     public void reportFailure(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
         jobBuild.setStatus(JobBuild.Status.FAILED);

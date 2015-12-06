@@ -119,6 +119,19 @@ public class JobBuildServiceTest extends ContextTestBase {
         assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.IN_PROGRESS);
     }
 
+    @Test
+    public void shouldAppendLog() {
+        Worker worker = produceWorker(Worker.Status.BUSY);
+        Build build = produceBuild();
+        JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
+
+        jobBuildService.reportProgress(jobBuild.getId(), "foo");
+        jobBuildService.reportProgress(jobBuild.getId(), "bar");
+
+        jobBuild = jobBuildDao.findOne(jobBuild.getId());
+        assertThat(jobBuild.getDeploymentLog()).isEqualTo("foobar");
+    }
+
     private JobBuild produceJobBuild(Worker worker, Build build, JobBuild.Status status) {
         JobBuild jobBuild = new JobBuild();
         jobBuild.setWorker(worker);
