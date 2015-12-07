@@ -32,7 +32,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
+        <dependency> 
             <groupId>org.kohsuke</groupId>
             <artifactId>wordnet-random-name</artifactId>
         </dependency>
