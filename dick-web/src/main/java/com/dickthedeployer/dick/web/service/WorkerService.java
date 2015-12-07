@@ -24,6 +24,7 @@ import com.dickthedeployer.dick.web.model.dickfile.Job;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author mariusz
  */
+@Slf4j
 @Service
 public class WorkerService {
 
@@ -46,7 +48,9 @@ public class WorkerService {
     JobBuildDao jobBuildDao;
 
     public String registerWorker() {
+        log.info("Registering new worker");
         String workerName = nameGenerator.next();
+        log.info("Selected name for new worker: {}", workerName);
         Worker worker = new Worker();
         worker.setName(workerName);
         workerDao.save(worker);
