@@ -122,19 +122,21 @@ public class JobBuildService {
     }
 
     @Transactional
-    public void reportSuccess(Long id, String log) {
+    public void reportSuccess(Long id, String buildOutput) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
         jobBuild.setStatus(JobBuild.Status.DEPLOYED);
         jobBuild.getWorker().setStatus(Worker.Status.READY);
-        jobBuild.getBuildLog().setOutput(log);
+        jobBuild.getBuildLog().setOutput(buildOutput);
         jobBuildDao.save(jobBuild);
 
         Build build = jobBuild.getBuild();
         Build.Status status = updateBuildStatus(build);
         if (status.equals(Build.Status.DEPLOYED_STAGE)) {
+            log.info("Build status after job build {} is {}", id, status);
             try {
                 Dickfile dickfile = dickYmlService.loadDickFile(build);
                 Stage nextStage = dickfile.getNextStage(dickfile.getStage(build.getCurrentStage()));
+                log.info("Next stage is {}", nextStage);
                 if (nextStage == null) {
                     build.setStatus(Build.Status.DEPLOYED);
                     buildDao.save(build);

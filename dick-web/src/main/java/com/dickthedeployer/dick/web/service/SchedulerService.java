@@ -19,11 +19,12 @@ import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  *
@@ -47,7 +48,7 @@ public class SchedulerService {
         List<JobBuild> jobBuilds = jobBuildDao.findByStatusAndWorkerNull(com.dickthedeployer.dick.web.domain.JobBuild.Status.READY);
         List<Worker> availableWorkers = workerDao.findByStatus(Worker.Status.READY);
         if (!availableWorkers.isEmpty()) {
-            log.info("Found available workers. Scheduling jobs");
+            log.debug("Found available workers. Scheduling jobs");
             jobBuilds.forEach(workerService::assignJobBuildToWorker);
         }
     }
