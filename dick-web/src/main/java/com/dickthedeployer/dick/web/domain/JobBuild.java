@@ -15,11 +15,8 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.persistence.Basic;
+import lombok.Data;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -28,17 +25,21 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import static javax.persistence.FetchType.LAZY;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-import lombok.Data;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static javax.persistence.FetchType.LAZY;
 
 /**
  *
@@ -58,9 +59,9 @@ public class JobBuild {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    @Lob
-    @Basic(fetch = LAZY)
-    private String deploymentLog = "";
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = LAZY)
+    private JobBuildLog buildLog = new JobBuildLog();
 
     private String job;
 
@@ -77,7 +78,7 @@ public class JobBuild {
     @MapKeyColumn(name = "entry_name")
     @Column(name = "entry_value")
     @CollectionTable(name = "job_build_attributes", joinColumns = @JoinColumn(name = "job_build_id"))
-    Map<String, String> environment = new HashMap<String, String>();
+    Map<String, String> environment = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     List<String> deploy;
@@ -86,7 +87,7 @@ public class JobBuild {
         return !status.equals(Status.IN_PROGRESS);
     }
 
-    public static enum Status {
+    public enum Status {
 
         FAILED, DEPLOYED, READY, IN_PROGRESS, STOPPED
     }
