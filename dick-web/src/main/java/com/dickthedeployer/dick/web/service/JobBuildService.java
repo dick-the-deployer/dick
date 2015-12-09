@@ -27,10 +27,6 @@ import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.google.common.base.Throwables;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +34,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -101,31 +102,31 @@ public class JobBuildService {
         updateBuildStatus(jobBuild.getBuild());
     }
 
+    @Transactional
     public void reportProgress(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        String deploymentLog = jobBuild.getDeploymentLog();
-        jobBuild.setDeploymentLog(new StringBuilder(deploymentLog)
-                .append(log)
-                .toString()
-        );
+        String deploymentLog = jobBuild.getBuildLog().getOutput();
+        jobBuild.getBuildLog().setOutput(deploymentLog + log);
         jobBuildDao.save(jobBuild);
     }
 
+    @Transactional
     public void reportFailure(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
         jobBuild.setStatus(JobBuild.Status.FAILED);
         jobBuild.getWorker().setStatus(Worker.Status.READY);
-        jobBuild.setDeploymentLog(log);
+        jobBuild.getBuildLog().setOutput(log);
         jobBuildDao.save(jobBuild);
 
         updateBuildStatus(jobBuild.getBuild());
     }
 
+    @Transactional
     public void reportSuccess(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
         jobBuild.setStatus(JobBuild.Status.DEPLOYED);
         jobBuild.getWorker().setStatus(Worker.Status.READY);
-        jobBuild.setDeploymentLog(log);
+        jobBuild.getBuildLog().setOutput(log);
         jobBuildDao.save(jobBuild);
 
         Build build = jobBuild.getBuild();
@@ -156,7 +157,7 @@ public class JobBuildService {
     private Build.Status determineBuildStatus(Build build) {
         Map<JobBuild.Status, List<JobBuild.Status>> statuses = jobBuildDao.findByBuild(build)
                 .stream()
-                .map(jobBuild -> jobBuild.getStatus())
+                .map(JobBuild::getStatus)
                 .collect(Collectors.groupingBy(Function.identity()));
         if (!statuses.containsKey(JobBuild.Status.IN_PROGRESS) && !statuses.containsKey(JobBuild.Status.READY)) {
             if (statuses.containsKey(JobBuild.Status.FAILED)) {

@@ -20,11 +20,13 @@ import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.model.BuildOrder;
+import com.dickthedeployer.dick.web.service.util.TransactionalQueryingService;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -34,6 +36,9 @@ public class JobBuildServiceTest extends ContextTestBase {
 
     @Autowired
     JobBuildService jobBuildService;
+
+    @Autowired
+    TransactionalQueryingService transactionalQueryingService;
 
     @Test
     public void shouldReturnBuildOrder() {
@@ -128,8 +133,8 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.reportProgress(jobBuild.getId(), "foo");
         jobBuildService.reportProgress(jobBuild.getId(), "bar");
 
-        jobBuild = jobBuildDao.findOne(jobBuild.getId());
-        assertThat(jobBuild.getDeploymentLog()).isEqualTo("foobar");
+        String output = transactionalQueryingService.getOutput(jobBuild.getId());
+        assertThat(output).isEqualTo("foobar");
     }
 
     private JobBuild produceJobBuild(Worker worker, Build build, JobBuild.Status status) {
