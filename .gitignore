@@ -56,3 +56,8 @@ dependency-reduced-pom.xml
 buildNumber.properties
 /dick-web/nb-configuration.xml
 /nb-configuration.xml
+/dick-ui/nodejs/nbproject/
+/dick-ui/nodejs/node/
+/dick-ui/nodejs/.tmp/
+/dick-ui/nodejs/node_modules/
+/dick-ui/nodejs/app/components/

@@ -1,0 +1,42 @@
+{
+  "name": "dick-ui",
+  "version": "1.0.0",
+  "authors": [
+    "gyatso"
+  ],
+  "description": "",
+  "keywords": [
+    "Bootstrap"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "app/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "~4.3.0",
+    "bootstrap": "~3.3.0",
+    "moment": "~2.10.6",
+    "animate.css": "~3.4.0",
+    "angular": "^1.4.8",
+    "angular-animate": "^1.4.8",
+    "angular-resource": "^1.4.8",
+    "angular-sanitize": "^1.4.8",
+    "angular-ui-router": "^0.2.15",
+    "angular-loading-bar": "~0.8.0",
+    "angular-bootstrap": "~0.14.2",
+    "gc-angular-toaster": "~1.0.0",
+    "nicescroll": "~3.6.0"
+  },
+  "resolutions": {
+    "angular": "1.4.8",
+    "angular-animate": "^1.4.8"
+  },
+  "devDependencies": {
+    "angular-mocks": "^1.4.8"
+  }
+}
