@@ -1,22 +1,26 @@
-<nav >
-    <div ng-include="'/views/parts/header.html'">
-    </div>
-    <!-- /.container-fluid -->
-</nav>
 
-<div ui-view="cta">
-
-</div>
-
-<!-- content wrapper -->
-<div role="main" ui-view>
-</div>
-<!-- /content wrapper -->
+<!-- header menu -->
+<header class="header header-fixed navbar" ng-include="'/views/parts/header.html'">
+</header>
+<!-- /header menu -->
 
 
-<footer>
-    <div  ng-include="'/views/parts/footer.html'">
+<section class="layout">
 
+    <!-- sidebar menu -->
+    <aside class="sidebar canvas-left" ng-include="'/views/parts/sidebar.html'">
+    </aside>
+    <!-- /sidebar menu -->
 
-    </div>
-</footer>
+    <!-- main content -->
+    <section class="main-content box-shadow">
+
+        <!-- content wrapper -->
+        <div class="content-wrap no-padding" role="main" ui-view>
+        </div>
+        <!-- /content wrapper -->
+
+    </section>
+    <!-- /main content -->
+</section>
+

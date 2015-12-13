@@ -1,59 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-    <link rel="shortcut icon" href="/favicon.ico">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="shortcut icon" href="/favicon.ico">
 
-    <!-- build:css /styles/app.min.css -->
-    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css" type="text/css"/>
-    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css" type="text/css"/>
-    <link rel="stylesheet" href="/components/animate.css/animate.min.css"/>
+        <!-- build:css /styles/app.min.css -->
+        <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css" type="text/css"/>
+        <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css" type="text/css"/>
+        <link rel="stylesheet" href="/components/animate.css/animate.min.css"/>
+        <link rel="stylesheet" href="/components/angular-loading-bar/build/loading-bar.min.css"/>
 
-    <link rel="stylesheet" href="/components/angular-loading-bar/build/loading-bar.min.css"/>
-    <!-- endbuild -->
-</head>
-<body ng-app="dick" nicescroll ng-controller="MainCtrl">
+        <link rel="stylesheet" href="/styles/main.css">
+        <link rel="stylesheet" href="/styles/palette.4.css" id="skin">
+        <link rel="stylesheet" href="/styles/style.1.css" id="font">
+        <link rel="stylesheet" href="/styles/custom.css">
+        <!-- endbuild -->
+    </head>
+    <body ng-app="dick" nicescroll ng-controller="MainCtrl">
 
-<div ui-view>
+        <div class="app boxed" ui-view>
 
-</div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
+        </div>
 
 
-<!-- build:js /scripts/vendor.js -->
-<script src="/components/jquery/dist/jquery.min.js" type="text/javascript"></script>
-<script src="/components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="/components/moment/moment.js" type="text/javascript"></script>
-<script src="/components/nicescroll/dist/jquery.nicescroll.min.js" type="text/javascript"></script>
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
 
-<!--ANGULAR-->
-<script src="/components/angular/angular.min.js" type="text/javascript"></script>
-<script src="/components/angular-animate/angular-animate.min.js" type="text/javascript"></script>
-<script src="/components/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
-<script src="/components/angular-loading-bar/build/loading-bar.min.js" type="text/javascript"></script>
-<script src="/components/angular-resource/angular-resource.min.js" type="text/javascript"></script>
-<script src="/components/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
-<script src="/components/angular-ui-router/release/angular-ui-router.min.js" type="text/javascript"></script>
-<script src="/components/gc-angular-toaster/toaster.js" type="text/javascript"></script>
-<!-- endbuild -->
 
-<!-- build:js /scripts/app.js -->
-<script src="/scripts/dick.js"></script>
-<script src="/scripts/dick/main.js"></script>
+        <!-- build:js /scripts/vendor.js -->
+        <script src="/components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+        <script src="/components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/components/moment/moment.js" type="text/javascript"></script>
+        <script src="/components/nicescroll/dist/jquery.nicescroll.min.js" type="text/javascript"></script>
 
-<script src="/scripts/dick/nicescroll/nicescroll.js"></script>
-<script src="/scripts/dick/nicescroll/directives/nicescroll.js"></script>
+        <!--ANGULAR-->
+        <script src="/components/angular/angular.min.js" type="text/javascript"></script>
+        <script src="/components/angular-animate/angular-animate.min.js" type="text/javascript"></script>
+        <script src="/components/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
+        <script src="/components/angular-loading-bar/build/loading-bar.min.js" type="text/javascript"></script>
+        <script src="/components/angular-resource/angular-resource.min.js" type="text/javascript"></script>
+        <script src="/components/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
+        <script src="/components/angular-ui-router/release/angular-ui-router.min.js" type="text/javascript"></script>
+        <script src="/components/gc-angular-toaster/toaster.js" type="text/javascript"></script>
+        <!-- endbuild -->
 
-<script src="/scripts/dick/router.js"></script>
+        <!-- build:js /scripts/app.js -->
+        <script src="/scripts/dick.js"></script>
+        <script src="/scripts/dick/main.js"></script>
 
-<script src="/scripts/dick/errors/errors.js"></script>
-<script src="/scripts/dick/errors/routers/errors-router.js"></script>
-<script src="/scripts/dick/errors/interceptors/static-errors-interceptor.js"></script>
-<!-- endbuild -->
+        <script src="/scripts/dick/nicescroll/nicescroll.js"></script>
+        <script src="/scripts/dick/nicescroll/directives/nicescroll.js"></script>
 
-</body>
+        <script src="/scripts/dick/router.js"></script>
+
+        <script src="/scripts/dick/errors/errors.js"></script>
+        <script src="/scripts/dick/errors/routers/errors-router.js"></script>
+        <script src="/scripts/dick/errors/interceptors/static-errors-interceptor.js"></script>
+        <!-- endbuild -->
+
+    </body>
 </html>

@@ -10,10 +10,9 @@ angular.module('dick')
                 url: '/',
                 views: {
                     '': {
-                        templateUrl: '/views/welcome.html',
-                    },
-                    'cta': {templateUrl: '/views/parts/landing-cta.html'}
-                },
+                        templateUrl: '/views/welcome.html'
+                    }
+                }
             });
     }
     ])

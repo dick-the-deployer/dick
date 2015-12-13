@@ -1,0 +1,21 @@
+/* 
+    Created on : Dec 13, 2015, 10:37:44 PM
+    Author     : mariusz
+*/
+
+.header .brand::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: -webkit-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: -moz-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: -ms-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: linear-gradient(to right,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+}
+
+.sidebar .main-navigation {
+    padding: 0 10px 0 5px;
+}
