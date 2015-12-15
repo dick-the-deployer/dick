@@ -38,7 +38,7 @@ public class GitlabService {
             TriggerModel model = new TriggerModel();
             model.setBuildUrl(GitlabUtils.getBuildUrl(trigger));
             model.setCommitUrl(GitlabUtils.getCommitUrl(trigger));
-            model.setProjectName(GitlabUtils.getProjectName(trigger));
+            model.setName(GitlabUtils.getProjectName(trigger));
             model.setRef(trigger.getRef());
             model.setSha(trigger.getSha());
             buildService.onTrigger(model);

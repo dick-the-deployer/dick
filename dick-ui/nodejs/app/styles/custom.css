@@ -1,0 +1,64 @@
+/* 
+    Created on : Dec 13, 2015, 10:37:44 PM
+    Author     : mariusz
+*/
+
+.header .brand::after{
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: -webkit-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: -moz-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: -ms-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: linear-gradient(to right,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+}
+.sidebar .separator {
+    height: 1px;
+    background-image: -webkit-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: -moz-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: -ms-linear-gradient(left,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+    background-image: linear-gradient(to right,transparent 0,rgba(0,0,0,.07) 15%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.07) 85%,transparent 100%);
+}
+
+.sidebar .main-navigation {
+    padding: 0 10px 0 5px;
+}
+
+.header .page-title{
+    font-size: 19px;
+}
+
+.header .heading-font{
+    font-size: 16px;
+}
+
+.sidebar,
+.brand {
+    transition: 0.3s;
+}
+.brand{
+    text-align: left; 
+    white-space: nowrap;
+}
+
+.user li,
+.main-navigation li {
+    width: 185px; 
+}
+.main-navigation li a {
+    height: 42px; 
+}
+
+.main-navigation ul > li i {
+    margin: 5px 0 0 4px;
+    text-align: left; 
+}
+.small-sidebar .main-navigation li {
+    width: auto;
+}
+.user li i {
+    margin-left: 19px;
+}

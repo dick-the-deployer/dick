@@ -31,7 +31,9 @@ public class StackModel {
     @NotNull
     String ref;
     @NotNull
-    Long projectId;
+    String name;
+    @NotNull
+    String repository;
 
     List<EnvironmentVariable> environmentVariables = emptyList();
 

@@ -32,7 +32,7 @@ public class TriggerModel {
     @NotNull
     String ref;
     @NotNull
-    String projectName;
+    String name;
     @NotNull
     String sha;
 }

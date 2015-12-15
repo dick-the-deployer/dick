@@ -18,10 +18,10 @@ package com.dickthedeployer.dick.web.domain;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import lombok.Data;
@@ -38,8 +38,11 @@ public class Stack {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Project project;
+    @Column(unique = true)
+    private String name;
+
+    @Column(unique = true)
+    private String repository;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
@@ -62,8 +65,13 @@ public class Stack {
             return this;
         }
 
-        public Builder withProject(final Project project) {
-            this.item.project = project;
+        public Builder withName(final String name) {
+            this.item.name = name;
+            return this;
+        }
+
+        public Builder withRepository(final String repository) {
+            this.item.repository = repository;
             return this;
         }
 
