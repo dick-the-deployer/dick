@@ -17,7 +17,6 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
@@ -40,11 +39,9 @@ public class DickYmlServiceTest extends ContextTestBase {
                 .withSha("2b1e9ab0207e91d3135163030d7c7ca05a40798f")
                 .withStack(new Stack.Builder()
                         .withRef("master")
-                        .withProject(new Project.Builder()
-                                .withProjectName("dick-the-deployer/dick")
-                                .withRepository("https://github.com/dick-the-deployer/dick.git")
-                                .build()
-                        ).build()
+                        .withName("dick-the-deployer/dick")
+                        .withRepository("https://github.com/dick-the-deployer/dick.git")
+                        .build()
                 ).build()
         );
 

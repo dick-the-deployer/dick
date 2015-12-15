@@ -15,10 +15,8 @@
  */
 package com.dickthedeployer.dick.web.service;
 
-import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.StackDao;
 import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
-import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.model.StackModel;
 import static java.util.stream.Collectors.toList;
@@ -37,14 +35,11 @@ public class StackService {
     @Autowired
     StackDao stackDao;
 
-    @Autowired
-    ProjectDao projectDao;
-
     public Stack createStack(StackModel model) {
-        Project project = projectDao.findOne(model.getProjectId());
         return stackDao.save(new Stack.Builder()
                 .withRef(model.getRef())
-                .withProject(project)
+                .withName(model.getName())
+                .withRepository(model.getRepository())
                 .withEnvironmentVariables(model.getEnvironmentVariables().stream()
                         .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
                         .collect(toList())

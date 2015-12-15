@@ -16,7 +16,6 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Stack;
 import com.dickthedeployer.dick.web.model.StackModel;
 import java.util.UUID;
@@ -35,18 +34,14 @@ public class StackServiceTest extends ContextTestBase {
 
     @Test
     public void shouldCreateStack() {
-        Project project = new Project();
-        project.setProjectName(UUID.randomUUID().toString());
-        project.setRepository(UUID.randomUUID().toString());
-        projectDao.save(project);
         StackModel model = new StackModel();
-        model.setProjectId(project.getId());
+        model.setName(UUID.randomUUID().toString());
+        model.setRepository(UUID.randomUUID().toString());
         model.setRef("master");
 
         Stack entity = stackService.createStack(model);
         assertThat(entity.getId()).isNotNull();
         assertThat(entity.getRef()).isEqualTo("master");
-        assertThat(entity.getProject().getId()).isEqualTo(project.getId());
         assertThat(entity.getCreationDate()).isNotNull();
 
     }

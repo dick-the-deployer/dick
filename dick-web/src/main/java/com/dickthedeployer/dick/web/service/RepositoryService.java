@@ -15,7 +15,7 @@
  */
 package com.dickthedeployer.dick.web.service;
 
-import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.domain.Stack;
 import com.google.common.base.Throwables;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,15 +32,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class RepositoryService {
 
-    private final static ConcurrentHashMap<Project, Path> REPOS = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<Stack, Path> REPOS = new ConcurrentHashMap<>();
 
     @Autowired
     CommandService commandService;
 
-    public InputStream getFile(Project project, String ref, String sha, String filePath) {
-        checkoutRepository(project, ref);
-        Path path = REPOS.get(project);
-        checkoutRevision(path, ref, sha);
+    public InputStream getFile(Stack stack, String sha, String filePath) {
+        checkoutRepository(stack);
+        Path path = REPOS.get(stack);
+        checkoutRevision(path, stack.getRef(), sha);
         Path file = path.resolve(filePath);
         try {
             if (Files.exists(file)) {
@@ -53,12 +53,12 @@ public class RepositoryService {
         }
     }
 
-    private void checkoutRepository(Project project, String ref) {
-        REPOS.computeIfAbsent(project, (key)
+    private void checkoutRepository(Stack stack) {
+        REPOS.computeIfAbsent(stack, (key)
                 -> {
                     try {
-                        Path path = Files.createTempDirectory(getPrefix(key, ref));
-                        initializeRepository(path, project, ref);
+                        Path path = Files.createTempDirectory(getPrefix(key, stack.getRef()));
+                        initializeRepository(path, stack);
                         return path;
                     } catch (IOException ex) {
                         throw Throwables.propagate(ex);
@@ -66,14 +66,14 @@ public class RepositoryService {
                 });
     }
 
-    private String getPrefix(Project project, String ref) {
-        return project.getProjectName().replaceAll("/", "-") + ref;
+    private String getPrefix(Stack stack, String ref) {
+        return stack.getName().replaceAll("/", "-") + ref;
     }
 
-    private void initializeRepository(Path path, Project project, String ref) {
+    private void initializeRepository(Path path, Stack stack) {
         commandService.invoke(path, "git", "init");
-        commandService.invoke(path, "git", "clone", project.getRepository());
-        commandService.invoke(path, "git", "remote", "add", "origin", project.getRepository());
+        commandService.invoke(path, "git", "clone", stack.getRepository());
+        commandService.invoke(path, "git", "remote", "add", "origin", stack.getRepository());
     }
 
     private void checkoutRevision(Path path, String ref, String sha) {
