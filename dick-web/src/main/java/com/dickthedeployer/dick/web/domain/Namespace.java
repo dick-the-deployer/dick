@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,13 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
-import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
 import lombok.Data;
 
 /**
@@ -32,7 +30,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class Stack {
+public class Namespace {
 
     @Id
     @GeneratedValue
@@ -41,23 +39,15 @@ public class Stack {
     @Column(unique = true)
     private String name;
 
-    @Column(unique = true)
-    private String repository;
-
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
-
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<EnvironmentVariable> environmentVariables;
-
-    private String ref;
+    @OneToMany(mappedBy = "namespace", fetch = FetchType.EAGER)
+    private List<Project> projects;
 
     public static class Builder {
 
-        private final Stack item;
+        private final Namespace item;
 
         public Builder() {
-            this.item = new Stack();
+            this.item = new Namespace();
         }
 
         public Builder withId(final Long id) {
@@ -70,27 +60,12 @@ public class Stack {
             return this;
         }
 
-        public Builder withRepository(final String repository) {
-            this.item.repository = repository;
+        public Builder withProjects(final List<Project> projects) {
+            this.item.projects = projects;
             return this;
         }
 
-        public Builder withCreationDate(final Date creationDate) {
-            this.item.creationDate = creationDate;
-            return this;
-        }
-
-        public Builder withEnvironmentVariables(final List<EnvironmentVariable> environmentVariables) {
-            this.item.environmentVariables = environmentVariables;
-            return this;
-        }
-
-        public Builder withRef(final String ref) {
-            this.item.ref = ref;
-            return this;
-        }
-
-        public Stack build() {
+        public Namespace build() {
             return this.item;
         }
     }

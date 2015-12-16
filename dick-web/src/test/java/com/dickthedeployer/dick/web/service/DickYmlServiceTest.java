@@ -17,7 +17,7 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Stack;
+import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -37,7 +37,7 @@ public class DickYmlServiceTest extends ContextTestBase {
     public void shouldLoadDickfile() throws DickFileMissingException {
         Dickfile dickfile = dickYmlService.loadDickFile(new Build.Builder()
                 .withSha("2b1e9ab0207e91d3135163030d7c7ca05a40798f")
-                .withStack(new Stack.Builder()
+                .withProject(new Project.Builder()
                         .withRef("master")
                         .withName("dick-the-deployer/dick")
                         .withRepository("https://github.com/dick-the-deployer/dick.git")

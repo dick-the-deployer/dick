@@ -15,15 +15,17 @@
  */
 package com.dickthedeployer.dick.web.dao;
 
-import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.Project;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-public interface BuildDao extends JpaRepository<Build, Long> {
+public interface ProjectDao extends JpaRepository<Project, Long> {
 
-    Build findByProjectAndStatus(Project project, Build.Status status);
+    List<Project> findByNameAndRef(String name, String ref);
+
+    Project findByName(String name);
 }

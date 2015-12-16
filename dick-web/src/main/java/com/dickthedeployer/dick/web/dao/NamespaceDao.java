@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
  */
 package com.dickthedeployer.dick.web.dao;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.domain.Namespace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-public interface BuildDao extends JpaRepository<Build, Long> {
+public interface NamespaceDao extends JpaRepository<Namespace, Long> {
 
-    Build findByProjectAndStatus(Project project, Build.Status status);
+    Namespace findByName(String name);
 }

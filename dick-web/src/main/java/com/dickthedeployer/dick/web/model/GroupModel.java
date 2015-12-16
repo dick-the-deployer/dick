@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.model;
 
-import com.dickthedeployer.dick.web.domain.Stack;
-import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 /**
  *
  * @author mariusz
  */
-public interface StackDao extends JpaRepository<Stack, Long> {
+@Data
+public class GroupModel {
 
-    List<Stack> findByNameAndRef(String name, String ref);
-
-    Stack findByName(String name);
+    @NotNull
+    String name;
 }

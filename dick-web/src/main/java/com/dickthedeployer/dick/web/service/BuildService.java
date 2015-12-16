@@ -16,9 +16,9 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
-import com.dickthedeployer.dick.web.dao.StackDao;
+import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Stack;
+import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
@@ -42,7 +42,7 @@ public class BuildService {
     BuildDao buildDao;
 
     @Autowired
-    StackDao stackDao;
+    ProjectDao stackDao;
 
     @Autowired
     DickYmlService dickYmlService;
@@ -51,14 +51,14 @@ public class BuildService {
     JobBuildService jobBuildService;
 
     public void onTrigger(TriggerModel model) {
-        List<Stack> stacks = stackDao.findByNameAndRef(model.getName(), model.getRef());
+        List<Project> stacks = stackDao.findByNameAndRef(model.getName(), model.getRef());
         stacks.forEach(stack -> {
             log.info("Found stack {} for stack {}", stack, model.getName());
             if (stack != null) {
                 Build build = buildDao.save(new Build.Builder()
                         .withBuildUrl(model.getBuildUrl())
                         .withCommitUrl(model.getCommitUrl())
-                        .withStack(stack)
+                        .withProject(stack)
                         .withSha(model.getSha())
                         .build()
                 );

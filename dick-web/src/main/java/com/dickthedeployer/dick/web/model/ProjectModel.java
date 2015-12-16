@@ -15,6 +15,9 @@
  */
 package com.dickthedeployer.dick.web.model;
 
+import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
+import static java.util.Collections.emptyList;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -26,8 +29,14 @@ import lombok.Data;
 public class ProjectModel {
 
     @NotNull
-    String projectName;
-
+    String ref;
+    @NotNull
+    String namespace;
+    @NotNull
+    String name;
     @NotNull
     String repository;
+
+    List<EnvironmentVariable> environmentVariables = emptyList();
+
 }

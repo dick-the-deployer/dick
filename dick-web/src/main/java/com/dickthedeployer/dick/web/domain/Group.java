@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import lombok.Data;
 
 /**
@@ -31,36 +30,25 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-@Entity
-public class Build {
+@Entity(name = "groupTable")
+public class Group {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Project project;
-
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.READY;
-
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    private String buildUrl;
-
-    private String commitUrl;
-
-    private String sha;
-
-    private String currentStage;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Namespace namespace;
 
     public static class Builder {
 
-        private final Build item;
+        private final Group item;
 
         public Builder() {
-            this.item = new Build();
+            this.item = new Group();
         }
 
         public Builder withId(final Long id) {
@@ -68,34 +56,19 @@ public class Build {
             return this;
         }
 
-        public Builder withProject(final Project project) {
-            this.item.project = project;
+        public Builder withCreationDate(final Date creationDate) {
+            this.item.creationDate = creationDate;
             return this;
         }
 
-        public Builder withBuildUrl(final String buildUrl) {
-            this.item.buildUrl = buildUrl;
+        public Builder withNamespace(final Namespace namespace) {
+            this.item.namespace = namespace;
             return this;
         }
 
-        public Builder withCommitUrl(final String commitUrl) {
-            this.item.commitUrl = commitUrl;
-            return this;
-        }
-
-        public Builder withSha(final String sha) {
-            this.item.sha = sha;
-            return this;
-        }
-
-        public Build build() {
+        public Group build() {
             return this.item;
         }
-    }
-
-    public static enum Status {
-
-        FAILED, DEPLOYED_STAGE, DEPLOYED, READY, IN_PROGRESS, MISSING_DICKFILE, STOPPED
     }
 
 }

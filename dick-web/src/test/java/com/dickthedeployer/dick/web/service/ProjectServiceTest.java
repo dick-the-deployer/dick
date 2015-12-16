@@ -16,8 +16,9 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.domain.Stack;
-import com.dickthedeployer.dick.web.model.StackModel;
+import com.dickthedeployer.dick.web.domain.Namespace;
+import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.model.ProjectModel;
 import java.util.UUID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
@@ -27,19 +28,24 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author mariusz
  */
-public class StackServiceTest extends ContextTestBase {
+public class ProjectServiceTest extends ContextTestBase {
 
     @Autowired
-    StackService stackService;
+    ProjectService projectService;
 
     @Test
     public void shouldCreateStack() {
-        StackModel model = new StackModel();
+        namespaceDao.save(new Namespace.Builder()
+                .withName("test-namespace")
+                .build()
+        );
+        ProjectModel model = new ProjectModel();
         model.setName(UUID.randomUUID().toString());
         model.setRepository(UUID.randomUUID().toString());
         model.setRef("master");
+        model.setNamespace("test-namespace");
 
-        Stack entity = stackService.createStack(model);
+        Project entity = projectService.createProject(model);
         assertThat(entity.getId()).isNotNull();
         assertThat(entity.getRef()).isEqualTo("master");
         assertThat(entity.getCreationDate()).isNotNull();

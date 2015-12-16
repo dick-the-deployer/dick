@@ -16,7 +16,7 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.domain.Stack;
+import com.dickthedeployer.dick.web.domain.Project;
 import com.google.common.base.Charsets;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ public class RepositoryServiceTest extends ContextTestBase {
 
     @Test
     public void shouldCloneRepository() throws IOException {
-        InputStream file = service.getFile(new Stack.Builder()
+        InputStream file = service.getFile(new Project.Builder()
                 .withName("dick-the-deployer/dick")
                 .withRepository("https://github.com/dick-the-deployer/dick.git")
                 .withRef("master")
