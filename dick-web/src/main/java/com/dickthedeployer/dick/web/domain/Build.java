@@ -39,7 +39,7 @@ public class Build {
     private Long id;
 
     @ManyToOne
-    private Stack stack;
+    private Project project;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.READY;
@@ -68,8 +68,8 @@ public class Build {
             return this;
         }
 
-        public Builder withStack(final Stack stack) {
-            this.item.stack = stack;
+        public Builder withProject(final Project project) {
+            this.item.project = project;
             return this;
         }
 

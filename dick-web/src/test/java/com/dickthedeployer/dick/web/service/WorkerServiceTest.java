@@ -18,7 +18,7 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
-import com.dickthedeployer.dick.web.domain.Stack;
+import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
@@ -74,7 +74,7 @@ public class WorkerServiceTest extends ContextTestBase {
     }
 
     private Build prepareBuild() {
-        final Stack stack = new Stack.Builder()
+        final Project project = new Project.Builder()
                 .withRef("master")
                 .withName(UUID.randomUUID().toString())
                 .withRepository(UUID.randomUUID().toString())
@@ -82,10 +82,10 @@ public class WorkerServiceTest extends ContextTestBase {
                                 new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
                         )
                 ).build();
-        stackDao.save(stack);
+        projectDao.save(project);
         Build build = new Build.Builder()
                 .withSha("somesha")
-                .withStack(stack).build();
+                .withProject(project).build();
         buildDao.save(build);
         return build;
     }

@@ -15,10 +15,10 @@
  */
 package com.dickthedeployer.dick.web.service;
 
-import com.dickthedeployer.dick.web.dao.StackDao;
+import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
-import com.dickthedeployer.dick.web.domain.Stack;
-import com.dickthedeployer.dick.web.model.StackModel;
+import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.model.ProjectModel;
 import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,13 +30,13 @@ import org.springframework.stereotype.Service;
  * @author mariusz
  */
 @Service
-public class StackService {
+public class ProjectService {
 
     @Autowired
-    StackDao stackDao;
+    ProjectDao projectDao;
 
-    public Stack createStack(StackModel model) {
-        return stackDao.save(new Stack.Builder()
+    public Project createProject(ProjectModel model) {
+        return projectDao.save(new Project.Builder()
                 .withRef(model.getRef())
                 .withName(model.getName())
                 .withRepository(model.getRepository())
@@ -47,7 +47,7 @@ public class StackService {
         );
     }
 
-    public Page<Stack> getStacks(int page, int size) {
-        return stackDao.findAll(new PageRequest(page, size));
+    public Page<Project> getProjects(int page, int size) {
+        return projectDao.findAll(new PageRequest(page, size));
     }
 }

@@ -15,7 +15,7 @@
  */
 package com.dickthedeployer.dick.web.dao;
 
-import com.dickthedeployer.dick.web.domain.Stack;
+import com.dickthedeployer.dick.web.domain.Project;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -23,9 +23,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author mariusz
  */
-public interface StackDao extends JpaRepository<Stack, Long> {
+public interface ProjectDao extends JpaRepository<Project, Long> {
 
-    List<Stack> findByNameAndRef(String name, String ref);
+    List<Project> findByNameAndRef(String name, String ref);
 
-    Stack findByName(String name);
+    Project findByName(String name);
 }

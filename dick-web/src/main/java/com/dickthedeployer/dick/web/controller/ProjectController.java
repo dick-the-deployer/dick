@@ -15,9 +15,9 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.Stack;
-import com.dickthedeployer.dick.web.model.StackModel;
-import com.dickthedeployer.dick.web.service.StackService;
+import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.model.ProjectModel;
+import com.dickthedeployer.dick.web.service.ProjectService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,19 +33,19 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mariusz
  */
 @RestController
-@RequestMapping("/stacks")
-public class StackController {
+@RequestMapping("/projects")
+public class ProjectController {
 
     @Autowired
-    StackService stackService;
+    ProjectService projectService;
 
     @RequestMapping(method = POST)
-    public Stack createStack(@RequestBody @Valid StackModel stackModel) {
-        return stackService.createStack(stackModel);
+    public Project createStack(@RequestBody @Valid ProjectModel projectModel) {
+        return projectService.createProject(projectModel);
     }
 
     @RequestMapping(method = GET)
-    public Page<Stack> getStacks(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return stackService.getStacks(page, size);
+    public Page<Project> getStacks(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return projectService.getProjects(page, size);
     }
 }

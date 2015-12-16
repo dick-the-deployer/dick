@@ -32,7 +32,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class Stack {
+public class Project {
 
     @Id
     @GeneratedValue
@@ -54,10 +54,10 @@ public class Stack {
 
     public static class Builder {
 
-        private final Stack item;
+        private final Project item;
 
         public Builder() {
-            this.item = new Stack();
+            this.item = new Project();
         }
 
         public Builder withId(final Long id) {
@@ -90,7 +90,7 @@ public class Stack {
             return this;
         }
 
-        public Stack build() {
+        public Project build() {
             return this.item;
         }
     }
