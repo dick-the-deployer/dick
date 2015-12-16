@@ -18,6 +18,7 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
@@ -74,10 +75,15 @@ public class WorkerServiceTest extends ContextTestBase {
     }
 
     private Build prepareBuild() {
+        Namespace namespace = namespaceDao.save(new Namespace.Builder()
+                .withName("test-namespace")
+                .build()
+        );
         final Project project = new Project.Builder()
                 .withRef("master")
                 .withName(UUID.randomUUID().toString())
                 .withRepository(UUID.randomUUID().toString())
+                .withNamespace(namespace)
                 .withEnvironmentVariables(asList(
                                 new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
                         )

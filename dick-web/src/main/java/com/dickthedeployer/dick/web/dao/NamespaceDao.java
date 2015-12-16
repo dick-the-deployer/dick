@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.dao;
 
-import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
-import static java.util.Collections.emptyList;
-import java.util.List;
-import javax.validation.constraints.NotNull;
-import lombok.Data;
+import com.dickthedeployer.dick.web.domain.Namespace;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author mariusz
  */
-@Data
-public class ProjectModel {
+public interface NamespaceDao extends JpaRepository<Namespace, Long> {
 
-    @NotNull
-    String ref;
-    @NotNull
-    String namespace;
-    @NotNull
-    String name;
-    @NotNull
-    String repository;
-
-    List<EnvironmentVariable> environmentVariables = emptyList();
-
+    Namespace findByName(String name);
 }

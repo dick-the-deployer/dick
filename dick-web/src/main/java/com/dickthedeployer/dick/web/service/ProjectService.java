@@ -15,8 +15,10 @@
  */
 package com.dickthedeployer.dick.web.service;
 
+import com.dickthedeployer.dick.web.dao.NamespaceDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
+import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import static java.util.stream.Collectors.toList;
@@ -35,10 +37,15 @@ public class ProjectService {
     @Autowired
     ProjectDao projectDao;
 
+    @Autowired
+    NamespaceDao namespaceDao;
+
     public Project createProject(ProjectModel model) {
+        Namespace namespace = namespaceDao.findByName(model.getNamespace());
         return projectDao.save(new Project.Builder()
                 .withRef(model.getRef())
                 .withName(model.getName())
+                .withNamespace(namespace)
                 .withRepository(model.getRepository())
                 .withEnvironmentVariables(model.getEnvironmentVariables().stream()
                         .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))

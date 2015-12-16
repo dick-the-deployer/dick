@@ -16,7 +16,9 @@
 package com.dickthedeployer.dick.web;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
+import com.dickthedeployer.dick.web.dao.GroupDao;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
+import com.dickthedeployer.dick.web.dao.NamespaceDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.dao.WorkerDao;
 import org.junit.Before;
@@ -47,11 +49,19 @@ public class ContextTestBase {
     @Autowired
     protected WorkerDao workerDao;
 
+    @Autowired
+    protected NamespaceDao namespaceDao;
+
+    @Autowired
+    protected GroupDao groupDao;
+
     @Before
     public void init() {
         jobBuildDao.deleteAll();
         buildDao.deleteAll();
         projectDao.deleteAll();
         workerDao.deleteAll();
+        namespaceDao.deleteAll();
+        groupDao.deleteAll();
     }
 }

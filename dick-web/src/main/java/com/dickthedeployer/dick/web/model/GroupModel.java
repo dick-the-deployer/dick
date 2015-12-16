@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package com.dickthedeployer.dick.web.model;
 
-import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
-import static java.util.Collections.emptyList;
-import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -26,17 +23,8 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-public class ProjectModel {
+public class GroupModel {
 
-    @NotNull
-    String ref;
-    @NotNull
-    String namespace;
     @NotNull
     String name;
-    @NotNull
-    String repository;
-
-    List<EnvironmentVariable> environmentVariables = emptyList();
-
 }

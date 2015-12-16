@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
+import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import java.util.UUID;
@@ -34,10 +35,15 @@ public class ProjectServiceTest extends ContextTestBase {
 
     @Test
     public void shouldCreateStack() {
+        namespaceDao.save(new Namespace.Builder()
+                .withName("test-namespace")
+                .build()
+        );
         ProjectModel model = new ProjectModel();
         model.setName(UUID.randomUUID().toString());
         model.setRepository(UUID.randomUUID().toString());
         model.setRef("master");
+        model.setNamespace("test-namespace");
 
         Project entity = projectService.createProject(model);
         assertThat(entity.getId()).isNotNull();

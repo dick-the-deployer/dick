@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
-import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import lombok.Data;
 
@@ -32,55 +30,29 @@ import lombok.Data;
  * @author mariusz
  */
 @Data
-@Entity
-public class Project {
+@Entity(name = "groupTable")
+public class Group {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true)
-    private String name;
-
-    @Column(unique = true)
-    private String repository;
-
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<EnvironmentVariable> environmentVariables;
-
-    @ManyToOne(optional = false)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Namespace namespace;
-
-    private String ref;
 
     public static class Builder {
 
-        private final Project item;
+        private final Group item;
 
         public Builder() {
-            this.item = new Project();
+            this.item = new Group();
         }
 
         public Builder withId(final Long id) {
             this.item.id = id;
-            return this;
-        }
-
-        public Builder withName(final String name) {
-            this.item.name = name;
-            return this;
-        }
-
-        public Builder withNamespace(final Namespace namespace) {
-            this.item.namespace = namespace;
-            return this;
-        }
-
-        public Builder withRepository(final String repository) {
-            this.item.repository = repository;
             return this;
         }
 
@@ -89,17 +61,12 @@ public class Project {
             return this;
         }
 
-        public Builder withEnvironmentVariables(final List<EnvironmentVariable> environmentVariables) {
-            this.item.environmentVariables = environmentVariables;
+        public Builder withNamespace(final Namespace namespace) {
+            this.item.namespace = namespace;
             return this;
         }
 
-        public Builder withRef(final String ref) {
-            this.item.ref = ref;
-            return this;
-        }
-
-        public Project build() {
+        public Group build() {
             return this.item;
         }
     }
