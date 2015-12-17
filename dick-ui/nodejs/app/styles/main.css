@@ -670,7 +670,7 @@ aside footer .toggle-sidebar i {
   background: #ebeef1;
 }
 .main-content .content-wrap {
-  padding: 15px;
+  padding: 15px 20px 15px 20px;
 }
 .main-content .subscription {
   padding: 50px 15px;
@@ -2480,7 +2480,7 @@ fieldset[disabled] .btn-danger.active {
 .nav-tabs {
   border-bottom: 0;
   border-radius: 2px 2px 0 0;
-  background: #dde1e7;
+  background: #fff;
 }
 .nav-tabs > li {
   margin: 0;

@@ -5,14 +5,14 @@ module.exports = {
         livereload: 35729
     },
     proxies: [{
-        context: ['/builds/', '/hooks/', '/job-builds/', '/projects/', '/stacks/', '/workers/'],
-        host: 'localhost',
-        port: 8080,
-        changeOrigin: true,
-        headers: {
-            "host": 'localhost'
-        }
-    }],
+            context: ['/api/'],
+            host: 'localhost',
+            port: 8080,
+            changeOrigin: true,
+            headers: {
+                "host": 'localhost'
+            }
+        }],
     livereload: {
         options: {
             open: true,
@@ -33,10 +33,10 @@ module.exports = {
 
                 middlewares.push(require('connect-modrewrite')([
                     '^/$ /index.html',
-                    '^/welcome$ /index.html',
+                    '^/groups.*$ /index.html',
                     '^/403$ /index.html',
                     '^/404$ /index.html',
-                    '^/500$ /index.html',
+                    '^/500$ /index.html'
                 ]));
 
                 var serveStatic = require('serve-static');

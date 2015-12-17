@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.exception;
 
-import javax.validation.constraints.NotNull;
-import lombok.Data;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
  * @author mariusz
  */
-@Data
-public class GroupModel {
+@ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+public class NameTakenException extends Exception {
 
-    @NotNull
-    String name;
-
-    String describtion;
 }

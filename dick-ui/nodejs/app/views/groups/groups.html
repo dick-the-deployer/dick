@@ -1,0 +1,19 @@
+<section>
+    <section class="panel infinite-container">
+        <header class="panel-heading">
+            <span class="pull-right">
+                <button type="button" class="btn btn-success" ui-sref="dick.groups-new">
+                    <i class="fa fa-plus mg-r-xs"></i>NEW GROUP
+                </button>
+            </span>
+            <div>Welcome to the groups!</div>
+            <span class="text-muted">You can browse groups here.</span>
+        </header>
+        <div class="panel-body" infinite-scroll="loadMore()" >
+            <div ng-repeat="group in groups" >
+                <br><br><br><br><br><br><br><br><br><br>{{group}} <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            </div>
+
+        </div>
+    </section>
+</section>

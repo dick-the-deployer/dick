@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mariusz
  */
 @RestController
-@RequestMapping("/job-builds")
+@RequestMapping("/api/job-builds")
 public class JobBuildController {
 
     @Autowired

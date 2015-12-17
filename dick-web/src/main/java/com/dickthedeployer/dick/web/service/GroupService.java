@@ -16,10 +16,14 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.GroupDao;
+import com.dickthedeployer.dick.web.dao.NamespaceDao;
 import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.domain.Namespace;
+import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.model.GroupModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,8 +36,14 @@ public class GroupService {
     @Autowired
     GroupDao groupDao;
 
-    public void createGroup(GroupModel groupModel) {
+    @Autowired
+    NamespaceDao namespaceDao;
+
+    public void createGroup(GroupModel groupModel) throws NameTakenException {
+        validateIfNameAvailable(groupModel);
+
         Group group = new Group.Builder()
+                .withDescribtion(groupModel.getDescribtion())
                 .withNamespace(
                         new Namespace.Builder()
                         .withName(groupModel.getName())
@@ -41,5 +51,16 @@ public class GroupService {
                 ).build();
 
         groupDao.save(group);
+    }
+
+    private void validateIfNameAvailable(GroupModel groupModel) throws NameTakenException {
+        Namespace namespace = namespaceDao.findByName(groupModel.getName());
+        if (namespace != null) {
+            throw new NameTakenException();
+        }
+    }
+
+    public Page<Group> getGroups(int page, int size) {
+        return groupDao.findAll(new PageRequest(page, size));
     }
 }
