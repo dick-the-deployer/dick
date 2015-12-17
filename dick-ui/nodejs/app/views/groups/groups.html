@@ -9,7 +9,7 @@
             <div>Welcome to the groups!</div>
             <span class="text-muted">You can browse groups here.</span>
         </header>
-        <div class="panel-body" >
+        <div class="panel-body" infinite-scroll="loadMore()" >
             <div ng-repeat="group in groups" >
                 <br><br><br><br><br><br><br><br><br><br>{{group}} <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
             </div>
