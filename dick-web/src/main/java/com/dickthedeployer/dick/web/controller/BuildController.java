@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mariusz
  */
 @RestController
-@RequestMapping("/builds")
+@RequestMapping("/api/builds")
 public class BuildController {
 
     @Autowired

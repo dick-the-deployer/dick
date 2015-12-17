@@ -9,7 +9,7 @@ module.exports = {
         }
     },
     gruntfile: {
-        files: ['Gruntfile.js'],
+        files: ['Gruntfile.js']
     },
     html: {
         options: {
@@ -37,6 +37,5 @@ module.exports = {
         files: [
             'app/images/**/*.{jpg,jpeg,gif,png}'
         ]
-
     }
 };

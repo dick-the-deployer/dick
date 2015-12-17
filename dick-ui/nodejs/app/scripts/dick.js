@@ -9,5 +9,7 @@ angular.module('dick', [
     'cfp.loadingBar',
     'gc.toaster',
     'dick.nicescroll',
-    'dick.errors'
+    'dick.errors',
+    'dick.groups',
+    'dick.metadata'
 ]);

@@ -15,13 +15,19 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.model.TriggerModel;
-import com.dickthedeployer.dick.web.service.BuildService;
+import com.dickthedeployer.dick.web.domain.Group;
+import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.model.GroupModel;
+import com.dickthedeployer.dick.web.service.GroupService;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import org.springframework.web.bind.annotation.RequestMethod;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,13 +36,19 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-public class HookController {
+@RequestMapping("/api/groups")
+public class GroupController {
 
     @Autowired
-    BuildService buildService;
+    GroupService groupService;
 
-    @RequestMapping(method = POST, value = "/api/hooks")
-    public void receiveHook(@RequestBody TriggerModel trigger) {
-        buildService.onTrigger(trigger);
+    @RequestMapping(method = RequestMethod.POST)
+    void createGroup(@RequestBody @Valid GroupModel groupModel) throws NameTakenException {
+        groupService.createGroup(groupModel);
+    }
+
+    @RequestMapping(method = GET)
+    public Page<Group> getProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return groupService.getGroups(page, size);
     }
 }

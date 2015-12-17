@@ -33,7 +33,7 @@ public class GitlabHookController {
     @Autowired
     GitlabService gitlabService;
 
-    @RequestMapping(method = POST, value = "/hooks/gitlab")
+    @RequestMapping(method = POST, value = "/api/hooks/gitlab")
     public void receiveHook(@RequestBody GitlabTrigger trigger) {
         gitlabService.onTrigger(trigger);
     }

@@ -43,6 +43,8 @@ public class Group {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Namespace namespace;
 
+    private String describtion;
+
     public static class Builder {
 
         private final Group item;
@@ -63,6 +65,11 @@ public class Group {
 
         public Builder withNamespace(final Namespace namespace) {
             this.item.namespace = namespace;
+            return this;
+        }
+
+        public Builder withDescribtion(final String describtion) {
+            this.item.describtion = describtion;
             return this;
         }
 

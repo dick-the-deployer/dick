@@ -65,7 +65,7 @@
 }
 
 .main-navigation ul > li i {
-    margin: 5px 0 0 4px;
+    margin: 5px 0 0 6px;
     text-align: left; 
 }
 .small-sidebar .main-navigation li {
@@ -74,6 +74,6 @@
 .user li i {
     margin-left: 19px;
 }
-.main-content {
-    background: #FFFFFF;
+.list-initial {
+    list-style: initial;
 }

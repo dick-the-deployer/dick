@@ -33,19 +33,19 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mariusz
  */
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/api/projects")
 public class ProjectController {
 
     @Autowired
     ProjectService projectService;
 
     @RequestMapping(method = POST)
-    public Project createStack(@RequestBody @Valid ProjectModel projectModel) {
+    public Project createProject(@RequestBody @Valid ProjectModel projectModel) {
         return projectService.createProject(projectModel);
     }
 
     @RequestMapping(method = GET)
-    public Page<Project> getStacks(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public Page<Project> getProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
         return projectService.getProjects(page, size);
     }
 }
