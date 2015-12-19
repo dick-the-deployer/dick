@@ -26,6 +26,7 @@ import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -65,10 +66,10 @@ public class ProjectService {
     }
 
     public Page<Project> getProjectsLikeName(String name, int page, int size) {
-        return projectDao.findByNameContaining(name, new PageRequest(page, size));
+        return projectDao.findByNameContaining(name, new PageRequest(page, size, Sort.Direction.DESC, "creationDate"));
     }
 
     public Page<Project> getProjects(int page, int size) {
-        return projectDao.findAll(new PageRequest(page, size));
+        return projectDao.findAll(new PageRequest(page, size, Sort.Direction.DESC, "creationDate"));
     }
 }
