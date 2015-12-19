@@ -30,7 +30,8 @@
     "angular-loading-bar": "~0.8.0",
     "angular-bootstrap": "~0.14.2",
     "gc-angular-toaster": "~1.0.0",
-    "nicescroll": "~3.6.0"
+    "nicescroll": "~3.6.0",
+    "angular-moment": "~0.10.3"
   },
   "resolutions": {
     "angular": "1.4.8",

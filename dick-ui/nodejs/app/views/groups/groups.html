@@ -9,11 +9,33 @@
             <div>Welcome to the groups!</div>
             <span class="text-muted">You can browse groups here.</span>
         </header>
-        <div class="panel-body" infinite-scroll="loadMore()" >
-            <div ng-repeat="group in groups" >
-                <br><br><br><br><br><br><br><br><br><br>{{group}} <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            </div>
 
+
+        <div class="panel-body" infinite-scroll="loadMore()" >
+            <loader on="groups"></loader>
+
+            <p ng-show="groups.length === 0" class="text-center text-muted">
+                No groups to show
+            </p>
+            <ul class="content-list">
+                <li ng-repeat="group in groups">
+                    <span class="actions">
+                        <button data-toggle="button" class="btn btn-white btn-sm">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                        <button data-toggle="button" class="btn btn-white btn-sm">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </span>
+                    <div>
+                        <b ng-bind="group.namespace.name"></b>
+                        <span class="text-muted">created {{group.creationDate| amTimeAgo}}</span>
+                    </div>
+                    <div class="text-muted">
+                        {{group.namespace.projects.length}} projects
+                    </div>
+                </li>
+            </ul>
         </div>
     </section>
 </section>
