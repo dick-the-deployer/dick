@@ -17,6 +17,8 @@ package com.dickthedeployer.dick.web.dao;
 
 import com.dickthedeployer.dick.web.domain.Project;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -26,6 +28,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ProjectDao extends JpaRepository<Project, Long> {
 
     List<Project> findByNameAndRef(String name, String ref);
+
+    Page<Project> findByNameContaining(String name, Pageable pageable);
 
     Project findByName(String name);
 }

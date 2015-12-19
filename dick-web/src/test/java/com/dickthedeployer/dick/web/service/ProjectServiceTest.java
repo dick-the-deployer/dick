@@ -18,6 +18,7 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import java.util.UUID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -34,7 +35,7 @@ public class ProjectServiceTest extends ContextTestBase {
     ProjectService projectService;
 
     @Test
-    public void shouldCreateStack() {
+    public void shouldCreateStack() throws NameTakenException {
         namespaceDao.save(new Namespace.Builder()
                 .withName("test-namespace")
                 .build()

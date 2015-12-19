@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.service;
 
-import java.util.Date;
+import com.dickthedeployer.dick.web.dao.NamespaceDao;
 import java.util.List;
-import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import static java.util.stream.Collectors.toList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author mariusz
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class GroupModel {
+@Service
+public class NamespaceService {
 
-    @NotNull
-    private String name;
+    @Autowired
+    NamespaceDao namespaceDao;
 
-    private Date creationDate;
-    private String description;
-    private List<ProjectModel> projects;
-
+    public List<String> getNamespaces() {
+        return namespaceDao.findAll().stream()
+                .map(namespace -> namespace.getName())
+                .collect(toList());
+    }
 }

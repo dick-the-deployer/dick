@@ -42,7 +42,7 @@ public class Project {
     @Column(unique = true)
     private String name;
 
-    @Column(unique = true)
+    @Column()
     private String repository;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -55,6 +55,8 @@ public class Project {
     private Namespace namespace;
 
     private String ref;
+
+    private String description;
 
     public static class Builder {
 
@@ -76,6 +78,11 @@ public class Project {
 
         public Builder withNamespace(final Namespace namespace) {
             this.item.namespace = namespace;
+            return this;
+        }
+
+        public Builder withDescription(final String description) {
+            this.item.description = description;
             return this;
         }
 

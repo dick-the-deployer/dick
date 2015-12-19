@@ -20,6 +20,7 @@ import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,18 +41,31 @@ public class ProjectService {
     @Autowired
     NamespaceDao namespaceDao;
 
-    public Project createProject(ProjectModel model) {
+    public Project createProject(ProjectModel model) throws NameTakenException {
+        validateIfNameAvailable(model);
         Namespace namespace = namespaceDao.findByName(model.getNamespace());
         return projectDao.save(new Project.Builder()
                 .withRef(model.getRef())
                 .withName(model.getName())
                 .withNamespace(namespace)
+                .withDescription(model.getDescription())
                 .withRepository(model.getRepository())
                 .withEnvironmentVariables(model.getEnvironmentVariables().stream()
                         .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
                         .collect(toList())
                 ).build()
         );
+    }
+
+    private void validateIfNameAvailable(ProjectModel model) throws NameTakenException {
+        Project project = projectDao.findByName(model.getName());
+        if (project != null) {
+            throw new NameTakenException();
+        }
+    }
+
+    public Page<Project> getProjectsLikeName(String name, int page, int size) {
+        return projectDao.findByNameContaining(name, new PageRequest(page, size));
     }
 
     public Page<Project> getProjects(int page, int size) {

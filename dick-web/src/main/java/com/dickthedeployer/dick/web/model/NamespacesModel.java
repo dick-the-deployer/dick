@@ -15,11 +15,8 @@
  */
 package com.dickthedeployer.dick.web.model;
 
-import java.util.Date;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,16 +25,9 @@ import lombok.NoArgsConstructor;
  * @author mariusz
  */
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupModel {
+public class NamespacesModel {
 
-    @NotNull
-    private String name;
-
-    private Date creationDate;
-    private String description;
-    private List<ProjectModel> projects;
-
+    private List<String> namespaces;
 }
