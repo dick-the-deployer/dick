@@ -3,7 +3,7 @@
 angular.module('dick.groups')
         .factory('GroupsResource', ['$resource',
             function ($resource) {
-                return $resource('/api/groups');
+                return $resource('/api/groups/:name');
             }
         ]);
 

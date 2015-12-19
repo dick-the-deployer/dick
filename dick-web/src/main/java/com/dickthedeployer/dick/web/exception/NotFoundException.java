@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.exception;
 
-import com.dickthedeployer.dick.web.domain.Group;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
  * @author mariusz
  */
-public interface GroupDao extends JpaRepository<Group, Long> {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NotFoundException extends Exception {
 
-    Group findByNamespaceName(String name);
 }
