@@ -1,0 +1,47 @@
+<section>
+    <section class="panel infinite-container">
+        <header class="panel-heading">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Filter by name" ng-model="name">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" ui-sref="dick.projects-new">
+                        <i class="fa fa-plus mg-r-xs"></i>NEW PROJECT
+                    </button>
+                </span>
+            </div>
+        </header>
+
+
+        <div class="panel-body" infinite-scroll="loadMore()" >
+            <loader on="projects"></loader>
+
+            <p ng-show="projects.length === 0" class="text-center text-muted">
+                No projects to show
+            </p>
+            <div ng-repeat="project in projects" class="panel col-lg-3 col-md-4 col-sm-6">
+
+                <div class="box-shadow" >
+                    <header class="panel-heading">
+                        <span class="pull-right">
+                            <a href="#">
+                                <i class="fa fa-gear"></i>
+                            </a>
+                        </span>
+                        {{project.name}}
+                    </header>
+                    <div class="panel-body">
+                        <div ng-hide="project.lastBuild" class="text-center text-muted">
+                            There are no builds yet
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-white">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</section>

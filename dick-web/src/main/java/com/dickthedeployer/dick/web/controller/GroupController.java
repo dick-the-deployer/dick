@@ -15,14 +15,15 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import static com.dickthedeployer.dick.web.mapper.GroupMapper.mapGroup;
 import com.dickthedeployer.dick.web.model.GroupModel;
 import com.dickthedeployer.dick.web.service.GroupService;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,7 +49,11 @@ public class GroupController {
     }
 
     @RequestMapping(method = GET)
-    public Page<Group> getProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return groupService.getGroups(page, size);
+    public List<GroupModel> getProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return groupService.getGroups(page, size).getContent().stream()
+                .map(group
+                        -> mapGroup(group)
+                ).collect(toList());
     }
+
 }

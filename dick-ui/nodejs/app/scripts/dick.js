@@ -5,6 +5,7 @@ angular.module('dick', [
     'ngResource',
     'ngSanitize',
     'ui.router',
+    'ui.bootstrap',
     'angular-loading-bar',
     'cfp.loadingBar',
     'gc.toaster',
@@ -12,5 +13,6 @@ angular.module('dick', [
     'dick.tools',
     'dick.errors',
     'dick.groups',
+    'dick.projects',
     'dick.metadata'
 ]);

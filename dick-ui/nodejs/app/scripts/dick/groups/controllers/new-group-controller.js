@@ -7,7 +7,7 @@ angular.module('dick.groups')
                 $scope.prefix = document.location.origin;
                 $scope.model = {};
 
-                $scope.createGroup = function () {
+                $scope.create = function () {
                     groupsResource.save($scope.model, function () {
                         toaster.add({
                             type: 'success',

@@ -34,6 +34,7 @@ module.exports = {
                 middlewares.push(require('connect-modrewrite')([
                     '^/$ /index.html',
                     '^/groups.*$ /index.html',
+                    '^/projects.*$ /index.html',
                     '^/403$ /index.html',
                     '^/404$ /index.html',
                     '^/500$ /index.html'

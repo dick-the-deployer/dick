@@ -44,7 +44,7 @@ public class GroupService {
         validateIfNameAvailable(groupModel);
 
         Group group = new Group.Builder()
-                .withDescribtion(groupModel.getDescribtion())
+                .withDescription(groupModel.getDescription())
                 .withNamespace(
                         new Namespace.Builder()
                         .withName(groupModel.getName())

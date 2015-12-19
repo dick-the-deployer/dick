@@ -17,26 +17,35 @@ package com.dickthedeployer.dick.web.model;
 
 import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
 import static java.util.Collections.emptyList;
+import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author mariusz
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectModel {
 
     @NotNull
-    String ref;
+    private String name;
     @NotNull
-    String namespace;
+    private String namespace;
     @NotNull
-    String name;
+    private String repository;
     @NotNull
-    String repository;
+    private String ref;
 
-    List<EnvironmentVariable> environmentVariables = emptyList();
-
+    private Date creationDate;
+    private String description;
+    private List<EnvironmentVariable> environmentVariables = emptyList();
+    private String lastBuild;
 }

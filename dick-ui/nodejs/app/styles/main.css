@@ -5034,10 +5034,12 @@ canvas {
 }
 .text-muted,
 .text-muted a {
+    font-weight: normal;
   color: #b3b3b3;
 }
 .text-muted:focus,
 .text-muted a:focus {
+    font-weight: normal;
   color: #8c8c8c;
 }
 /*
