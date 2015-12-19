@@ -8,7 +8,8 @@ angular.module('dick', [
     'angular-loading-bar',
     'cfp.loadingBar',
     'gc.toaster',
-    'dick.nicescroll',
+    'angularMoment',
+    'dick.tools',
     'dick.errors',
     'dick.groups',
     'dick.metadata'

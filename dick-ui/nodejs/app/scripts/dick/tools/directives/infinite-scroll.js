@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dick.nicescroll')
+angular.module('dick.tools')
         .directive('infiniteScroll', function () {
             return function (scope, elm, attr) {
                 var raw = angular.element($('.scrollable'))[0];
