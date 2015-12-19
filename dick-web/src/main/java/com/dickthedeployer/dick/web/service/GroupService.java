@@ -65,4 +65,8 @@ public class GroupService {
         PageRequest pageRequest = new PageRequest(page, size, Sort.Direction.DESC, "creationDate");
         return groupDao.findAll(pageRequest);
     }
+
+    public Group getGroup(String name) {
+        return groupDao.findByNamespaceName(name);
+    }
 }

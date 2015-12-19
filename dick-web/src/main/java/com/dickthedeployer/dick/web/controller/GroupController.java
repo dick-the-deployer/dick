@@ -15,7 +15,9 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
+import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import static com.dickthedeployer.dick.web.mapper.GroupMapper.mapGroup;
 import com.dickthedeployer.dick.web.model.GroupModel;
 import com.dickthedeployer.dick.web.service.GroupService;
@@ -24,10 +26,10 @@ import static java.util.stream.Collectors.toList;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,16 +46,26 @@ public class GroupController {
     GroupService groupService;
 
     @RequestMapping(method = RequestMethod.POST)
-    void createGroup(@RequestBody @Valid GroupModel groupModel) throws NameTakenException {
+    public void createGroup(@RequestBody @Valid GroupModel groupModel) throws NameTakenException {
         groupService.createGroup(groupModel);
     }
 
-    @RequestMapping(method = GET)
-    public List<GroupModel> getProjects(@RequestParam("page") int page, @RequestParam("size") int size) {
+    @RequestMapping(method = RequestMethod.GET)
+    public List<GroupModel> getGroups(@RequestParam("page") int page, @RequestParam("size") int size) {
         return groupService.getGroups(page, size).getContent().stream()
                 .map(group
                         -> mapGroup(group)
                 ).collect(toList());
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{name}")
+    public GroupModel getGroupByName(@PathVariable("name") String name) throws NotFoundException {
+        Group group = groupService.getGroup(name);
+        if (group != null) {
+            return mapGroup(group);
+        } else {
+            throw new NotFoundException();
+        }
     }
 
 }

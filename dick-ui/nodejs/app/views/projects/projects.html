@@ -20,26 +20,7 @@
             </p>
             <div ng-repeat="project in projects" class="panel col-lg-3 col-md-4 col-sm-6">
 
-                <div class="box-shadow" >
-                    <header class="panel-heading">
-                        <span class="pull-right">
-                            <a href="#">
-                                <i class="fa fa-gear"></i>
-                            </a>
-                        </span>
-                        {{project.namespace}} / {{project.name}}
-                    </header>
-                    <div class="panel-body">
-                        <div ng-hide="project.lastBuild" class="text-center text-muted">
-                            There are no builds yet
-                        </div>
-                    </div>
-                    <div class="panel-footer">
-                        <button type="button" class="btn btn-white">
-                            <i class="fa fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
+                <div ng-include=" '/views/parts/project.html'"></div>
             </div>
 
         </div>

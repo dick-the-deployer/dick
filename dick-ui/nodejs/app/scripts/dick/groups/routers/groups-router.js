@@ -12,6 +12,11 @@ angular.module('dick.groups')
                             url: '/groups/new',
                             controller: 'NewGroupController',
                             templateUrl: '/views/groups/new.html'
+                        })
+                        .state('dick.group-details', {
+                            url: '/groups/:name',
+                            controller: 'GroupController',
+                            templateUrl: '/views/groups/group.html'
                         });
             }
         ]);

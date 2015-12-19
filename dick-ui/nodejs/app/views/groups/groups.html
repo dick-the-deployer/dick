@@ -28,7 +28,7 @@
                         </button>
                     </span>
                     <div>
-                        <b ng-bind="group.name"></b>
+                        <a href="/groups/{{group.name}}"><b ng-bind="group.name"></b></a>
                         <span class="text-muted">created {{group.creationDate| amTimeAgo}}</span>
                     </div>
                     <div class="text-muted">
