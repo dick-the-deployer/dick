@@ -5,7 +5,7 @@ angular.module('dick.tools')
             return function (scope, elm, attr) {
                 var raw = angular.element($('.scrollable'))[0];
                 angular.element($('.scrollable')).bind('scroll', function () {
-                    if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight - 50) {
+                    if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
                         scope.$apply(attr.infiniteScroll);
                     }
                 });
