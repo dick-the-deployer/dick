@@ -65,6 +65,7 @@ public class JobBuildService {
     DickYmlService dickYmlService;
 
     @Async
+    @Transactional
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
         build.setStatus(Build.Status.IN_PROGRESS);
