@@ -56,7 +56,7 @@ public class BuildService {
     public void onTrigger(TriggerModel model) {
         List<Project> projects = stackDao.findByNameAndRef(model.getName(), model.getRef());
         projects.forEach(project -> {
-            log.info("Found stack {} for stack {}", project, model.getName());
+            log.info("Found project {} for name {}", project.getId(), model.getName());
             if (project != null) {
                 Build build = buildDao.save(new Build.Builder()
                         .withCommitUrl(model.getCommitUrl())
