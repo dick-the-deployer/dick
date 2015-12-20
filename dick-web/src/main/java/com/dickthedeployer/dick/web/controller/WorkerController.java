@@ -16,11 +16,14 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.model.RegistrationData;
+import com.dickthedeployer.dick.web.model.WorkerModel;
 import com.dickthedeployer.dick.web.service.WorkerService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -38,5 +41,10 @@ public class WorkerController {
     RegistrationData register() {
         String workerName = workerService.registerWorker();
         return new RegistrationData(workerName);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public List<WorkerModel> getWorkers(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return workerService.getWorkers(page, size);
     }
 }

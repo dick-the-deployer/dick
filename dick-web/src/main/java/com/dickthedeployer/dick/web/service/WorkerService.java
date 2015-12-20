@@ -20,13 +20,19 @@ import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
+import com.dickthedeployer.dick.web.mapper.WorkerMapper;
+import com.dickthedeployer.dick.web.model.WorkerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import static java.util.stream.Collectors.toList;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,6 +99,13 @@ public class WorkerService {
         worker.setStatus(Worker.Status.BUSY);
         jobBuildDao.save(jobBuild);
         workerDao.save(worker);
+    }
+
+    public List<WorkerModel> getWorkers(int page, int size) {
+        PageRequest pageRequest = new PageRequest(page, size, Sort.Direction.DESC, "registrationDate");
+        return workerDao.findAll(pageRequest).getContent().stream()
+                .map(WorkerMapper::mapWorker)
+                .collect(toList());
     }
 
 }

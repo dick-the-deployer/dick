@@ -1,0 +1,36 @@
+<section>
+    <section class="panel infinite-container">
+        <header class="panel-heading">
+            <div>Welcome to the workers!</div>
+            <span class="text-muted">You can browse workers here.</span>
+        </header>
+
+
+        <div class="panel-body" infinite-scroll="loadMore()" >
+            <loader on="workers"></loader>
+
+            <p ng-show="workers.length === 0" class="text-center text-muted">
+                No workers to show
+            </p>
+            <ul class="content-list">
+                <li ng-repeat="worker in workers">
+                    <span class="actions">
+                        <button data-toggle="button" class="btn btn-white btn-sm">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                        <button data-toggle="button" class="btn btn-white btn-sm">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </span>
+                    <div>
+                        <b ng-bind="worker.name"></b> with status {{worker.status}}
+                        <span class="text-muted">created {{worker.registrationDate| amTimeAgo}}</span>
+                    </div>
+                    <div class="text-muted">
+                        Last heartbeat {{worker.lastHeartbeat| amTimeAgo}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+</section>

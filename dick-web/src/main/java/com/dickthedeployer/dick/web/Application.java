@@ -21,12 +21,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author mariusz
  */
 @EnableAsync
+@RestController
 @EnableScheduling
 @SpringBootApplication
 public class Application {
@@ -34,6 +37,11 @@ public class Application {
     @Bean
     public RandomNameGenerator randomNameGenerator() {
         return new RandomNameGenerator();
+    }
+
+    @RequestMapping(value = "/{[path:[^\\.]*}")
+    public String redirect() {
+        return "forward:/";
     }
 
     public static void main(String[] args) {
