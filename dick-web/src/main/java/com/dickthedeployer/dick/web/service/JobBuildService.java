@@ -29,7 +29,6 @@ import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +63,6 @@ public class JobBuildService {
     @Autowired
     DickYmlService dickYmlService;
 
-    @Async
     @Transactional
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
