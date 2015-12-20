@@ -15,14 +15,11 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
-import static com.dickthedeployer.dick.web.mapper.GroupMapper.mapGroup;
 import com.dickthedeployer.dick.web.model.GroupModel;
 import com.dickthedeployer.dick.web.service.GroupService;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,19 +49,16 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<GroupModel> getGroups(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return groupService.getGroups(page, size).getContent().stream()
-                .map(group
-                        -> mapGroup(group)
-                ).collect(toList());
+        return groupService.getGroups(page, size);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{name}")
     public GroupModel getGroupByName(@PathVariable("name") String name) throws NotFoundException {
-        Group group = groupService.getGroup(name);
-        if (group != null) {
-            return mapGroup(group);
-        } else {
+        GroupModel group = groupService.getGroup(name);
+        if (group == null) {
             throw new NotFoundException();
+        } else {
+            return group;
         }
     }
 

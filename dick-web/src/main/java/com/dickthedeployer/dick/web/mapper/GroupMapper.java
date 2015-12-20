@@ -37,4 +37,12 @@ public class GroupMapper {
                         ).collect(toList())
                 ).build();
     }
+
+    public static GroupModel mapGroupShallow(Group group) {
+        return GroupModel.builder()
+                .creationDate(group.getCreationDate())
+                .description(group.getDescription())
+                .name(group.getNamespace().getName())
+                .build();
+    }
 }

@@ -63,9 +63,10 @@ public class WorkerService {
         workerDao.save(worker);
     }
 
-    public void sheduleJobBuild(Build build, Job job) {
+    public void sheduleJobBuild(Build build, String stageName, Job job) {
         JobBuild jobBuild = new JobBuild();
         jobBuild.setBuild(build);
+        jobBuild.setStage(stageName);
         jobBuild.setDeploy(job.getDeploy());
         jobBuild.setEnvironment(getEnvironment(build, job));
         jobBuildDao.save(jobBuild);

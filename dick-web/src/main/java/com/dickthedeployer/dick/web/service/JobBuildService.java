@@ -29,8 +29,6 @@ import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,11 +71,7 @@ public class JobBuildService {
         build.setCurrentStage(stage.getName());
         buildDao.save(build);
         jobs.stream()
-                .forEach(job -> workerService.sheduleJobBuild(build, job));
-    }
-
-    public Page<JobBuild> getJobBuilds(int page, int size) {
-        return jobBuildDao.findAll(new PageRequest(page, size));
+                .forEach(job -> workerService.sheduleJobBuild(build, stage.getName(), job));
     }
 
     @Transactional

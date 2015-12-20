@@ -15,16 +15,12 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
-import static com.dickthedeployer.dick.web.mapper.ProjectMapper.mapProject;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import com.dickthedeployer.dick.web.service.ProjectService;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,16 +48,10 @@ public class ProjectController {
     @RequestMapping(method = GET)
     public List<ProjectModel> getProjects(@RequestParam("page") int page, @RequestParam("size") int size,
             @RequestParam(required = false, name = "name") String name) {
-        Page<Project> projects;
         if (StringUtils.isEmpty(name)) {
-            projects = projectService.getProjects(page, size);
+            return projectService.getProjects(page, size);
         } else {
-            projects = projectService.getProjectsLikeName(name, page, size);
+            return projectService.getProjectsLikeName(name, page, size);
         }
-
-        return projects.getContent().stream()
-                .map(project
-                        -> mapProject(project)
-                ).collect(toList());
     }
 }

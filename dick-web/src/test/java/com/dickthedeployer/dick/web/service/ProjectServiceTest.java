@@ -41,12 +41,13 @@ public class ProjectServiceTest extends ContextTestBase {
                 .build()
         );
         ProjectModel model = new ProjectModel();
-        model.setName(UUID.randomUUID().toString());
+        model.setName("some-semi-random-name");
         model.setRepository(UUID.randomUUID().toString());
         model.setRef("master");
         model.setNamespace("test-namespace");
 
-        Project entity = projectService.createProject(model);
+        projectService.createProject(model);
+        Project entity = projectDao.findByName("some-semi-random-name");
         assertThat(entity.getId()).isNotNull();
         assertThat(entity.getRef()).isEqualTo("master");
         assertThat(entity.getCreationDate()).isNotNull();

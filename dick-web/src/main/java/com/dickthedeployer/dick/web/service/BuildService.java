@@ -20,6 +20,8 @@ import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
+import com.dickthedeployer.dick.web.mapper.BuildMapper;
+import com.dickthedeployer.dick.web.model.BuildModel;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,19 +54,20 @@ public class BuildService {
     JobBuildService jobBuildService;
 
     public void onTrigger(TriggerModel model) {
-        List<Project> stacks = stackDao.findByNameAndRef(model.getName(), model.getRef());
-        stacks.forEach(stack -> {
-            log.info("Found stack {} for stack {}", stack, model.getName());
-            if (stack != null) {
+        List<Project> projects = stackDao.findByNameAndRef(model.getName(), model.getRef());
+        projects.forEach(project -> {
+            log.info("Found stack {} for stack {}", project, model.getName());
+            if (project != null) {
                 Build build = buildDao.save(new Build.Builder()
-                        .withBuildUrl(model.getBuildUrl())
                         .withCommitUrl(model.getCommitUrl())
-                        .withProject(stack)
+                        .withProject(project)
                         .withSha(model.getSha())
                         .build()
                 );
                 try {
                     Dickfile dickfile = dickYmlService.loadDickFile(build);
+                    build.setStages(dickfile.getStageNames());
+                    buildDao.save(build);
                     Stage firstStage = dickfile.getFirstStage();
                     if (firstStage.isAutorun()) {
                         jobBuildService.buildStage(build, dickfile, firstStage);
@@ -91,7 +95,8 @@ public class BuildService {
 
     }
 
-    public Page<Build> getBuilds(int page, int size) {
-        return buildDao.findAll(new PageRequest(page, size));
+    public BuildModel findLastBuild(Project project) {
+        Page<Build> builds = buildDao.findByProject(project, new PageRequest(0, 1, Sort.Direction.DESC, "creationDate"));
+        return builds.getContent().isEmpty() ? null : BuildMapper.mapBuild(builds.getContent().get(0));
     }
 }

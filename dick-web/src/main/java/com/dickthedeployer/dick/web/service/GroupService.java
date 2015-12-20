@@ -19,10 +19,16 @@ import com.dickthedeployer.dick.web.dao.GroupDao;
 import com.dickthedeployer.dick.web.dao.NamespaceDao;
 import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.domain.Namespace;
+import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.mapper.GroupMapper;
+import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.GroupModel;
+import com.dickthedeployer.dick.web.model.ProjectModel;
+import java.util.Collections;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -39,6 +45,9 @@ public class GroupService {
 
     @Autowired
     NamespaceDao namespaceDao;
+
+    @Autowired
+    BuildService buildService;
 
     public void createGroup(GroupModel groupModel) throws NameTakenException {
         validateIfNameAvailable(groupModel);
@@ -61,12 +70,27 @@ public class GroupService {
         }
     }
 
-    public Page<Group> getGroups(int page, int size) {
+    public List<GroupModel> getGroups(int page, int size) {
         PageRequest pageRequest = new PageRequest(page, size, Sort.Direction.DESC, "creationDate");
-        return groupDao.findAll(pageRequest);
+        return groupDao.findAll(pageRequest).getContent().stream()
+                .map(GroupMapper::mapGroup)
+                .collect(toList());
     }
 
-    public Group getGroup(String name) {
-        return groupDao.findByNamespaceName(name);
+    public GroupModel getGroup(String name) {
+        Group group = groupDao.findByNamespaceName(name);
+        if (group == null) {
+            return null;
+        }
+        List<ProjectModel> projectModels = group.getNamespace().getProjects().stream()
+                .map((Project project) -> {
+                    ProjectModel model = ProjectMapper.mapProject(project);
+                    model.setLastBuild(buildService.findLastBuild(project));
+                    return model;
+                }).collect(toList());
+        GroupModel model = GroupMapper.mapGroupShallow(group);
+        Collections.reverse(projectModels);
+        model.setProjects(projectModels);
+        return model;
     }
 }
