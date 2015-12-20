@@ -16,9 +16,12 @@
 package com.dickthedeployer.dick.web.domain;
 
 import java.util.Date;
+import java.util.List;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -47,13 +50,14 @@ public class Build {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    private String buildUrl;
-
     private String commitUrl;
 
     private String sha;
 
     private String currentStage;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> stages;
 
     public static class Builder {
 
@@ -73,8 +77,8 @@ public class Build {
             return this;
         }
 
-        public Builder withBuildUrl(final String buildUrl) {
-            this.item.buildUrl = buildUrl;
+        public Builder withStages(final List<String> stages) {
+            this.item.stages = stages;
             return this;
         }
 

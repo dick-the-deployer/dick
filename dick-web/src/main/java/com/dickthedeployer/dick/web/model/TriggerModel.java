@@ -25,9 +25,6 @@ import lombok.Data;
 @Data
 public class TriggerModel {
 
-    @NotNull
-    String buildUrl;
-    @NotNull
     String commitUrl;
     @NotNull
     String ref;

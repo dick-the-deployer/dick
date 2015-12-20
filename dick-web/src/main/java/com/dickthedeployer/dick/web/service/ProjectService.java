@@ -21,10 +21,11 @@ import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.ProjectModel;
+import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -42,10 +43,13 @@ public class ProjectService {
     @Autowired
     NamespaceDao namespaceDao;
 
-    public Project createProject(ProjectModel model) throws NameTakenException {
+    @Autowired
+    BuildService buildService;
+
+    public void createProject(ProjectModel model) throws NameTakenException {
         validateIfNameAvailable(model);
         Namespace namespace = namespaceDao.findByName(model.getNamespace());
-        return projectDao.save(new Project.Builder()
+        projectDao.save(new Project.Builder()
                 .withRef(model.getRef())
                 .withName(model.getName())
                 .withNamespace(namespace)
@@ -65,11 +69,21 @@ public class ProjectService {
         }
     }
 
-    public Page<Project> getProjectsLikeName(String name, int page, int size) {
-        return projectDao.findByNameContaining(name, new PageRequest(page, size, Sort.Direction.DESC, "creationDate"));
+    public List<ProjectModel> getProjectsLikeName(String name, int page, int size) {
+        return projectDao.findByNameContaining(name, new PageRequest(page, size, Sort.Direction.DESC, "creationDate")).getContent().stream()
+                .map((Project project) -> {
+                    ProjectModel model = ProjectMapper.mapProject(project);
+                    model.setLastBuild(buildService.findLastBuild(project));
+                    return model;
+                }).collect(toList());
     }
 
-    public Page<Project> getProjects(int page, int size) {
-        return projectDao.findAll(new PageRequest(page, size, Sort.Direction.DESC, "creationDate"));
+    public List<ProjectModel> getProjects(int page, int size) {
+        return projectDao.findAll(new PageRequest(page, size, Sort.Direction.DESC, "creationDate")).getContent().stream()
+                .map((Project project) -> {
+                    ProjectModel model = ProjectMapper.mapProject(project);
+                    model.setLastBuild(buildService.findLastBuild(project));
+                    return model;
+                }).collect(toList());
     }
 }

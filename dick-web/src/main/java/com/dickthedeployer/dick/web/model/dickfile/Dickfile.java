@@ -44,6 +44,12 @@ public class Dickfile {
                 .get();
     }
 
+    public List<String> getStageNames() {
+        return pipeline.getStages().stream()
+                .map(stage -> stage.getName())
+                .collect(toList());
+    }
+
     public List<Job> getJobs(Stage stage) {
         return jobs.stream().filter(job -> job.getStage()
                 .equals(stage.getName()))

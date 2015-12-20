@@ -25,10 +25,6 @@ public class GitlabUtils {
         return trigger.getGitlab_url() + "/commit/" + trigger.getSha();
     }
 
-    static String getBuildUrl(GitlabTrigger trigger) {
-        return trigger.getGitlab_url() + "/builds/" + trigger.getBuild_id();
-    }
-
     static String getProjectName(GitlabTrigger trigger) {
         return trigger.getProject_name().replaceAll(" ", "");
     }

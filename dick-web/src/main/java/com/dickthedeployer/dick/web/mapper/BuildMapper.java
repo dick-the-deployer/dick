@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.dao;
+package com.dickthedeployer.dick.web.mapper;
 
 import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.Project;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dickthedeployer.dick.web.model.BuildModel;
 
 /**
  *
  * @author mariusz
  */
-public interface BuildDao extends JpaRepository<Build, Long> {
+public class BuildMapper {
 
-    Build findByProjectAndStatus(Project project, Build.Status status);
-
-    Page<Build> findByProject(Project project, Pageable pageable);
+    public static BuildModel mapBuild(Build build) {
+        return BuildModel.builder()
+                .currentStage(build.getCurrentStage())
+                .creationDate(build.getCreationDate())
+                .stages(build.getStages())
+                .status(build.getStatus())
+                .build();
+    }
 }

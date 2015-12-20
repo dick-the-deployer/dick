@@ -11,9 +11,17 @@
         <div ng-hide="project.lastBuild" class="text-center text-muted">
             There are no builds yet
         </div>
+        <div ng-show="project.lastBuild">
+            {{project.lastBuild.currentStage}}
+            {{project.lastBuild.stages}}
+            {{project.lastBuild.status}}
+            <div>
+                Triggered {{project.lastBuild.creationDate| amTimeAgo}}
+            </div>
+        </div>
     </div>
-    <div class="panel-footer">
-        <button type="button" class="btn btn-white">
+    <div class="panel-footer" ng-controller="HookController">
+        <button type="button" class="btn btn-white" ng-click="startBuild(project)">
             <i class="fa fa-chevron-right"></i>
         </button>
     </div>

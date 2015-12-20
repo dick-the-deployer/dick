@@ -59,11 +59,12 @@ public class JobBuild {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-
     @OneToOne(cascade = CascadeType.ALL, fetch = LAZY)
     private JobBuildLog buildLog = new JobBuildLog();
 
     private String job;
+
+    private String stage;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.READY;

@@ -66,7 +66,7 @@ public class WorkerServiceTest extends ContextTestBase {
         Stage firstStage = new Stage("first", true);
         Dickfile dickfile = prepareDickfile(firstStage);
 
-        workerService.sheduleJobBuild(build, dickfile.getJobs(firstStage).get(0));
+        workerService.sheduleJobBuild(build, "first", dickfile.getJobs(firstStage).get(0));
 
         List<JobBuild> builds = jobBuildDao.findByBuild(build);
         assertThat(builds).hasSize(1);

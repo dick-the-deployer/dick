@@ -14,5 +14,6 @@ angular.module('dick', [
     'dick.errors',
     'dick.groups',
     'dick.projects',
-    'dick.metadata'
+    'dick.metadata',
+    'dick.builds'
 ]);

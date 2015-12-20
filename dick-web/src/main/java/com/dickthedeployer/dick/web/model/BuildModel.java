@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 dick the deployer.
+ * Copyright dick the deployer.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  */
 package com.dickthedeployer.dick.web.model;
 
-import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
-import static java.util.Collections.emptyList;
+import com.dickthedeployer.dick.web.domain.Build;
 import java.util.Date;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,19 +31,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectModel {
+public class BuildModel {
 
-    @NotNull
-    private String name;
-    @NotNull
-    private String namespace;
-    @NotNull
-    private String repository;
-    @NotNull
-    private String ref;
-
+    private List<String> stages;
+    private String currentStage;
     private Date creationDate;
-    private String description;
-    private List<EnvironmentVariable> environmentVariables = emptyList();
-    private BuildModel lastBuild;
+    private Build.Status status;
 }

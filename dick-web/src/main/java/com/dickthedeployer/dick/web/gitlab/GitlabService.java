@@ -36,7 +36,6 @@ public class GitlabService {
         log.info("Received gitlab trigger for {} with status {}", trigger.getProject_name(), trigger.getBuild_status());
         if (trigger.getBuild_status().equals("success")) {
             TriggerModel model = new TriggerModel();
-            model.setBuildUrl(GitlabUtils.getBuildUrl(trigger));
             model.setCommitUrl(GitlabUtils.getCommitUrl(trigger));
             model.setName(GitlabUtils.getProjectName(trigger));
             model.setRef(trigger.getRef());
