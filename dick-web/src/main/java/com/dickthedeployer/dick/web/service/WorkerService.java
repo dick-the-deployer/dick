@@ -23,11 +23,6 @@ import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.mapper.WorkerMapper;
 import com.dickthedeployer.dick.web.model.WorkerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import static java.util.stream.Collectors.toList;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +30,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -65,6 +67,10 @@ public class WorkerService {
 
     public void onHeartbeat(String name) {
         Worker worker = workerDao.findByName(name);
+        if (worker == null) {
+            worker = new Worker();
+            worker.setName(name);
+        }
         worker.setLastHeartbeat(new Date());
         workerDao.save(worker);
     }
