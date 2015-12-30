@@ -34,6 +34,7 @@ public class BuildMapper {
 
         return BuildModel.builder()
                 .creationDate(build.getCreationDate())
+                .currentStage(build.getCurrentStage())
                 .stages(stages)
                 .status(build.getStatus())
                 .build();

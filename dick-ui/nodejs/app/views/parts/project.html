@@ -1,4 +1,4 @@
-<div class="box-shadow" >
+<div class="box-shadow">
     <header class="panel-heading">
         <span class="pull-right">
             <a href="#">
@@ -12,17 +12,53 @@
             There are no builds yet
         </div>
         <div ng-show="project.lastBuild">
-            {{project.lastBuild.currentStage}}
-            {{project.lastBuild.stages}}
-            {{project.lastBuild.status}}
-            <div>
-                Triggered {{project.lastBuild.creationDate| amTimeAgo}}
+            <div ng-repeat="stage in project.lastBuild.stages"
+                 ng-class="{'col-lg-12' : project.lastBuild.stages.length === 1,
+                 'col-lg-6' : project.lastBuild.stages.length === 2,
+                 'col-lg-4' : project.lastBuild.stages.length > 2,
+                 'col-md-12' : project.lastBuild.stages.length === 1,
+                 'col-md-6' : project.lastBuild.stages.length > 1}"
+            >
+                <div class="row">
+                    <div class="progress mg-r-xs">
+                        <div class="progress-bar progress-bar-striped"
+                             ng-class="{'progress-bar-success': stage.status === 'DEPLOYED' || stage.status === 'DEPLOYED_STAGE',
+                        'progress-bar-warning': stage.status === 'STOPPED',
+                        'progress-bar-danger': stage.status === 'FAILED',
+                        'active': stage.status === 'IN_PROGRESS'
+                     }"
+                             role="progressbar" aria-valuenow="{{stage.status === 'READY' ? 0 : 100}}"
+                             aria-valuemin="0" aria-valuemax="100"
+                             style="width: {{stage.status === 'READY' ? 0 : 100}}%"
+                             title="{{stage.name}}">
+
+                            <a href="#" class="text-white" ng-show="stage.status === 'IN_PROGRESS'">
+                                <i class="fa fa-pause"></i>
+                            </a>
+                            <a href="#" class="text-white pull-right mg-r-sm"
+                               ng-show="stage.status === 'DEPLOYED_STAGE'">
+                                <i class="fa fa-forward"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span ng-show="project.lastBuild.status === 'MISSING_DICKFILE'">
+                <i class="fa fa-warning"></i> Configuration .dick.yml file missing!
+            </span>
+
+            <div class="col-sm-12 row">
+                <span class="text-muted">Current stage:</span> {{project.lastBuild.currentStage}}
             </div>
         </div>
     </div>
     <div class="panel-footer" ng-controller="HookController">
-        <button type="button" class="btn btn-white" ng-click="startBuild(project)">
+        <button type="button" class="btn btn-white btn-xs" ng-click="startBuild(project)">
             <i class="fa fa-chevron-right"></i>
         </button>
+        <span class="mg-l-xs" ng-show="project.lastBuild">
+            <span class="text-muted">Started</span> {{project.lastBuild.creationDate| amTimeAgo}}
+        </span>
     </div>
 </div>
