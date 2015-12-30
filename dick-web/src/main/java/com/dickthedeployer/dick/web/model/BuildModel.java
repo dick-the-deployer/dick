@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
 public class BuildModel {
 
     private List<StageModel> stages;
+    private String currentStage;
     private Date creationDate;
     private Build.Status status;
 }
