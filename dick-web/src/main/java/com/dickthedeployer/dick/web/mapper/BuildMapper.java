@@ -17,12 +17,11 @@ package com.dickthedeployer.dick.web.mapper;
 
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.model.BuildModel;
-import com.dickthedeployer.dick.web.model.BuildStatus;
 import com.dickthedeployer.dick.web.model.StageModel;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author mariusz
@@ -34,6 +33,7 @@ public class BuildMapper {
 
         return BuildModel.builder()
                 .creationDate(build.getCreationDate())
+                .id(build.getId())
                 .currentStage(build.getCurrentStage())
                 .stages(stages)
                 .status(build.getStatus())
@@ -42,7 +42,7 @@ public class BuildMapper {
 
     private static List<StageModel> getStageModels(Build build) {
         List<StageModel> stages = new ArrayList<>();
-        boolean afterCurrentStage = false;
+        boolean afterCurrentStage = StringUtils.isEmpty(build.getCurrentStage());
         for (String stageName : build.getStages()) {
             if (stageName.equals(build.getCurrentStage())) {
                 stages.add(
