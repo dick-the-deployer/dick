@@ -33,8 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BuildModel {
 
-    private List<String> stages;
-    private String currentStage;
+    private List<StageModel> stages;
     private Date creationDate;
     private Build.Status status;
 }

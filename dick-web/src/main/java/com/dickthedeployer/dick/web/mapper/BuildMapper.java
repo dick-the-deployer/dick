@@ -17,19 +17,58 @@ package com.dickthedeployer.dick.web.mapper;
 
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.model.BuildModel;
+import com.dickthedeployer.dick.web.model.BuildStatus;
+import com.dickthedeployer.dick.web.model.StageModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author mariusz
  */
 public class BuildMapper {
 
     public static BuildModel mapBuild(Build build) {
+        List<StageModel> stages = getStageModels(build);
+
         return BuildModel.builder()
-                .currentStage(build.getCurrentStage())
                 .creationDate(build.getCreationDate())
-                .stages(build.getStages())
+                .stages(stages)
                 .status(build.getStatus())
                 .build();
+    }
+
+    private static List<StageModel> getStageModels(Build build) {
+        List<StageModel> stages = new ArrayList<>();
+        boolean afterCurrentStage = false;
+        for (String stageName : build.getStages()) {
+            if (stageName.equals(build.getCurrentStage())) {
+                stages.add(
+                        StageModel.builder()
+                                .name(stageName)
+                                .status(build.getStatus())
+                                .build()
+                );
+                afterCurrentStage = true;
+            } else {
+                if (afterCurrentStage) {
+                    stages.add(
+                            StageModel.builder()
+                                    .name(stageName)
+                                    .status(Build.Status.READY)
+                                    .build()
+                    );
+                } else {
+                    stages.add(
+                            StageModel.builder()
+                                    .name(stageName)
+                                    .status(Build.Status.DEPLOYED)
+                                    .build()
+                    );
+                }
+            }
+        }
+        return stages;
     }
 }
