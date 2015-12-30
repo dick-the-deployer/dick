@@ -1,4 +1,4 @@
-<div class="box-shadow">
+<div class="box-shadow" ng-controller="HookController">
     <header class="panel-heading">
         <span class="pull-right">
             <a href="#">
@@ -35,8 +35,13 @@
                             <a href="#" class="text-white" ng-show="stage.status === 'IN_PROGRESS'">
                                 <i class="fa fa-pause"></i>
                             </a>
-                            <a href="#" class="text-white pull-right mg-r-sm"
+                            <a href="#" ng-click="buildStage(project, stage)" class="text-white pull-right mg-r-sm"
                                ng-show="stage.status === 'DEPLOYED_STAGE'">
+                                <i class="fa fa-forward"></i>
+                            </a>
+
+                            <a href="#" ng-click="buildFirstStage(project)" class="text-white pull-left mg-l-sm"
+                               ng-show="project.lastBuild.currentStage === null && $first">
                                 <i class="fa fa-forward"></i>
                             </a>
 
@@ -48,12 +53,12 @@
                 <i class="fa fa-warning"></i> Configuration .dick.yml file missing!
             </span>
 
-            <div class="col-sm-12 row">
+            <div class="col-sm-12 row" ng-show="project.lastBuild.currentStage">
                 <span class="text-muted">Current stage:</span> {{project.lastBuild.currentStage}}
             </div>
         </div>
     </div>
-    <div class="panel-footer" ng-controller="HookController">
+    <div class="panel-footer">
         <button type="button" class="btn btn-white btn-xs" ng-click="startBuild(project)">
             <i class="fa fa-chevron-right"></i>
         </button>

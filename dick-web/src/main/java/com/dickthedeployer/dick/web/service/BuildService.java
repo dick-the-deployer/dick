@@ -25,13 +25,14 @@ import com.dickthedeployer.dick.web.model.BuildModel;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  *
@@ -67,6 +68,7 @@ public class BuildService {
                 try {
                     Dickfile dickfile = dickYmlService.loadDickFile(build);
                     build.setStages(dickfile.getStageNames());
+                    build.setStatus(Build.Status.READY);
                     buildDao.save(build);
                     Stage firstStage = dickfile.getFirstStage();
                     if (firstStage.isAutorun()) {
