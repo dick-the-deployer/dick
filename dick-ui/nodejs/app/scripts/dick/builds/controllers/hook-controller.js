@@ -22,6 +22,15 @@ angular.module('dick.builds')
                 buildStage(project, 0);
             }
 
+            $scope.kill = function (project) {
+                buildsResource.kill({id: project.lastBuild.id}).$promise.then(function () {
+                    toaster.add({
+                        type: 'success',
+                        message: 'Build stopped'
+                    })
+                });
+            }
+
             function buildStage(project, nextStageIndex) {
                 buildsResource.save({
                     id: project.lastBuild.id,

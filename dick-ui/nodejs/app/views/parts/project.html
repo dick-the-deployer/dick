@@ -32,7 +32,8 @@
                              style="width: {{stage.status === 'READY' ? 0 : 100}}%"
                              title="{{stage.name}}">
 
-                            <a href="#" class="text-white" ng-show="stage.status === 'IN_PROGRESS'">
+                            <a href="#" class="text-white" ng-click="kill(project)"
+                               ng-show="stage.status === 'IN_PROGRESS'">
                                 <i class="fa fa-pause"></i>
                             </a>
                             <a href="#" ng-click="buildStage(project, stage)" class="text-white pull-right mg-r-sm"
@@ -54,7 +55,11 @@
             </span>
 
             <div class="col-sm-12 row" ng-show="project.lastBuild.currentStage">
-                <span class="text-muted">Current stage:</span> {{project.lastBuild.currentStage}}
+                <span class="text-muted">Status:</span> {{project.lastBuild.status | buildStatus}}
+            </div>
+
+            <div class="col-sm-12 row" ng-show="project.lastBuild.currentStage">
+                <span class="text-muted">Stage:</span> {{project.lastBuild.currentStage}}
             </div>
         </div>
     </div>

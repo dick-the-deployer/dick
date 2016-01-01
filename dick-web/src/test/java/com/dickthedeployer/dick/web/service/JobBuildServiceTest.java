@@ -64,7 +64,7 @@ public class JobBuildServiceTest extends ContextTestBase {
         Build build = produceBuild();
         JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.IN_PROGRESS);
 
-        jobBuildService.stop(jobBuild.getId());
+        jobBuildService.stop(build);
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
 

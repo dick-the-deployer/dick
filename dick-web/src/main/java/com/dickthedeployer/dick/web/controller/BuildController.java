@@ -19,8 +19,9 @@ import com.dickthedeployer.dick.web.service.BuildService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *
@@ -36,5 +37,10 @@ public class BuildController {
     @RequestMapping(method = POST, value = "/{buildId}/{stageName}")
     public void buildStage(@PathVariable("buildId") Long buildId, @PathVariable("stageName") String stageName) {
         buildService.buildStage(buildId, stageName);
+    }
+
+    @RequestMapping(method = POST, value = "/{buildId}/kill")
+    public void kill(@PathVariable("buildId") Long buildId) {
+        buildService.kill(buildId);
     }
 }
