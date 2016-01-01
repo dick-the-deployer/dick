@@ -101,4 +101,9 @@ public class BuildService {
         Page<Build> builds = buildDao.findByProject(project, new PageRequest(0, 1, Sort.Direction.DESC, "creationDate"));
         return builds.getContent().isEmpty() ? null : BuildMapper.mapBuild(builds.getContent().get(0));
     }
+
+    public void kill(Long buildId) {
+        Build build = buildDao.findOne(buildId);
+        jobBuildService.stop(build);
+    }
 }

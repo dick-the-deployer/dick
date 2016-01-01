@@ -86,15 +86,6 @@ public class JobBuildService {
         return jobBuild.isStopped();
     }
 
-    public void stop(Long id) {
-        JobBuild jobBuild = jobBuildDao.findOne(id);
-        jobBuild.setStatus(JobBuild.Status.STOPPED);
-        jobBuild.getWorker().setStatus(Worker.Status.READY);
-        jobBuildDao.save(jobBuild);
-
-        updateBuildStatus(jobBuild.getBuild());
-    }
-
     @Transactional
     public void reportProgress(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
@@ -106,7 +97,9 @@ public class JobBuildService {
     @Transactional
     public void reportFailure(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        jobBuild.setStatus(JobBuild.Status.FAILED);
+        if (!jobBuild.getStatus().equals(JobBuild.Status.STOPPED)) {
+            jobBuild.setStatus(JobBuild.Status.FAILED);
+        }
         jobBuild.getWorker().setStatus(Worker.Status.READY);
         jobBuild.getBuildLog().setOutput(log);
         jobBuildDao.save(jobBuild);
@@ -176,4 +169,15 @@ public class JobBuildService {
         return new BuildOrder(jobBuild.getId(), jobBuild.getDeploy(), jobBuild.getEnvironment());
     }
 
+    public void stop(Build build) {
+        List<JobBuild> jobBuilds = jobBuildDao.findByBuild(build);
+        jobBuilds.stream()
+                .filter(jobBuild -> jobBuild.getStatus().equals(JobBuild.Status.IN_PROGRESS))
+                .forEach(jobBuild -> {
+                    jobBuild.setStatus(JobBuild.Status.STOPPED);
+                    jobBuild.getWorker().setStatus(Worker.Status.READY);
+                    jobBuildDao.save(jobBuild);
+                });
+        updateBuildStatus(build);
+    }
 }
