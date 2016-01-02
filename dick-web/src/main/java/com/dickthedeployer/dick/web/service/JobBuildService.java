@@ -169,6 +169,7 @@ public class JobBuildService {
         return new BuildOrder(jobBuild.getId(), jobBuild.getDeploy(), jobBuild.getEnvironment());
     }
 
+    @Transactional
     public void stop(Build build) {
         List<JobBuild> jobBuilds = jobBuildDao.findByBuild(build);
         jobBuilds.stream()
@@ -176,6 +177,12 @@ public class JobBuildService {
                 .forEach(jobBuild -> {
                     jobBuild.setStatus(JobBuild.Status.STOPPED);
                     jobBuild.getWorker().setStatus(Worker.Status.READY);
+                    jobBuildDao.save(jobBuild);
+                });
+        jobBuilds.stream()
+                .filter(jobBuild -> jobBuild.getStatus().equals(JobBuild.Status.READY))
+                .forEach(jobBuild -> {
+                    jobBuild.setStatus(JobBuild.Status.STOPPED);
                     jobBuildDao.save(jobBuild);
                 });
         updateBuildStatus(build);
