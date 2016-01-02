@@ -18,11 +18,14 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.domain.LogChunk;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.service.util.TransactionalQueryingService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -107,6 +110,9 @@ public class JobBuildServiceTest extends ContextTestBase {
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
         assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
         assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.FAILED);
+
+        String output = transactionalQueryingService.getOutput(jobBuild.getId());
+        assertThat(output).isEqualTo("foo");
     }
 
     @Test
@@ -133,8 +139,8 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.reportProgress(jobBuild.getId(), "foo");
         jobBuildService.reportProgress(jobBuild.getId(), "bar");
 
-        String output = transactionalQueryingService.getOutput(jobBuild.getId());
-        assertThat(output).isEqualTo("foobar");
+        List<LogChunk> logChunks = logChunkDao.findByJobBuild(jobBuild);
+        assertThat(logChunks).extracting("buildLog").extracting("output").containsExactly("foo", "bar");
     }
 
     private JobBuild produceJobBuild(Worker worker, Build build, JobBuild.Status status) {

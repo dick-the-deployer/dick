@@ -17,9 +17,11 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
+import com.dickthedeployer.dick.web.dao.LogChunkDao;
 import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.domain.LogChunk;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
@@ -63,6 +65,9 @@ public class JobBuildService {
     @Autowired
     DickYmlService dickYmlService;
 
+    @Autowired
+    LogChunkDao logChunkDao;
+
     @Transactional
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
@@ -89,9 +94,10 @@ public class JobBuildService {
     @Transactional
     public void reportProgress(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        String deploymentLog = jobBuild.getBuildLog().getOutput();
-        jobBuild.getBuildLog().setOutput(deploymentLog + log);
-        jobBuildDao.save(jobBuild);
+        LogChunk logChunk = new LogChunk();
+        logChunk.setJobBuild(jobBuild);
+        logChunk.getBuildLog().setOutput(log);
+        logChunkDao.save(logChunk);
     }
 
     @Transactional
