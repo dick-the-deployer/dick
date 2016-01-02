@@ -18,6 +18,7 @@ package com.dickthedeployer.dick.web.mapper;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
+
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -38,6 +39,7 @@ public class ProjectMapper {
                 .namespace(project.getNamespace().getName())
                 .ref(project.getRef())
                 .repository(project.getRepository())
+                .id(project.getId())
                 .build();
     }
 }

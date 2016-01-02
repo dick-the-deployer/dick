@@ -23,12 +23,14 @@ import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.ProjectModel;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -67,6 +69,15 @@ public class ProjectService {
         if (project != null) {
             throw new NameTakenException();
         }
+    }
+
+    public List<ProjectModel> getProjects(List<Long> ids) {
+        return projectDao.findByIdIn(ids, new Sort(Sort.Direction.DESC, "creationDate")).stream()
+                .map((Project project) -> {
+                    ProjectModel model = ProjectMapper.mapProject(project);
+                    model.setLastBuild(buildService.findLastBuild(project));
+                    return model;
+                }).collect(toList());
     }
 
     public List<ProjectModel> getProjectsLikeName(String name, int page, int size) {

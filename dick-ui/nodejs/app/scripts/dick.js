@@ -10,6 +10,7 @@ angular.module('dick', [
     'cfp.loadingBar',
     'gc.toaster',
     'angularMoment',
+    'rx',
     'dick.tools',
     'dick.errors',
     'dick.groups',

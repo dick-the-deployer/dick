@@ -31,6 +31,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class BuildService {
     @Autowired
     JobBuildService jobBuildService;
 
+    @Transactional
     public void onTrigger(TriggerModel model) {
         List<Project> projects = stackDao.findByNameAndRef(model.getName(), model.getRef());
         projects.forEach(project -> {
