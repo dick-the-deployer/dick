@@ -16,14 +16,16 @@
 package com.dickthedeployer.dick.web.model;
 
 import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
-import static java.util.Collections.emptyList;
-import java.util.Date;
-import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 /**
  *
@@ -44,6 +46,7 @@ public class ProjectModel {
     @NotNull
     private String ref;
 
+    private Long id;
     private Date creationDate;
     private String description;
     private List<EnvironmentVariable> environmentVariables = emptyList();

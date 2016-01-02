@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('dick.groups')
-        .controller('GroupController', ['$window', '$scope', '$stateParams', '$location', 'MetadataService', 'GroupsResource',
-            function ($window, $scope, $stateParams, $location, metadataService, groupsResource) {
+    .controller('GroupController', ['$window', '$scope', '$stateParams', '$location', 'MetadataService', 'GroupsResource', 'rx',
+        function ($window, $scope, $stateParams, $location, metadataService, groupsResource, rx) {
                 if ($window.angular.isUndefined($stateParams.name) ||
                         $stateParams.name === '') {
                     $location.path('/');
@@ -14,6 +14,17 @@ angular.module('dick.groups')
                 groupsResource.get({name: name}).$promise.then(function (data) {
                     $scope.group = data;
                 });
+            var subscriber = rx.Observable.interval(2000)
+                .safeApply($scope, function () {
+                    groupsResource.get({name: name}).$promise.then(function (data) {
+                        $scope.group = data;
+                    });
+                })
+                .subscribe();
+
+            $scope.$on("$destroy", function () {
+                subscriber.dispose();
+            });
 
             }
         ]);
