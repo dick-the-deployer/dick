@@ -17,13 +17,14 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.domain.Project;
 import com.google.common.base.Throwables;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  *
@@ -40,20 +41,22 @@ public class RepositoryService {
     public InputStream getFile(Project project, String sha, String filePath) {
         checkoutRepository(project);
         Path path = REPOS.get(project);
-        checkoutRevision(path, project.getRef(), sha);
-        Path file = path.resolve(filePath);
-        try {
-            if (Files.exists(file)) {
-                return Files.newInputStream(file);
-            } else {
-                return null;
+        synchronized (path) {
+            checkoutRevision(path, project.getRef(), sha);
+            Path file = path.resolve(filePath);
+            try {
+                if (Files.exists(file)) {
+                    return Files.newInputStream(file);
+                } else {
+                    return null;
+                }
+            } catch (IOException ex) {
+                throw Throwables.propagate(ex);
             }
-        } catch (IOException ex) {
-            throw Throwables.propagate(ex);
         }
     }
 
-    private void checkoutRepository(Project project) {
+    private synchronized void checkoutRepository(Project project) {
         REPOS.computeIfAbsent(project, (key)
                 -> {
                     try {
