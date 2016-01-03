@@ -20,8 +20,9 @@ import com.dickthedeployer.dick.web.model.BuildModel;
 import com.dickthedeployer.dick.web.model.StageModel;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author mariusz
@@ -29,47 +30,40 @@ import java.util.List;
 public class BuildMapper {
 
     public static BuildModel mapBuild(Build build) {
-        List<StageModel> stages = getStageModels(build);
+        Map<String, Build.Status> buildStatusMap = getBuildStatusMap(build);
+
 
         return BuildModel.builder()
                 .creationDate(build.getCreationDate())
                 .id(build.getId())
                 .currentStage(build.getCurrentStage())
-                .stages(stages)
-                .status(build.getStatus())
+                .stages(
+                        build.getStages().stream()
+                                .map(stageName ->
+                                        StageModel.builder()
+                                                .status(buildStatusMap.get(stageName))
+                                                .name(stageName)
+                                                .build()
+                                ).collect(Collectors.toList())
+                ).status(build.getStatus())
                 .build();
     }
 
-    private static List<StageModel> getStageModels(Build build) {
-        List<StageModel> stages = new ArrayList<>();
+    public static Map<String, Build.Status> getBuildStatusMap(Build build) {
+        Map<String, Build.Status> buildStatusMap = new HashMap<>();
         boolean afterCurrentStage = StringUtils.isEmpty(build.getCurrentStage());
         for (String stageName : build.getStages()) {
             if (stageName.equals(build.getCurrentStage())) {
-                stages.add(
-                        StageModel.builder()
-                                .name(stageName)
-                                .status(build.getStatus())
-                                .build()
-                );
+                buildStatusMap.put(stageName, build.getStatus());
                 afterCurrentStage = true;
             } else {
                 if (afterCurrentStage) {
-                    stages.add(
-                            StageModel.builder()
-                                    .name(stageName)
-                                    .status(Build.Status.READY)
-                                    .build()
-                    );
+                    buildStatusMap.put(stageName, Build.Status.READY);
                 } else {
-                    stages.add(
-                            StageModel.builder()
-                                    .name(stageName)
-                                    .status(Build.Status.DEPLOYED)
-                                    .build()
-                    );
+                    buildStatusMap.put(stageName, Build.Status.DEPLOYED);
                 }
             }
         }
-        return stages;
+        return buildStatusMap;
     }
 }

@@ -69,13 +69,31 @@ public class JobBuildService {
     LogChunkDao logChunkDao;
 
     @Transactional
+    public void prepareJobs(Build build, Dickfile dickfile) {
+        dickfile.getStageNames().stream()
+                .map(dickfile::getStage)
+                .forEach(stage ->
+                        dickfile.getJobs(stage).stream()
+                                .map(job -> {
+                                    JobBuild jobBuild = new JobBuild();
+                                    jobBuild.setName(job.getName());
+                                    jobBuild.setBuild(build);
+                                    jobBuild.setStage(stage.getName());
+                                    jobBuild.setDeploy(job.getDeploy());
+                                    jobBuild.setStatus(JobBuild.Status.WAITING);
+                                    return jobBuild;
+                                }).forEach(jobBuildDao::save)
+                );
+    }
+
+    @Transactional
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
         build.setStatus(Build.Status.IN_PROGRESS);
         build.setCurrentStage(stage.getName());
         buildDao.save(build);
         jobs.stream()
-                .forEach(job -> workerService.sheduleJobBuild(build, stage.getName(), job));
+                .forEach(job -> workerService.scheduleJobBuild(build, stage.getName(), job));
     }
 
     @Transactional
@@ -193,4 +211,5 @@ public class JobBuildService {
                 });
         updateBuildStatus(build);
     }
+
 }
