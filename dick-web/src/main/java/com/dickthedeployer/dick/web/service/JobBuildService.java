@@ -25,6 +25,8 @@ import com.dickthedeployer.dick.web.domain.LogChunk;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
+import com.dickthedeployer.dick.web.model.LogChunkModel;
+import com.dickthedeployer.dick.web.model.OutputModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -212,4 +215,26 @@ public class JobBuildService {
         updateBuildStatus(build);
     }
 
+    @Transactional
+    public List<LogChunkModel> getLogChunks(Long id, Date creationDate) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        List<LogChunk> logChunks = creationDate == null ?
+                logChunkDao.findByJobBuild(jobBuild) :
+                logChunkDao.findByJobBuildAndCreationDateAfter(jobBuild, creationDate);
+        return logChunks.stream()
+                .map(logChunk ->
+                        LogChunkModel.builder()
+                                .output(logChunk.getBuildLog().getOutput())
+                                .creationDate(logChunk.getCreationDate())
+                                .build()
+                ).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public OutputModel getOutput(Long id) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        return OutputModel.builder()
+                .output(jobBuild.getBuildLog().getOutput())
+                .build();
+    }
 }
