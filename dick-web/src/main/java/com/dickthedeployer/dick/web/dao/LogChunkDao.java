@@ -29,5 +29,7 @@ public interface LogChunkDao extends JpaRepository<LogChunk, Long> {
 
     List<LogChunk> findByJobBuild(JobBuild jobBuild);
 
+    Long deleteByJobBuild(JobBuild jobBuild);
+
     List<LogChunk> findByJobBuildAndCreationDateAfter(JobBuild jobBuild, Date date);
 }

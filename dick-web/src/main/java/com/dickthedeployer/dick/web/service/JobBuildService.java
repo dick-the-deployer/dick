@@ -130,6 +130,7 @@ public class JobBuildService {
         jobBuild.getWorker().setStatus(Worker.Status.READY);
         jobBuild.getBuildLog().setOutput(log);
         jobBuildDao.save(jobBuild);
+        logChunkDao.deleteByJobBuild(jobBuild);
 
         updateBuildStatus(jobBuild.getBuild());
     }
@@ -141,6 +142,7 @@ public class JobBuildService {
         jobBuild.getWorker().setStatus(Worker.Status.READY);
         jobBuild.getBuildLog().setOutput(buildOutput);
         jobBuildDao.save(jobBuild);
+        logChunkDao.deleteByJobBuild(jobBuild);
 
         Build build = jobBuild.getBuild();
         Build.Status status = updateBuildStatus(build);

@@ -67,8 +67,10 @@ public class JobBuildController {
     }
 
     @RequestMapping(value = "/{id}/chunks", method = RequestMethod.GET)
-    List<LogChunkModel> getLogChunks(@PathVariable Long id, @RequestParam(required = false, name = "creationDate") Date creationDate) {
-        return jobBuildService.getLogChunks(id, creationDate);
+    List<LogChunkModel> getLogChunks(@PathVariable Long id,
+                                     @RequestParam(required = false, name = "creationDate")
+                                     Long creationDate) {
+        return jobBuildService.getLogChunks(id, creationDate != null ? new Date(creationDate) : null);
     }
 
     @RequestMapping(value = "/{id}/output", method = RequestMethod.GET)
