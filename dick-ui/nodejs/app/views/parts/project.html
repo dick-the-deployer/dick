@@ -32,6 +32,11 @@
                              style="width: {{stage.status === 'READY' ? 0 : 100}}%"
                              title="{{stage.name}}">
 
+                            <a href="/{{project.namespace}}/{{project.name}}/{{project.lastBuild.id}}/{{stage.name}}"
+                               class="text-white pull-left mg-l-sm">
+                                <i class="fa fa-external-link-square"></i>
+                            </a>
+
                             <a href="#" class="text-white" ng-click="kill(project)"
                                ng-show="stage.status === 'IN_PROGRESS'">
                                 <i class="fa fa-pause"></i>
@@ -41,11 +46,10 @@
                                 <i class="fa fa-forward"></i>
                             </a>
 
-                            <a href="#" ng-click="buildFirstStage(project)" class="text-white pull-left mg-l-sm"
+                            <a href="#" ng-click="buildFirstStage(project)" class="text-white mg-l-sm"
                                ng-show="project.lastBuild.currentStage === null && $first">
                                 <i class="fa fa-forward"></i>
                             </a>
-
                         </div>
                     </div>
                 </div>

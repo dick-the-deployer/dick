@@ -18,8 +18,9 @@ package com.dickthedeployer.dick.web.dao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 /**
  *
@@ -28,6 +29,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface JobBuildDao extends JpaRepository<JobBuild, Long> {
 
     List<JobBuild> findByBuild(Build build);
+
+    JobBuild findByBuildAndStageAndName(Build build, String stage, String name);
 
     List<JobBuild> findByStatusAndWorkerNull(JobBuild.Status status);
 

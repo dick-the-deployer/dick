@@ -15,14 +15,15 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
-import com.dickthedeployer.dick.web.model.BuildForm;
-import com.dickthedeployer.dick.web.model.BuildOrder;
-import com.dickthedeployer.dick.web.model.BuildStatus;
+import com.dickthedeployer.dick.web.model.*;
 import com.dickthedeployer.dick.web.service.JobBuildService;
 import com.dickthedeployer.dick.web.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -64,5 +65,18 @@ public class JobBuildController {
     void reportProgress(@PathVariable Long id, @RequestBody BuildForm form) {
         jobBuildService.reportProgress(id, form.getLog());
     }
+
+    @RequestMapping(value = "/{id}/chunks", method = RequestMethod.GET)
+    List<LogChunkModel> getLogChunks(@PathVariable Long id,
+                                     @RequestParam(required = false, name = "creationDate")
+                                     Long creationDate) {
+        return jobBuildService.getLogChunks(id, creationDate != null ? new Date(creationDate) : null);
+    }
+
+    @RequestMapping(value = "/{id}/output", method = RequestMethod.GET)
+    OutputModel getOutput(@PathVariable Long id) {
+        return jobBuildService.getOutput(id);
+    }
+
 
 }

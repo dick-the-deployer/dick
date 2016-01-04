@@ -36,6 +36,7 @@ module.exports = {
                     '^/groups.*$ /index.html',
                     '^/projects.*$ /index.html',
                     '^/workers.*$ /index.html',
+                    '^/asd.*$ /index.html',
                     '^/403$ /index.html',
                     '^/404$ /index.html',
                     '^/500$ /index.html'

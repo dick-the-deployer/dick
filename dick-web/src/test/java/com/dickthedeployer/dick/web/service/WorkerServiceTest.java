@@ -16,28 +16,23 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
-import com.dickthedeployer.dick.web.domain.Build;
-import com.dickthedeployer.dick.web.domain.JobBuild;
-import com.dickthedeployer.dick.web.domain.Namespace;
-import com.dickthedeployer.dick.web.domain.Project;
-import com.dickthedeployer.dick.web.domain.Worker;
-import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.domain.*;
+import com.dickthedeployer.dick.web.model.dickfile.*;
 import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
-import com.dickthedeployer.dick.web.model.dickfile.Job;
-import com.dickthedeployer.dick.web.model.dickfile.Pipeline;
-import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.dickthedeployer.dick.web.service.util.OptymisticLockService;
-import static com.watchrabbit.commons.sleep.Sleep.sleep;
-import static java.util.Arrays.asList;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static com.watchrabbit.commons.sleep.Sleep.sleep;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 /**
  *
@@ -50,6 +45,9 @@ public class WorkerServiceTest extends ContextTestBase {
 
     @Autowired
     OptymisticLockService optymisticLockService;
+
+    @Autowired
+    JobBuildService jobBuildService;
 
     @Test
     public void shouldRegisterNewWorker() {
@@ -66,7 +64,8 @@ public class WorkerServiceTest extends ContextTestBase {
         Stage firstStage = new Stage("first", true);
         Dickfile dickfile = prepareDickfile(firstStage);
 
-        workerService.sheduleJobBuild(build, "first", dickfile.getJobs(firstStage).get(0));
+        jobBuildService.prepareJobs(build, dickfile);
+        workerService.scheduleJobBuild(build, "first", dickfile.getJobs(firstStage).get(0));
 
         List<JobBuild> builds = jobBuildDao.findByBuild(build);
         assertThat(builds).hasSize(1);

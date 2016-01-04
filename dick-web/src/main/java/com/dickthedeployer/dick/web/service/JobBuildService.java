@@ -17,12 +17,16 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
+import com.dickthedeployer.dick.web.dao.LogChunkDao;
 import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
+import com.dickthedeployer.dick.web.domain.LogChunk;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
+import com.dickthedeployer.dick.web.model.LogChunkModel;
+import com.dickthedeployer.dick.web.model.OutputModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
@@ -32,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -63,6 +68,27 @@ public class JobBuildService {
     @Autowired
     DickYmlService dickYmlService;
 
+    @Autowired
+    LogChunkDao logChunkDao;
+
+    @Transactional
+    public void prepareJobs(Build build, Dickfile dickfile) {
+        dickfile.getStageNames().stream()
+                .map(dickfile::getStage)
+                .forEach(stage ->
+                        dickfile.getJobs(stage).stream()
+                                .map(job -> {
+                                    JobBuild jobBuild = new JobBuild();
+                                    jobBuild.setName(job.getName());
+                                    jobBuild.setBuild(build);
+                                    jobBuild.setStage(stage.getName());
+                                    jobBuild.setDeploy(job.getDeploy());
+                                    jobBuild.setStatus(JobBuild.Status.WAITING);
+                                    return jobBuild;
+                                }).forEach(jobBuildDao::save)
+                );
+    }
+
     @Transactional
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
@@ -70,7 +96,7 @@ public class JobBuildService {
         build.setCurrentStage(stage.getName());
         buildDao.save(build);
         jobs.stream()
-                .forEach(job -> workerService.sheduleJobBuild(build, stage.getName(), job));
+                .forEach(job -> workerService.scheduleJobBuild(build, stage.getName(), job));
     }
 
     @Transactional
@@ -89,9 +115,10 @@ public class JobBuildService {
     @Transactional
     public void reportProgress(Long id, String log) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        String deploymentLog = jobBuild.getBuildLog().getOutput();
-        jobBuild.getBuildLog().setOutput(deploymentLog + log);
-        jobBuildDao.save(jobBuild);
+        LogChunk logChunk = new LogChunk();
+        logChunk.setJobBuild(jobBuild);
+        logChunk.getBuildLog().setOutput(log);
+        logChunkDao.save(logChunk);
     }
 
     @Transactional
@@ -103,6 +130,7 @@ public class JobBuildService {
         jobBuild.getWorker().setStatus(Worker.Status.READY);
         jobBuild.getBuildLog().setOutput(log);
         jobBuildDao.save(jobBuild);
+        logChunkDao.deleteByJobBuild(jobBuild);
 
         updateBuildStatus(jobBuild.getBuild());
     }
@@ -114,6 +142,7 @@ public class JobBuildService {
         jobBuild.getWorker().setStatus(Worker.Status.READY);
         jobBuild.getBuildLog().setOutput(buildOutput);
         jobBuildDao.save(jobBuild);
+        logChunkDao.deleteByJobBuild(jobBuild);
 
         Build build = jobBuild.getBuild();
         Build.Status status = updateBuildStatus(build);
@@ -186,5 +215,28 @@ public class JobBuildService {
                     jobBuildDao.save(jobBuild);
                 });
         updateBuildStatus(build);
+    }
+
+    @Transactional
+    public List<LogChunkModel> getLogChunks(Long id, Date creationDate) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        List<LogChunk> logChunks = creationDate == null ?
+                logChunkDao.findByJobBuild(jobBuild) :
+                logChunkDao.findByJobBuildAndCreationDateAfter(jobBuild, creationDate);
+        return logChunks.stream()
+                .map(logChunk ->
+                        LogChunkModel.builder()
+                                .output(logChunk.getBuildLog().getOutput())
+                                .creationDate(logChunk.getCreationDate())
+                                .build()
+                ).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public OutputModel getOutput(Long id) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        return OutputModel.builder()
+                .output(jobBuild.getBuildLog().getOutput())
+                .build();
     }
 }

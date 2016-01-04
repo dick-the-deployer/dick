@@ -16,12 +16,18 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.dao.BuildDao;
+import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
+import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
+import com.dickthedeployer.dick.web.mapper.ProjectMapper;
+import com.dickthedeployer.dick.web.model.BuildDetailsModel;
 import com.dickthedeployer.dick.web.model.BuildModel;
+import com.dickthedeployer.dick.web.model.ProjectModel;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
@@ -36,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- *
  * @author mariusz
  */
 @Slf4j
@@ -47,7 +52,10 @@ public class BuildService {
     BuildDao buildDao;
 
     @Autowired
-    ProjectDao stackDao;
+    ProjectDao projectDao;
+
+    @Autowired
+    JobBuildDao jobBuildDao;
 
     @Autowired
     DickYmlService dickYmlService;
@@ -57,30 +65,29 @@ public class BuildService {
 
     @Transactional
     public void onTrigger(TriggerModel model) {
-        List<Project> projects = stackDao.findByNameAndRef(model.getName(), model.getRef());
+        List<Project> projects = projectDao.findByNameAndRef(model.getName(), model.getRef());
         projects.forEach(project -> {
             log.info("Found project {} for name {}", project.getId(), model.getName());
-            if (project != null) {
-                Build build = buildDao.save(new Build.Builder()
-                        .withCommitUrl(model.getCommitUrl())
-                        .withProject(project)
-                        .withSha(model.getSha())
-                        .build()
-                );
-                try {
-                    Dickfile dickfile = dickYmlService.loadDickFile(build);
-                    build.setStages(dickfile.getStageNames());
-                    build.setStatus(Build.Status.READY);
-                    buildDao.save(build);
-                    Stage firstStage = dickfile.getFirstStage();
-                    if (firstStage.isAutorun()) {
-                        jobBuildService.buildStage(build, dickfile, firstStage);
-                    }
-                } catch (DickFileMissingException ex) {
-                    log.info("Dickfile is missing", ex);
-                    build.setStatus(Build.Status.MISSING_DICKFILE);
-                    buildDao.save(build);
+            Build build = buildDao.save(new Build.Builder()
+                    .withCommitUrl(model.getCommitUrl())
+                    .withProject(project)
+                    .withSha(model.getSha())
+                    .build()
+            );
+            try {
+                Dickfile dickfile = dickYmlService.loadDickFile(build);
+                build.setStages(dickfile.getStageNames());
+                build.setStatus(Build.Status.READY);
+                buildDao.save(build);
+                Stage firstStage = dickfile.getFirstStage();
+                jobBuildService.prepareJobs(build, dickfile);
+                if (firstStage.isAutorun()) {
+                    jobBuildService.buildStage(build, dickfile, firstStage);
                 }
+            } catch (DickFileMissingException ex) {
+                log.info("Dickfile is missing", ex);
+                build.setStatus(Build.Status.MISSING_DICKFILE);
+                buildDao.save(build);
             }
         });
     }
@@ -108,4 +115,13 @@ public class BuildService {
         Build build = buildDao.findOne(buildId);
         jobBuildService.stop(build);
     }
+
+
+    public BuildDetailsModel getBuild(Long buildId) {
+        Build build = buildDao.findOne(buildId);
+        ProjectModel projectModel = ProjectMapper.mapProject(build.getProject());
+        List<JobBuild> jobBuilds = jobBuildDao.findByBuild(build);
+        return BuildDetailsMapper.mapBuildDetails(build, projectModel, jobBuilds);
+    }
+
 }
