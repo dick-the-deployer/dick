@@ -20,7 +20,8 @@
                  'col-md-6' : project.lastBuild.stages.length > 1}"
             >
                 <div class="row">
-                    <div class="progress mg-r-xs">
+                    <div class="progress mg-r-xs"
+                         ng-class="{'box-shadow': stage.name === project.lastBuild.currentStage}">
                         <div class="progress-bar progress-bar-striped"
                              ng-class="{'progress-bar-success': stage.status === 'DEPLOYED' || stage.status === 'DEPLOYED_STAGE',
                         'progress-bar-warning': stage.status === 'STOPPED',
@@ -37,16 +38,17 @@
                                 <i class="fa fa-external-link-square"></i>
                             </a>
 
-                            <a href="#" class="text-white" ng-click="kill(project)"
+                            <a href="#" class="text-white" ng-click="kill(project.lastBuild)"
                                ng-show="stage.status === 'IN_PROGRESS'">
                                 <i class="fa fa-pause"></i>
                             </a>
-                            <a href="#" ng-click="buildStage(project, stage)" class="text-white pull-right mg-r-sm"
+                            <a href="#" ng-click="buildStage(project.lastBuild, stage)"
+                               class="text-white pull-right mg-r-sm"
                                ng-show="stage.status === 'DEPLOYED_STAGE'">
                                 <i class="fa fa-forward"></i>
                             </a>
 
-                            <a href="#" ng-click="buildFirstStage(project)" class="text-white mg-l-sm"
+                            <a href="#" ng-click="buildFirstStage(project.lastBuild)" class="text-white mg-l-sm"
                                ng-show="project.lastBuild.currentStage === null && $first">
                                 <i class="fa fa-forward"></i>
                             </a>

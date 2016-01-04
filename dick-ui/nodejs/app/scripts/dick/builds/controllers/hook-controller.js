@@ -13,17 +13,22 @@ angular.module('dick.builds')
                 });
             };
 
-            $scope.buildStage = function (project, stage) {
-                var nextStageIndex = project.lastBuild.stages.indexOf(stage) + 1;
-                buildStage(project, nextStageIndex);
+            $scope.buildStage = function (build, stage) {
+                var nextStageIndex = build.stages.indexOf(stage) + 1;
+                buildStage(build, nextStageIndex);
             }
 
-            $scope.buildFirstStage = function (project) {
-                buildStage(project, 0);
+            $scope.rebuildStage = function (build, stage) {
+                var nextStageIndex = build.stages.indexOf(stage);
+                buildStage(build, nextStageIndex);
             }
 
-            $scope.kill = function (project) {
-                buildsResource.kill({id: project.lastBuild.id}).$promise.then(function () {
+            $scope.buildFirstStage = function (build) {
+                buildStage(build, 0);
+            }
+
+            $scope.kill = function (build) {
+                buildsResource.kill({id: build.id}).$promise.then(function () {
                     toaster.add({
                         type: 'success',
                         message: 'Build stopped'
@@ -31,10 +36,10 @@ angular.module('dick.builds')
                 });
             }
 
-            function buildStage(project, nextStageIndex) {
+            function buildStage(build, nextStageIndex) {
                 buildsResource.save({
-                    id: project.lastBuild.id,
-                    stage: project.lastBuild.stages[nextStageIndex].name
+                    id: build.id,
+                    stage: build.stages[nextStageIndex].name
                 }).$promise.then(function () {
                     toaster.add({
                         type: 'success',

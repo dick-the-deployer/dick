@@ -8,7 +8,7 @@ angular.module('dick.builds')
             } else if (input === 'DEPLOYED') {
                 return '<i class="fa fa-check-square-o"></i>';
             } else if (input === 'WAITING') {
-                return '<i class="fa fa-square-o"></i>';
+                return '<i class="fa fa-circle-o"></i>';
             } else if (input === 'IN_PROGRESS') {
                 return '<i class="fa fa-spin fa-spinner"></i>';
             } else if (input === 'FAILED') {
