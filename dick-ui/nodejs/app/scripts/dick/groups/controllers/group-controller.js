@@ -16,7 +16,7 @@ angular.module('dick.groups')
                 });
             var subscriber = rx.Observable.interval(2000)
                 .safeApply($scope, function () {
-                    groupsResource.get({name: name}).$promise.then(function (data) {
+                    groupsResource.getSilently({name: name}).$promise.then(function (data) {
                         $scope.group = data;
                     });
                 })

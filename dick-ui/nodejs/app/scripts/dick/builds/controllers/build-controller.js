@@ -22,7 +22,7 @@ angular.module('dick.builds')
 
             var subscriber = rx.Observable.interval(2000)
                 .safeApply($scope, function () {
-                    buildsResource.get({id: id}).$promise.then(function (data) {
+                    buildsResource.getSilently({id: id}).$promise.then(function (data) {
                         $scope.build = data;
                         $scope.stage = data.stages.find(function (candidate) {
                             return candidate.name === stage;
@@ -56,7 +56,7 @@ angular.module('dick.builds')
                         outputSubscriber = rx.Observable.interval(2001)
                             .safeApply($scope, function () {
                                 var creationDate = $scope.output.slice(-1).pop() ? $scope.output.slice(-1).pop().creationDate : null;
-                                jobBuildsResource.chunks({
+                                jobBuildsResource.chunksSilently({
                                     id: $scope.job.id,
                                     creationDate: creationDate
                                 }).$promise.then(function (data) {
