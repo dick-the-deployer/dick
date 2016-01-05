@@ -42,7 +42,7 @@ angular.module('dick.groups')
                         return elem.id;
                     });
                     if (ids.length !== 0) {
-                        projectsResource.all({ids: ids}).$promise.then(function (data) {
+                        projectsResource.allSilently({ids: ids}).$promise.then(function (data) {
                             $scope.projects = data;
                         });
                     }
