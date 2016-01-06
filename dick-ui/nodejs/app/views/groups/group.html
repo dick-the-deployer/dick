@@ -9,7 +9,14 @@
         <div class="panel-body" infinite-scroll="loadMore()" >
             <loader on="group"></loader>
 
-            <div ng-repeat="project in group.projects track by project.id" class="panel col-lg-3 col-md-4 col-sm-6">
+            <div ng-repeat="project in group.projects track by project.id" class="panel"
+                 ng-class="{
+                 'col-md-12' : group.projects.length === 1,
+                 'col-md-6' : group.projects.length === 2,
+                 'col-md-4' : group.projects.length > 2,
+                 'col-sm-12' : group.projects.length === 1,
+                 'col-sm-6' : group.projects.length > 1}"
+            >
 
                 <div ng-include=" '/views/parts/project.html'"></div>
             </div>

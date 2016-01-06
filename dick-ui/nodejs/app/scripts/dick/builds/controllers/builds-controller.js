@@ -2,8 +2,8 @@
 
 angular.module('dick.builds')
     .controller('BuildsController', ['MetadataService', '$scope', 'toaster', 'BuildsResource', '$window', '$stateParams',
-        '$location', 'ProjectsResource', 'rx',
-        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, projectsResource, rx) {
+        '$location', 'ProjectsResource', 'rx', 'settings',
+        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, projectsResource, rx, settings) {
             if ($window.angular.isUndefined($stateParams.namespace) ||
                 $stateParams.namespace === '' || $window.angular.isUndefined($stateParams.name) ||
                 $stateParams.name === '') {
@@ -39,7 +39,7 @@ angular.module('dick.builds')
                 }
             });
             var deferred;
-            var subscriber = rx.Observable.interval(2000)
+            var subscriber = rx.Observable.interval(settings.interval)
                 .filter(function () {
                     return !deferred || deferred.$resolved;
                 })

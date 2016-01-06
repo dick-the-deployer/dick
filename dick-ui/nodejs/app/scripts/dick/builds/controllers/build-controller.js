@@ -2,8 +2,8 @@
 
 angular.module('dick.builds')
     .controller('BuildController', ['MetadataService', '$scope', 'toaster', 'BuildsResource', '$window', '$stateParams',
-        '$location', 'JobBuildsResource', 'rx',
-        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, jobBuildsResource, rx) {
+        '$location', 'JobBuildsResource', 'rx', 'settings',
+        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, jobBuildsResource, rx, settings) {
             if ($window.angular.isUndefined($stateParams.id) ||
                 $stateParams.id === '' || $window.angular.isUndefined($stateParams.namespace) ||
                 $stateParams.namespace === '' || $window.angular.isUndefined($stateParams.name) ||
@@ -25,7 +25,7 @@ angular.module('dick.builds')
             }
 
             var deferred;
-            var subscriber = rx.Observable.interval(2000)
+            var subscriber = rx.Observable.interval(settings.interval)
                 .filter(function () {
                     return !deferred || deferred.$resolved;
                 })
@@ -62,7 +62,7 @@ angular.module('dick.builds')
                             $scope.output = data;
                         });
 
-                        outputSubscriber = rx.Observable.interval(2001)
+                        outputSubscriber = rx.Observable.interval(settings.interval)
                             .safeApply($scope, function () {
                                 var creationDate = $scope.output.slice(-1).pop() ? $scope.output.slice(-1).pop().creationDate : null;
                                 jobBuildsResource.chunksSilently({

@@ -20,9 +20,16 @@
            ng-show="stage.status === 'IN_PROGRESS'">
             <i class="fa fa-pause"></i>
         </a>
+
         <a href="#" ng-click="buildStage(build, stage)" class="text-white pull-right mg-r-sm ng-hide"
            ng-show="stage.status === 'DEPLOYED_STAGE'">
             <i class="fa fa-forward"></i>
+        </a>
+
+        <a href="#" class="text-white pull-right mg-r-sm ng-hide"
+           ng-show="build.status !== 'IN_PROGRESS'"
+           ng-click="rebuildStage(build, stage)">
+            <i class="fa fa-refresh"></i>
         </a>
 
         <a href="#" ng-click="buildFirstStage(build)" class="text-white mg-l-sm ng-hide"
