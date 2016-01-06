@@ -33,6 +33,8 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
     List<Project> findByIdIn(List<Long> ids, Sort sort);
 
+    Project findByNamespaceNameAndName(String namespaceName, String name);
+
     Page<Project> findByNameContaining(String name, Pageable pageable);
 
     Project findByName(String name);

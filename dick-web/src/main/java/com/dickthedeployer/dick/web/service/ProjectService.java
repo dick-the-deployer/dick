@@ -73,28 +73,27 @@ public class ProjectService {
 
     public List<ProjectModel> getProjects(List<Long> ids) {
         return projectDao.findByIdIn(ids, new Sort(Sort.Direction.DESC, "creationDate")).stream()
-                .map((Project project) -> {
-                    ProjectModel model = ProjectMapper.mapProject(project);
-                    model.setLastBuild(buildService.findLastBuild(project));
-                    return model;
-                }).collect(toList());
+                .map(this::mapProject).collect(toList());
     }
 
     public List<ProjectModel> getProjectsLikeName(String name, int page, int size) {
         return projectDao.findByNameContaining(name, new PageRequest(page, size, Sort.Direction.DESC, "creationDate")).getContent().stream()
-                .map((Project project) -> {
-                    ProjectModel model = ProjectMapper.mapProject(project);
-                    model.setLastBuild(buildService.findLastBuild(project));
-                    return model;
-                }).collect(toList());
+                .map(this::mapProject).collect(toList());
     }
 
     public List<ProjectModel> getProjects(int page, int size) {
         return projectDao.findAll(new PageRequest(page, size, Sort.Direction.DESC, "creationDate")).getContent().stream()
-                .map((Project project) -> {
-                    ProjectModel model = ProjectMapper.mapProject(project);
-                    model.setLastBuild(buildService.findLastBuild(project));
-                    return model;
-                }).collect(toList());
+                .map(this::mapProject).collect(toList());
+    }
+
+    public ProjectModel getProject(String namespaceName, String name) {
+        Project project = projectDao.findByNamespaceNameAndName(namespaceName, name);
+        return mapProject(project);
+    }
+
+    private ProjectModel mapProject(Project project) {
+        ProjectModel model = ProjectMapper.mapProject(project);
+        model.setLastBuild(buildService.findLastBuild(project));
+        return model;
     }
 }

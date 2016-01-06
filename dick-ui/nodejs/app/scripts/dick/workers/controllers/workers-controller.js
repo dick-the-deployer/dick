@@ -4,6 +4,7 @@ angular.module('dick.workers')
         .controller('WorkersController', ['WorkersResource', '$scope', 'MetadataService',
             function (workersResource, $scope, metadataService) {
                 metadataService.setTitle('Workers');
+                metadataService.setPageTitle('Workers');
                 var page = 0, size = 20;
 
                 workersResource.query({page: page, size: size}).$promise.then(function (data) {

@@ -18,7 +18,7 @@
                 No groups to show
             </p>
             <ul class="content-list">
-                <li ng-repeat="group in groups">
+                <li ng-repeat="group in groups track by group.name">
                     <span class="actions">
                         <button data-toggle="button" class="btn btn-white btn-sm">
                             <i class="fa fa-heart"></i>

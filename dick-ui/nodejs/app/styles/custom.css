@@ -96,3 +96,29 @@
 .content-list li .actions {
     float: right;
 }
+
+/*********************/
+/* Skin panel style */
+.panel-inverse {
+    background-color: #333333;
+    color: #dddddd;
+    border-color: #000;
+}
+
+.panel-inverse > .panel-heading {
+    color: #c2e0f4;
+    background-color: #222222;
+    border-color: #000;
+}
+
+.panel-inverse > .panel-heading + .panel-collapse .panel-body {
+    border-top-color: #000;
+}
+
+.panel-inverse > .panel-heading a {
+    color: #c2e0f4;
+}
+
+.panel-inverse > .panel-footer + .panel-collapse .panel-body {
+    border-bottom-color: #000;
+}

@@ -16,14 +16,13 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.model.BuildModel;
 import com.dickthedeployer.dick.web.model.ProjectModel;
+import com.dickthedeployer.dick.web.service.BuildService;
 import com.dickthedeployer.dick.web.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -42,6 +41,9 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    BuildService buildService;
+
     @RequestMapping(method = POST)
     public void createProject(@RequestBody @Valid ProjectModel projectModel) throws NameTakenException {
         projectService.createProject(projectModel);
@@ -49,8 +51,7 @@ public class ProjectController {
 
     @RequestMapping(method = GET)
     public List<ProjectModel> getProjects(@RequestParam("page") int page, @RequestParam("size") int size,
-                                          @RequestParam(required = false, name = "name") String name,
-                                          @RequestParam(required = false, name = "ids") List<Long> ids) {
+                                          @RequestParam(required = false, name = "name") String name) {
         if (StringUtils.isEmpty(name)) {
             return projectService.getProjects(page, size);
         } else {
@@ -61,5 +62,16 @@ public class ProjectController {
     @RequestMapping(method = GET, value = "/all")
     public List<ProjectModel> getProjects(@RequestParam("ids") List<Long> ids) {
         return projectService.getProjects(ids);
+    }
+
+    @RequestMapping(method = GET, value = "/{namespace}/{name}")
+    public ProjectModel getProject(@PathVariable("namespace") String namespace, @PathVariable("name") String name) {
+        return projectService.getProject(namespace, name);
+    }
+
+    @RequestMapping(method = GET, value = "/{namespace}/{name}/builds")
+    public List<BuildModel> getBuilds(@PathVariable("namespace") String namespace, @PathVariable("name") String name,
+                                      @RequestParam("page") int page, @RequestParam("size") int size) {
+        return buildService.getBuilds(namespace, name, page, size);
     }
 }

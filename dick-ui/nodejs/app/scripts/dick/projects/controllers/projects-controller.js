@@ -4,6 +4,7 @@ angular.module('dick.groups')
     .controller('ProjectsController', ['ProjectsResource', '$scope', 'MetadataService', 'rx',
         function (projectsResource, $scope, metadataService, rx) {
             metadataService.setTitle('Projects');
+            metadataService.setPageTitle('Projects');
             var page = 0, size = 20;
             var load = function (filter) {
                 projectsResource.query(filter).$promise.then(function (data) {
@@ -36,13 +37,18 @@ angular.module('dick.groups')
                     });
                 }
             };
+            var deferred;
             var subscriber = rx.Observable.interval(2000)
+                .filter(function () {
+                    return !deferred || deferred.$resolved;
+                })
                 .safeApply($scope, function () {
                     var ids = $scope.projects.map(function (elem) {
                         return elem.id;
                     });
                     if (ids.length !== 0) {
-                        projectsResource.allSilently({ids: ids}).$promise.then(function (data) {
+                        deferred = projectsResource.allSilently({ids: ids});
+                        deferred.$promise.then(function (data) {
                             $scope.projects = data;
                         });
                     }

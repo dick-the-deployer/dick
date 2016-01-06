@@ -4,6 +4,7 @@ angular.module('dick.groups')
         .controller('GroupsController', ['GroupsResource', '$scope', 'MetadataService',
             function (groupsResource, $scope, metadataService) {
                 metadataService.setTitle('Groups');
+                metadataService.setPageTitle('Groups');
                 var page = 0, size = 20;
 
                 groupsResource.query({page: page, size: size}).$promise.then(function (data) {

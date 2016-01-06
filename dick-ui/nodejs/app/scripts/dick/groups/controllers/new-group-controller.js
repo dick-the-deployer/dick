@@ -3,7 +3,8 @@
 angular.module('dick.groups')
         .controller('NewGroupController', ['GroupsResource', '$scope', 'MetadataService', 'toaster', 'statusCode', '$state',
             function (groupsResource, $scope, metadataService, toaster, statusCode, $state) {
-                metadataService.setTitle('New group');
+                metadataService.setTitle('New Group');
+                metadataService.setPageTitle('New Group');
                 $scope.prefix = document.location.origin;
                 $scope.model = {};
 

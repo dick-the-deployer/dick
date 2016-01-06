@@ -41,6 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author mariusz
  */
@@ -124,4 +126,12 @@ public class BuildService {
         return BuildDetailsMapper.mapBuildDetails(build, projectModel, jobBuilds);
     }
 
+    public List<BuildModel> getBuilds(String namespace, String name, int page, int size) {
+        Project project = projectDao.findByNamespaceNameAndName(namespace, name);
+        Page<Build> builds = buildDao.findByProject(project, new PageRequest(page, size,
+                Sort.Direction.DESC, "creationDate"));
+        return builds.getContent().stream()
+                .map(BuildMapper::mapBuild)
+                .collect(toList());
+    }
 }
