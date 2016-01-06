@@ -70,9 +70,10 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.stop(build);
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
-
+        worker = workerDao.findByName(jobBuild.getWorkerName());
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.STOPPED);
-        assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
+        assertThat(jobBuild.getWorker()).isNull();
+        assertThat(worker.getStatus()).isEqualTo(Worker.Status.READY);
         assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.STOPPED);
     }
 
@@ -107,8 +108,10 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.reportFailure(jobBuild.getId(), "foo");
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
+        worker = workerDao.findByName(jobBuild.getWorkerName());
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
-        assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
+        assertThat(jobBuild.getWorker()).isNull();
+        assertThat(worker.getStatus()).isEqualTo(Worker.Status.READY);
         assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.FAILED);
 
         String output = transactionalQueryingService.getOutput(jobBuild.getId());
@@ -125,8 +128,10 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.reportFailure(jobBuild.getId(), "foo");
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
+        worker = workerDao.findByName(jobBuild.getWorkerName());
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
-        assertThat(jobBuild.getWorker().getStatus()).isEqualTo(Worker.Status.READY);
+        assertThat(jobBuild.getWorker()).isNull();
+        assertThat(worker.getStatus()).isEqualTo(Worker.Status.READY);
         assertThat(jobBuild.getBuild().getStatus()).isEqualTo(Build.Status.IN_PROGRESS);
     }
 
@@ -146,6 +151,7 @@ public class JobBuildServiceTest extends ContextTestBase {
     private JobBuild produceJobBuild(Worker worker, Build build, JobBuild.Status status) {
         JobBuild jobBuild = new JobBuild();
         jobBuild.setWorker(worker);
+        jobBuild.setWorkerName(worker.getName());
         jobBuild.setBuild(build);
         jobBuild.setStatus(status);
         jobBuild.setDeploy(asList("echo bar"));

@@ -54,6 +54,7 @@ public class BuildDetailsMapper {
                                                                         .name(jobBuild.getName())
                                                                         .status(jobBuild.getStatus())
                                                                         .id(jobBuild.getId())
+                                                                        .worker(jobBuild.getWorkerName())
                                                                         .build()
                                                         ).collect(toList())
                                                 ).build()

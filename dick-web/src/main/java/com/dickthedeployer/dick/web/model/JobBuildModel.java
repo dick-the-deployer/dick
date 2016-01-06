@@ -32,5 +32,6 @@ public class JobBuildModel {
 
     private Long id;
     private String name;
+    private String worker;
     private JobBuild.Status status;
 }
