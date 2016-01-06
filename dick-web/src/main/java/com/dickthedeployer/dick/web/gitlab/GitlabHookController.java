@@ -15,12 +15,14 @@
  */
 package com.dickthedeployer.dick.web.gitlab;
 
+import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *
@@ -34,7 +36,7 @@ public class GitlabHookController {
     GitlabService gitlabService;
 
     @RequestMapping(method = POST, value = "/api/hooks/gitlab")
-    public void receiveHook(@RequestBody GitlabTrigger trigger) {
+    public void receiveHook(@RequestBody GitlabTrigger trigger) throws BuildAlreadyQueuedException {
         gitlabService.onTrigger(trigger);
     }
 

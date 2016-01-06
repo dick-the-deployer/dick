@@ -42,6 +42,8 @@ public class Build {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
+    private boolean inQueue = true;
+
     private String commitUrl;
 
     private String sha;

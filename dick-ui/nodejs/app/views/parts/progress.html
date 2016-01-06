@@ -28,7 +28,7 @@
         </a>
 
         <a href="#" class="text-white pull-right mg-r-sm ng-hide"
-           ng-show="build.status !== 'IN_PROGRESS'"
+           ng-show="build.status !== 'IN_PROGRESS' && build.status !== 'READY'"
            ng-click="rebuildStage(build, stage)">
             <i class="fa fa-refresh"></i>
         </a>

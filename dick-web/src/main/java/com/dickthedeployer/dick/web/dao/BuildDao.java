@@ -27,7 +27,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BuildDao extends JpaRepository<Build, Long> {
 
-    Build findByProjectAndStatus(Project project, Build.Status status);
+    Build findByProjectAndInQueueTrue(Project project);
 
     Page<Build> findByProject(Project project, Pageable pageable);
 }
