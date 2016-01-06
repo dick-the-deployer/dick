@@ -13,6 +13,8 @@ angular.module('dick.metadata')
                 },
                 setTitle: function (newTitle) {
                     this.title = newTitle;
+                },
+                setPageTitle: function (newTitle) {
                     this.pageTitle = newTitle + ' | Dick the Deployer';
                 },
                 reset: function () {

@@ -3,7 +3,8 @@
 angular.module('dick.groups')
         .controller('NewProjectController', ['ProjectsResource', '$scope', 'MetadataService', 'toaster', 'statusCode', '$state', 'NamespacesResource',
             function (projectsResource, $scope, metadataService, toaster, statusCode, $state, namespacesResource) {
-                metadataService.setTitle('New project');
+                metadataService.setTitle('New Project');
+                metadataService.setPageTitle('New Project');
                 $scope.prefix = document.location.origin;
                 $scope.model = {environmentVariables: []};
 

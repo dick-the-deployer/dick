@@ -14,15 +14,24 @@ angular.module('dick.builds')
             }
             var id = $stateParams.id, name = $stateParams.name,
                 namespace = $stateParams.namespace, stage = $stateParams.stage;
-            metadataService.setTitle(namespace + ' / ' + name + ': ' + stage);
+            metadataService.setTitle(
+                '<a href="/groups/' + namespace + '">' + namespace + '</a>' + '</a> / ' +
+                '<a href="/' + namespace + '/' + name + '">' + name + '</a>: ' + stage
+            );
+            metadataService.setPageTitle(namespace + ' / ' + name + ': ' + stage);
 
             $scope.selectJob = function (newJob) {
                 $scope.job = newJob;
             }
 
+            var deferred;
             var subscriber = rx.Observable.interval(2000)
+                .filter(function () {
+                    return !deferred || deferred.$resolved;
+                })
                 .safeApply($scope, function () {
-                    buildsResource.getSilently({id: id}).$promise.then(function (data) {
+                    deferred = buildsResource.getSilently({id: id});
+                    deferred.$promise.then(function (data) {
                         $scope.build = data;
                         $scope.stage = data.stages.find(function (candidate) {
                             return candidate.name === stage;

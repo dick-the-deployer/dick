@@ -1,0 +1,63 @@
+<section>
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="pull-right">
+                <span class="text-muted">Created: </span>{{project.creationDate| amTimeAgo}}
+            </div>
+            <div>
+                <span class="text-muted">Repository: </span>{{project.repository}}
+            </div>
+            <div>
+                <span class="text-muted">Ref: </span>{{project.ref}}
+            </div>
+
+        </header>
+
+
+        <div class="panel-body" infinite-scroll="loadMore()">
+            <loader on="builds"></loader>
+
+            <p ng-show="builds.length === 0" class="text-center text-muted">
+                No builds to show
+            </p>
+
+            <ul class="content-list">
+                <li ng-repeat="build in builds track by build.id">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div>
+                                <span class="text-muted">Number: </span> {{build.id}}
+                            </div>
+                            <div>
+                                <span class="text-muted">Started: </span>{{build.creationDate| amTimeAgo}}
+                            </div>
+                            <div>
+                                <span class="text-muted">Stage: </span>{{build.currentStage}}
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div ng-repeat="stage in build.stages"
+                                 ng-class="{'col-lg-12' : project.lastBuild.stages.length === 1,
+                 'col-lg-6' : project.lastBuild.stages.length === 2,
+                 'col-lg-4' : project.lastBuild.stages.length > 2,
+                 'col-md-12' : project.lastBuild.stages.length === 1,
+                 'col-md-6' : project.lastBuild.stages.length > 1}"
+                            >
+                                <div class="row">
+                                    <div class="mg-b-xs">
+                                        <button data-toggle="button" class="btn btn-white btn-xs" title="restart"
+                                                ng-click="rebuildStage(build, stage)" ng-controller="HookController">
+                                            <i class="fa fa-refresh"></i>
+                                        </button>
+                                        {{stage.name}}
+                                    </div>
+                                    <stage-progress project=project stage=stage build=build></stage-progress>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+    </section>
+</section>
