@@ -115,7 +115,10 @@ public class WorkerServiceTest extends ContextTestBase {
 
     @Test
     public void shouldAssignWorker() {
-        JobBuild jobBuild = jobBuildDao.save(new JobBuild());
+        JobBuild jobBuild = new JobBuild();
+        Build build = buildDao.save(new Build());
+        jobBuild.setBuild(build);
+        jobBuild = jobBuildDao.save(jobBuild);
         Worker worker = workerDao.save(new Worker());
 
         sleep(2, TimeUnit.SECONDS);
