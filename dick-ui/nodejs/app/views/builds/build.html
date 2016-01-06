@@ -61,8 +61,11 @@
                 <div class="col-md-10 ">
                     <div class="panel box-shadow panel-default">
                         <header class="panel-heading">
+                            <span class="text-muted">Console Log </span>
                             {{job.name}}
-                            <span class="text-muted">console log</span>
+                            <span class="text-muted" ng-show="job.worker">on</span>
+                            <span ng-show="job.worker">{{job.worker}}</span>
+                            <span class="text-muted" ng-show="job.worker">worker</span>
                         </header>
                         <div class="panel-body">
                             <div class="text-center text-muted"

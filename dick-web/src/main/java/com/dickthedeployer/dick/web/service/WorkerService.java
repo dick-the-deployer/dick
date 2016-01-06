@@ -78,6 +78,7 @@ public class WorkerService {
     public void scheduleJobBuild(Build build, String stageName, Job job) {
         JobBuild jobBuild = jobBuildDao.findByBuildAndStageAndName(build, stageName, job.getName());
         jobBuild.setStatus(JobBuild.Status.READY);
+        jobBuild.setWorkerName(null);
         jobBuild.setEnvironment(getEnvironment(build, job));
         jobBuildDao.save(jobBuild);
     }
@@ -100,6 +101,7 @@ public class WorkerService {
 
     private void assignToWorker(JobBuild jobBuild, Worker worker) {
         jobBuild.setWorker(worker);
+        jobBuild.setWorkerName(worker.getName());
         worker.setStatus(Worker.Status.BUSY);
         jobBuildDao.save(jobBuild);
         workerDao.save(worker);
@@ -112,4 +114,9 @@ public class WorkerService {
                 .collect(toList());
     }
 
+    @Transactional
+    public void readyWorker(Worker worker) {
+        worker.setStatus(Worker.Status.READY);
+        workerDao.save(worker);
+    }
 }

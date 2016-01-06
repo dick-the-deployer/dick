@@ -48,12 +48,14 @@ public class JobBuild {
 
     private String name;
 
+    private String workerName;
+
     private String stage;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.READY;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Worker worker;
 
     @Version

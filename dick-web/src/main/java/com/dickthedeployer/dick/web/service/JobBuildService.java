@@ -127,7 +127,8 @@ public class JobBuildService {
         if (!jobBuild.getStatus().equals(JobBuild.Status.STOPPED)) {
             jobBuild.setStatus(JobBuild.Status.FAILED);
         }
-        jobBuild.getWorker().setStatus(Worker.Status.READY);
+        workerService.readyWorker(jobBuild.getWorker());
+        jobBuild.setWorker(null);
         jobBuild.getBuildLog().setOutput(log);
         jobBuildDao.save(jobBuild);
         logChunkDao.deleteByJobBuild(jobBuild);
@@ -139,7 +140,8 @@ public class JobBuildService {
     public void reportSuccess(Long id, String buildOutput) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
         jobBuild.setStatus(JobBuild.Status.DEPLOYED);
-        jobBuild.getWorker().setStatus(Worker.Status.READY);
+        workerService.readyWorker(jobBuild.getWorker());
+        jobBuild.setWorker(null);
         jobBuild.getBuildLog().setOutput(buildOutput);
         jobBuildDao.save(jobBuild);
         logChunkDao.deleteByJobBuild(jobBuild);
@@ -205,7 +207,8 @@ public class JobBuildService {
                 .filter(jobBuild -> jobBuild.getStatus().equals(JobBuild.Status.IN_PROGRESS))
                 .forEach(jobBuild -> {
                     jobBuild.setStatus(JobBuild.Status.STOPPED);
-                    jobBuild.getWorker().setStatus(Worker.Status.READY);
+                    workerService.readyWorker(jobBuild.getWorker());
+                    jobBuild.setWorker(null);
                     jobBuildDao.save(jobBuild);
                 });
         jobBuilds.stream()

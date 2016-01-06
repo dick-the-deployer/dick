@@ -2,13 +2,19 @@
     <section class="panel">
         <header class="panel-heading">
             <div class="pull-right">
-                <span class="text-muted">Created: </span>{{project.creationDate| amTimeAgo}}
+                <button class="btn btn-default" type="button"
+                        ng-controller="HookController" ng-click="startBuild(project)">
+                    <i class="fa fa-chevron-right mg-r-xs"></i>BUILD PROJECT
+                </button>
             </div>
             <div>
                 <span class="text-muted">Repository: </span>{{project.repository}}
             </div>
             <div>
                 <span class="text-muted">Ref: </span>{{project.ref}}
+            </div>
+            <div>
+                <span class="text-muted">Created: </span>{{project.creationDate| amTimeAgo}}
             </div>
 
         </header>

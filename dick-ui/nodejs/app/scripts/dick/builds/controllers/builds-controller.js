@@ -23,7 +23,6 @@ angular.module('dick.builds')
             projectsResource.get({namespace: namespace, name: name})
                 .$promise.then(function (data) {
                 $scope.project = data;
-                console.log(data);
             });
 
 
@@ -48,7 +47,7 @@ angular.module('dick.builds')
                         namespace: namespace,
                         name: name,
                         page: 0,
-                        size: $scope.builds.length
+                        size: $scope.builds.length > size ? $scope.builds.length : size
                     });
                     deferred.$promise.then(function (data) {
                         $scope.builds = data;

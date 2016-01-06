@@ -16,9 +16,9 @@ angular.module('dick.builds')
                 namespace = $stateParams.namespace, stage = $stateParams.stage;
             metadataService.setTitle(
                 '<a href="/groups/' + namespace + '">' + namespace + '</a>' + '</a> / ' +
-                '<a href="/' + namespace + '/' + name + '">' + name + '</a>: ' + stage
+                '<a href="/' + namespace + '/' + name + '">' + name + '</a> - ' + stage
             );
-            metadataService.setPageTitle(namespace + ' / ' + name + ': ' + stage);
+            metadataService.setPageTitle(namespace + ' / ' + name + ' - ' + stage);
 
             $scope.selectJob = function (newJob) {
                 $scope.job = newJob;
