@@ -102,6 +102,7 @@ public class WorkerService {
     private void assignToWorker(JobBuild jobBuild, Worker worker) {
         jobBuild.setWorker(worker);
         jobBuild.setWorkerName(worker.getName());
+        jobBuild.getBuild().setInQueue(false);
         worker.setStatus(Worker.Status.BUSY);
         jobBuildDao.save(jobBuild);
         workerDao.save(worker);

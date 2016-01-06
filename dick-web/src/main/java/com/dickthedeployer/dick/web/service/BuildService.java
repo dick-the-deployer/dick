@@ -21,6 +21,7 @@ import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
@@ -66,10 +67,14 @@ public class BuildService {
     JobBuildService jobBuildService;
 
     @Transactional
-    public void onTrigger(TriggerModel model) {
+    public void onTrigger(TriggerModel model) throws BuildAlreadyQueuedException {
         List<Project> projects = projectDao.findByNameAndRef(model.getName(), model.getRef());
-        projects.forEach(project -> {
+        for (Project project : projects) {
             log.info("Found project {} for name {}", project.getId(), model.getName());
+            Build inQueue = buildDao.findByProjectAndInQueueTrue(project);
+            if (inQueue != null) {
+                throw new BuildAlreadyQueuedException();
+            }
             Build build = buildDao.save(new Build.Builder()
                     .withCommitUrl(model.getCommitUrl())
                     .withProject(project)
@@ -91,7 +96,7 @@ public class BuildService {
                 build.setStatus(Build.Status.MISSING_DICKFILE);
                 buildDao.save(build);
             }
-        });
+        }
     }
 
     public void buildStage(Long buildId, String stageName) {

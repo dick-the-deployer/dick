@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.gitlab;
 
+import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.service.BuildService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class GitlabService {
     @Autowired
     BuildService buildService;
 
-    public void onTrigger(GitlabTrigger trigger) {
+    public void onTrigger(GitlabTrigger trigger) throws BuildAlreadyQueuedException {
         log.info("Received gitlab trigger for {} with status {}", trigger.getProject_name(), trigger.getBuild_status());
         if (trigger.getBuild_status().equals("success")) {
             TriggerModel model = new TriggerModel();

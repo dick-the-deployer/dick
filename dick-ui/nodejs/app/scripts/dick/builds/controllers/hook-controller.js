@@ -1,15 +1,21 @@
 'use strict';
 
 angular.module('dick.builds')
-    .controller('HookController', ['HooksResource', '$scope', 'toaster', 'BuildsResource',
-        function (hooksResource, $scope, toaster, buildsResource) {
+    .controller('HookController', ['HooksResource', '$scope', 'toaster', 'BuildsResource', 'statusCode',
+        function (hooksResource, $scope, toaster, buildsResource, statusCode) {
             $scope.startBuild = function (project) {
-
                 hooksResource.save({ref: project.ref, name: project.name, sha: 'HEAD'}).$promise.then(function () {
                     toaster.add({
                         type: 'success',
                         message: 'Build was successfully queued.'
                     });
+                }, function (response) {
+                    if (response.status === statusCode.preconditionFailed) {
+                        toaster.add({
+                            type: 'warning',
+                            message: 'Build already queued!'
+                        });
+                    }
                 });
             };
 
