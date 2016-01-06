@@ -18,7 +18,13 @@
             <p ng-show="projects.length === 0" class="text-center text-muted">
                 No projects to show
             </p>
-            <div ng-repeat="project in projects track by project.id" class="panel col-lg-3 col-md-4 col-sm-6">
+            <div ng-repeat="project in projects track by project.id" class="panel"
+                 ng-class="{
+                 'col-md-12' : projects.length === 1,
+                 'col-md-6' : projects.length === 2,
+                 'col-md-4' : projects.length > 2,
+                 'col-sm-12' : projects.length === 1,
+                 'col-sm-6' : projects.length > 1}">
 
                 <div ng-include=" '/views/parts/project.html'"></div>
 

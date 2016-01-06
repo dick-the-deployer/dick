@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('dick.groups')
-    .controller('ProjectsController', ['ProjectsResource', '$scope', 'MetadataService', 'rx',
-        function (projectsResource, $scope, metadataService, rx) {
+    .controller('ProjectsController', ['ProjectsResource', '$scope', 'MetadataService', 'rx', 'settings',
+        function (projectsResource, $scope, metadataService, rx, settings) {
             metadataService.setTitle('Projects');
             metadataService.setPageTitle('Projects');
             var page = 0, size = 20;
@@ -38,7 +38,7 @@ angular.module('dick.groups')
                 }
             };
             var deferred;
-            var subscriber = rx.Observable.interval(2000)
+            var subscriber = rx.Observable.interval(settings.interval)
                 .filter(function () {
                     return !deferred || deferred.$resolved;
                 })

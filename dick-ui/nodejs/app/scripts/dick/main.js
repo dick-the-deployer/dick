@@ -10,6 +10,9 @@ angular.module('dick')
             };
         }
     ])
+    .constant('settings', {
+        interval: 2500
+    })
     .constant('statusCode', {
         notAcceptable: 406,
         forbidden: 403,

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('dick.groups')
-    .controller('GroupController', ['$window', '$scope', '$stateParams', '$location', 'MetadataService', 'GroupsResource', 'rx',
-        function ($window, $scope, $stateParams, $location, metadataService, groupsResource, rx) {
+    .controller('GroupController', ['$window', '$scope', '$stateParams', '$location', 'MetadataService', 'GroupsResource', 'rx', 'settings',
+        function ($window, $scope, $stateParams, $location, metadataService, groupsResource, rx, settings) {
             if ($window.angular.isUndefined($stateParams.name) ||
                 $stateParams.name === '') {
                 $location.path('/');
@@ -16,7 +16,7 @@ angular.module('dick.groups')
                 $scope.group = data;
             });
             var deferred;
-            var subscriber = rx.Observable.interval(2000)
+            var subscriber = rx.Observable.interval(settings.interval)
                 .filter(function () {
                     return !deferred || deferred.$resolved;
                 })
