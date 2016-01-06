@@ -4,11 +4,12 @@
          ng-class="{'progress-bar-success': stage.status === 'DEPLOYED' || stage.status === 'DEPLOYED_STAGE',
                         'progress-bar-warning': stage.status === 'STOPPED',
                         'progress-bar-danger': stage.status === 'FAILED',
-                        'active': stage.status === 'IN_PROGRESS'
+                        'active': stage.status === 'IN_PROGRESS' || stage.status === 'READY',
+                        'progress-bar-default': stage.status === 'READY'
                      }"
-         role="progressbar" aria-valuenow="{{stage.status === 'READY' ? 0 : 100}}"
+         role="progressbar" aria-valuenow="{{stage.status === 'READY' && stage.name !== build.currentStage ? 0 : 100}}"
          aria-valuemin="0" aria-valuemax="100"
-         style="width: {{stage.status === 'READY' ? 0 : 100}}%"
+         style="width: {{stage.status === 'READY' && stage.name !== build.currentStage ? 0 : 100}}%"
          title="{{stage.name}}">
 
         <a href="/{{project.namespace}}/{{project.name}}/{{build.id}}/{{stage.name}}"

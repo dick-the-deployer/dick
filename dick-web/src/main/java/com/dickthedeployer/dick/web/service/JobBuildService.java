@@ -92,11 +92,12 @@ public class JobBuildService {
     @Transactional
     public void buildStage(Build build, Dickfile dickfile, Stage stage) {
         List<Job> jobs = dickfile.getJobs(stage);
-        build.setStatus(Build.Status.IN_PROGRESS);
         build.setCurrentStage(stage.getName());
         buildDao.save(build);
         jobs.stream()
                 .forEach(job -> workerService.scheduleJobBuild(build, stage.getName(), job));
+
+        updateBuildStatus(build);
     }
 
     @Transactional
@@ -119,6 +120,8 @@ public class JobBuildService {
         logChunk.setJobBuild(jobBuild);
         logChunk.getBuildLog().setOutput(log);
         logChunkDao.save(logChunk);
+
+        updateBuildStatus(jobBuild.getBuild());
     }
 
     @Transactional
@@ -166,7 +169,7 @@ public class JobBuildService {
         }
     }
 
-    private Build.Status updateBuildStatus(Build build) {
+    public Build.Status updateBuildStatus(Build build) {
         Build.Status buildStatus = determineBuildStatus(build);
         build.setStatus(buildStatus);
         buildDao.save(build);
@@ -186,8 +189,10 @@ public class JobBuildService {
             } else {
                 return Build.Status.DEPLOYED_STAGE;
             }
-        } else {
+        } else if (statuses.containsKey(JobBuild.Status.IN_PROGRESS)) {
             return Build.Status.IN_PROGRESS;
+        } else {
+            return Build.Status.READY;
         }
     }
 

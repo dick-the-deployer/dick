@@ -11,7 +11,7 @@ angular.module('dick')
         }
     ])
     .constant('settings', {
-        interval: 2500
+        interval: 2000
     })
     .constant('statusCode', {
         notAcceptable: 406,
