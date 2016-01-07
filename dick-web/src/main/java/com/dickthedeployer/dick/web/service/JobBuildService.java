@@ -220,6 +220,8 @@ public class JobBuildService {
                 .filter(jobBuild -> jobBuild.getStatus().equals(JobBuild.Status.READY))
                 .forEach(jobBuild -> {
                     jobBuild.setStatus(JobBuild.Status.STOPPED);
+                    workerService.readyWorker(jobBuild.getWorker());
+                    jobBuild.setWorker(null);
                     jobBuildDao.save(jobBuild);
                 });
         updateBuildStatus(build);
