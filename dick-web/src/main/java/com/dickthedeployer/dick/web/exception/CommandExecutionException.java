@@ -13,32 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.exception;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public class CommandExecutionException extends RuntimeException {
+    public CommandExecutionException() {
+    }
 
-import java.util.Date;
-import java.util.List;
-
-/**
- * @author mariusz
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class BuildDetailsModel {
-
-    private ProjectModel project;
-
-    private Long id;
-    private List<StageDetailsModel> stages;
-    private String currentStage;
-    private Date creationDate;
-    private Build.Status status;
-
+    public CommandExecutionException(Throwable cause) {
+        super(cause);
+    }
 }

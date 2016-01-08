@@ -15,8 +15,9 @@
  */
 package com.dickthedeployer.dick.web.model;
 
-import javax.validation.constraints.NotNull;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -25,7 +26,6 @@ import lombok.Data;
 @Data
 public class TriggerModel {
 
-    String commitUrl;
     @NotNull
     String ref;
     @NotNull

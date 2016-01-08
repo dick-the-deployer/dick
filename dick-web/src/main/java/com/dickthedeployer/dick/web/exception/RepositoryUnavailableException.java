@@ -13,32 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.model;
+package com.dickthedeployer.dick.web.exception;
 
-import com.dickthedeployer.dick.web.domain.Build;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Date;
-import java.util.List;
-
-/**
- * @author mariusz
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class BuildDetailsModel {
-
-    private ProjectModel project;
-
-    private Long id;
-    private List<StageDetailsModel> stages;
-    private String currentStage;
-    private Date creationDate;
-    private Build.Status status;
-
+@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+public class RepositoryUnavailableException extends Exception {
 }

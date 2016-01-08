@@ -21,10 +21,6 @@ package com.dickthedeployer.dick.web.gitlab;
  */
 public class GitlabUtils {
 
-    static String getCommitUrl(GitlabTrigger trigger) {
-        return trigger.getGitlab_url() + "/commit/" + trigger.getSha();
-    }
-
     static String getProjectName(GitlabTrigger trigger) {
         return trigger.getProject_name().replaceAll(" ", "");
     }

@@ -76,7 +76,6 @@ public class BuildService {
                 throw new BuildAlreadyQueuedException();
             }
             Build build = buildDao.save(new Build.Builder()
-                    .withCommitUrl(model.getCommitUrl())
                     .withProject(project)
                     .withSha(model.getSha())
                     .build()
