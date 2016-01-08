@@ -27,9 +27,7 @@ import javax.validation.constraints.NotNull;
 public class TriggerModel {
 
     @NotNull
-    String ref;
+    String namespace;
     @NotNull
     String name;
-    @NotNull
-    String sha;
 }

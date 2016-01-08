@@ -66,17 +66,17 @@ public class WorkerService {
     }
 
     public void onHeartbeat(String name) {
-        Worker worker = workerDao.findByName(name);
-        if (worker == null) {
-            worker = new Worker();
-            worker.setName(name);
-        }
+        Worker worker = workerDao.findByName(name)
+                .orElseGet(() -> Worker.builder()
+                        .name(name)
+                        .build()
+                );
         worker.setLastHeartbeat(new Date());
         workerDao.save(worker);
     }
 
     public void scheduleJobBuild(Build build, String stageName, Job job) {
-        JobBuild jobBuild = jobBuildDao.findByBuildAndStageAndName(build, stageName, job.getName());
+        JobBuild jobBuild = jobBuildDao.findByBuildAndStageAndName(build, stageName, job.getName()).get();
         jobBuild.setStatus(JobBuild.Status.READY);
         jobBuild.setWorkerName(null);
         jobBuild.setEnvironment(getEnvironment(build, job));

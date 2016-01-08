@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -101,11 +102,11 @@ public class JobBuildService {
     }
 
     @Transactional
-    public BuildOrder peekBuildFor(String workerName) {
-        Worker worker = workerDao.findByName(workerName);
-        JobBuild jobBuild = jobBuildDao.findByStatusAndWorker(JobBuild.Status.READY, worker);
+    public Optional<BuildOrder> peekBuildFor(String workerName) {
+        Worker worker = workerDao.findByName(workerName).get();
+        Optional<JobBuild> jobBuildOptional = jobBuildDao.findByStatusAndWorker(JobBuild.Status.READY, worker);
 
-        return jobBuild == null ? null : prepareBuildOrder(jobBuild, worker);
+        return jobBuildOptional.map(jobBuild -> prepareBuildOrder(jobBuild, worker));
     }
 
     public boolean isStopped(Long id) {

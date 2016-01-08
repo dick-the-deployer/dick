@@ -34,11 +34,6 @@ public class Project {
     @GeneratedValue
     private Long id;
 
-    private String name;
-
-    @Column
-    private String repository;
-
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
@@ -48,9 +43,13 @@ public class Project {
     @ManyToOne(optional = false)
     private Namespace namespace;
 
+    private String name;
+    private String repository;
+    private String repositoryHost;
+    private String repositoryPath;
     private String ref;
-
     private String description;
+
 
     public static class Builder {
 
@@ -77,6 +76,16 @@ public class Project {
 
         public Builder withDescription(final String description) {
             this.item.description = description;
+            return this;
+        }
+
+        public Builder withRepositoryHost(final String repositoryHost) {
+            this.item.repositoryHost = repositoryHost;
+            return this;
+        }
+
+        public Builder withRepositoryPath(final String repositoryPath) {
+            this.item.repositoryPath = repositoryPath;
             return this;
         }
 

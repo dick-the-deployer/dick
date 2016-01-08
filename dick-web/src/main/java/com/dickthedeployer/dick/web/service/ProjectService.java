@@ -21,7 +21,9 @@ import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
+import com.dickthedeployer.dick.web.hook.RepositoryMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -52,15 +55,17 @@ public class ProjectService {
     @Autowired
     RepositoryService repositoryService;
 
-    public void createProject(ProjectModel model) throws NameTakenException, RepositoryUnavailableException {
+    public void createProject(ProjectModel model) throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
         validateIfNameAvailable(model);
-        Namespace namespace = namespaceDao.findByName(model.getNamespace());
+        Namespace namespace = namespaceDao.findByName(model.getNamespace()).get();
         Project project = new Project.Builder()
                 .withRef(model.getRef())
                 .withName(model.getName())
                 .withNamespace(namespace)
                 .withDescription(model.getDescription())
                 .withRepository(model.getRepository())
+                .withRepositoryHost(RepositoryMapper.getHost(model.getRepository()))
+                .withRepositoryPath(RepositoryMapper.getPath(model.getRepository()))
                 .withEnvironmentVariables(model.getEnvironmentVariables().stream()
                         .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
                         .collect(toList())
@@ -74,8 +79,8 @@ public class ProjectService {
     }
 
     private void validateIfNameAvailable(ProjectModel model) throws NameTakenException {
-        Project project = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
-        if (project != null) {
+        Optional<Project> project = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
+        if (project.isPresent()) {
             throw new NameTakenException();
         }
     }
@@ -96,8 +101,8 @@ public class ProjectService {
     }
 
     public ProjectModel getProject(String namespaceName, String name) {
-        Project project = projectDao.findByNamespaceNameAndName(namespaceName, name);
-        return mapProject(project);
+        Optional<Project> project = projectDao.findByNamespaceNameAndName(namespaceName, name);
+        return mapProject(project.get());
     }
 
     private ProjectModel mapProject(Project project) {

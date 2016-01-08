@@ -19,16 +19,12 @@ import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.GroupModel;
 import com.dickthedeployer.dick.web.service.GroupService;
-import java.util.List;
-import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  *
@@ -54,12 +50,7 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{name}")
     public GroupModel getGroupByName(@PathVariable("name") String name) throws NotFoundException {
-        GroupModel group = groupService.getGroup(name);
-        if (group == null) {
-            throw new NotFoundException();
-        } else {
-            return group;
-        }
+        return groupService.getGroup(name);
     }
 
 }

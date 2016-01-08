@@ -18,11 +18,13 @@ package com.dickthedeployer.dick.web.dao;
 import com.dickthedeployer.dick.web.domain.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  *
  * @author mariusz
  */
 public interface GroupDao extends JpaRepository<Group, Long> {
 
-    Group findByNamespaceName(String name);
+    Optional<Group> findByNamespaceName(String name);
 }

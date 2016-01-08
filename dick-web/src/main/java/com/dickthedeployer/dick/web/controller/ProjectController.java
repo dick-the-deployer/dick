@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
 import com.dickthedeployer.dick.web.model.BuildModel;
 import com.dickthedeployer.dick.web.model.ProjectModel;
@@ -46,7 +47,7 @@ public class ProjectController {
     BuildService buildService;
 
     @RequestMapping(method = POST)
-    public void createProject(@RequestBody @Valid ProjectModel projectModel) throws NameTakenException, RepositoryUnavailableException {
+    public void createProject(@RequestBody @Valid ProjectModel projectModel) throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
         projectService.createProject(projectModel);
     }
 

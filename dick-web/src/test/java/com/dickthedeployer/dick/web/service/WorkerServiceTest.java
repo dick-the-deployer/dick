@@ -52,7 +52,7 @@ public class WorkerServiceTest extends ContextTestBase {
     @Test
     public void shouldRegisterNewWorker() {
         String workerName = workerService.registerWorker();
-        Worker worker = workerDao.findByName(workerName);
+        Worker worker = workerDao.findByName(workerName).get();
 
         assertThat(workerName).isNotEmpty();
         assertThat(worker).isNotNull();

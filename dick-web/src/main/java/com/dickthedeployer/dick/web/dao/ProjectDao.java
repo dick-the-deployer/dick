@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -29,12 +30,11 @@ import java.util.List;
  */
 public interface ProjectDao extends JpaRepository<Project, Long> {
 
-    List<Project> findByNameAndRef(String name, String ref);
-
     List<Project> findByIdIn(List<Long> ids, Sort sort);
 
-    Project findByNamespaceNameAndName(String namespaceName, String name);
+    Optional<Project> findByNamespaceNameAndName(String namespaceName, String name);
 
     Page<Project> findByNameContaining(String name, Pageable pageable);
 
+    List<Project> findByRepositoryHostAndRepositoryPathAndRef(String host, String path, String ref);
 }
