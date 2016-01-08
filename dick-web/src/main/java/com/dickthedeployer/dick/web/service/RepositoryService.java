@@ -17,9 +17,12 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.domain.Project;
 import com.google.common.base.Throwables;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -30,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author mariusz
  */
+@Slf4j
 @Service
 public class RepositoryService {
 
@@ -37,6 +41,20 @@ public class RepositoryService {
 
     @Autowired
     CommandService commandService;
+
+    @PreDestroy
+    public void cleanup() {
+        REPOS.values().stream()
+                .forEach(path -> {
+                    try {
+                        log.info("Cleaning {}", path);
+                        FileUtils.deleteDirectory(path.toFile());
+                    } catch (IOException ex) {
+                        throw Throwables.propagate(ex);
+                    }
+                });
+    }
+
 
     public InputStream getFile(Project project, String sha, String filePath) {
         checkoutRepository(project);
