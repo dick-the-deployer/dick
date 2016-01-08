@@ -21,6 +21,7 @@ import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,13 @@ public class ProjectService {
     @Autowired
     BuildService buildService;
 
-    public void createProject(ProjectModel model) throws NameTakenException {
+    @Autowired
+    RepositoryService repositoryService;
+
+    public void createProject(ProjectModel model) throws NameTakenException, RepositoryUnavailableException {
         validateIfNameAvailable(model);
         Namespace namespace = namespaceDao.findByName(model.getNamespace());
-        projectDao.save(new Project.Builder()
+        Project project = new Project.Builder()
                 .withRef(model.getRef())
                 .withName(model.getName())
                 .withNamespace(namespace)
@@ -60,8 +64,13 @@ public class ProjectService {
                 .withEnvironmentVariables(model.getEnvironmentVariables().stream()
                         .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
                         .collect(toList())
-                ).build()
-        );
+                ).build();
+        validateIfRepositoryAvailable(project);
+        projectDao.save(project);
+    }
+
+    private void validateIfRepositoryAvailable(Project project) throws RepositoryUnavailableException {
+        repositoryService.checkoutRepository(project);
     }
 
     private void validateIfNameAvailable(ProjectModel model) throws NameTakenException {
