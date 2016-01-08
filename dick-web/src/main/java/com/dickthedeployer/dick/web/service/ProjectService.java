@@ -65,7 +65,7 @@ public class ProjectService {
     }
 
     private void validateIfNameAvailable(ProjectModel model) throws NameTakenException {
-        Project project = projectDao.findByName(model.getName());
+        Project project = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
         if (project != null) {
             throw new NameTakenException();
         }

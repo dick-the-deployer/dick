@@ -15,35 +15,28 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
-import java.util.Date;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
 import lombok.Data;
 
+import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
+
 /**
- *
  * @author mariusz
  */
 @Data
 @Entity
+@Table(uniqueConstraints =
+@UniqueConstraint(columnNames = {"name", "namespace_id"}))
 public class Project {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true)
     private String name;
 
-    @Column()
+    @Column
     private String repository;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)

@@ -37,5 +37,4 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
     Page<Project> findByNameContaining(String name, Pageable pageable);
 
-    Project findByName(String name);
 }
