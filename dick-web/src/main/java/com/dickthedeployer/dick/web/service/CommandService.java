@@ -15,16 +15,17 @@
  */
 package com.dickthedeployer.dick.web.service;
 
-import com.dickthedeployer.dick.web.model.CommandResult;
-import com.google.common.base.Throwables;
+import com.dickthedeployer.dick.web.exception.CommandExecutionException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import static java.util.Collections.emptyMap;
 import java.util.Map;
 import java.util.Scanner;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+
+import static java.util.Collections.emptyMap;
 
 /**
  *
@@ -34,11 +35,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommandService {
 
-    public int invoke(Path workingDir, String... command) {
-        return invokeWithEnvironment(workingDir, emptyMap(), command).getResult();
+    public void invoke(Path workingDir, String... command) {
+        invokeWithEnvironment(workingDir, emptyMap(), command);
     }
 
-    public CommandResult invokeWithEnvironment(Path workingDir, Map<String, String> environment, String... command) throws RuntimeException {
+    public void invokeWithEnvironment(Path workingDir, Map<String, String> environment, String... command) throws RuntimeException {
         try {
             log.info("Executing command {} in path {}", Arrays.toString(command), workingDir.toString());
             StringBuilder text = new StringBuilder();
@@ -60,13 +61,12 @@ public class CommandService {
                 int result = process.waitFor();
                 log.info("Process exited with result {} and output {}", result, text);
 
-                CommandResult commandResult = new CommandResult();
-                commandResult.setOutput(text.toString());
-                commandResult.setResult(result);
-                return commandResult;
+                if (result != 0) {
+                    throw new CommandExecutionException();
+                }
             }
         } catch (IOException | InterruptedException ex) {
-            throw Throwables.propagate(ex);
+            throw new CommandExecutionException(ex);
         }
     }
 

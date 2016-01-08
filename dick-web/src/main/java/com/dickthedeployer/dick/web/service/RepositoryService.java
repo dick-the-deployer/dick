@@ -16,7 +16,11 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.domain.Project;
+import com.dickthedeployer.dick.web.exception.CommandExecutionException;
+import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
 import com.google.common.base.Throwables;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class RepositoryService {
 
-    private final static ConcurrentHashMap<Project, Path> REPOS = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<Repo, Path> REPOS = new ConcurrentHashMap<>();
 
     @Autowired
     CommandService commandService;
@@ -55,10 +59,23 @@ public class RepositoryService {
                 });
     }
 
+    public void checkoutRepository(Project project) throws RepositoryUnavailableException {
+        Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
+        if (!REPOS.contains(repo)) {
+            try {
+                Path path = checkoutRepository(repo);
+                REPOS.put(repo, path);
+            } catch (CommandExecutionException ex) {
+                throw new RepositoryUnavailableException();
+            }
+        }
+
+    }
 
     public InputStream getFile(Project project, String sha, String filePath) {
-        checkoutRepository(project);
-        Path path = REPOS.get(project);
+        Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
+        REPOS.computeIfAbsent(repo, key -> checkoutRepository(key));
+        Path path = REPOS.get(repo);
         synchronized (path) {
             checkoutRevision(path, project.getRef(), sha);
             Path file = path.resolve(filePath);
@@ -74,31 +91,37 @@ public class RepositoryService {
         }
     }
 
-    private synchronized void checkoutRepository(Project project) {
-        REPOS.computeIfAbsent(project, (key)
-                -> {
-                    try {
-                        Path path = Files.createTempDirectory(getPrefix(key, project.getRef()));
-                        initializeRepository(path, project);
-                        return path;
-                    } catch (IOException ex) {
-                        throw Throwables.propagate(ex);
-                    }
-                });
+    private synchronized Path checkoutRepository(Repo repository) {
+        try {
+            Path path = Files.createTempDirectory(getPrefix(repository, repository.getRef()));
+            initializeRepository(path, repository);
+            return path;
+        } catch (IOException ex) {
+            throw Throwables.propagate(ex);
+        }
     }
 
-    private String getPrefix(Project project, String ref) {
-        return project.getName().replaceAll("/", "-") + ref;
+    private String getPrefix(Repo repository, String ref) {
+        return repository.getName().replaceAll("/", "-") + ref;
     }
 
-    private void initializeRepository(Path path, Project stack) {
+    private void initializeRepository(Path path, Repo repository) {
         commandService.invoke(path, "git", "init");
-        commandService.invoke(path, "git", "clone", stack.getRepository());
-        commandService.invoke(path, "git", "remote", "add", "origin", stack.getRepository());
+        commandService.invoke(path, "git", "clone", repository.getRepository());
+        commandService.invoke(path, "git", "remote", "add", "origin", repository.getRepository());
     }
 
     private void checkoutRevision(Path path, String ref, String sha) {
         commandService.invoke(path, "git", "pull", "origin", ref);
         commandService.invoke(path, "git", "checkout", sha);
+    }
+
+    @Data
+    @AllArgsConstructor
+    private class Repo {
+
+        final String name;
+        final String repository;
+        final String ref;
     }
 }

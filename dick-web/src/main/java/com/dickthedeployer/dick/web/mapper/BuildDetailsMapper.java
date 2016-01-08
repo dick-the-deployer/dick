@@ -38,7 +38,6 @@ public class BuildDetailsMapper {
         return BuildDetailsModel.builder()
                 .project(projectModel)
                 .creationDate(build.getCreationDate())
-                .commitUrl(build.getCommitUrl())
                 .currentStage(build.getCurrentStage())
                 .id(build.getId())
                 .stages(

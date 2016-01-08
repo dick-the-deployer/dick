@@ -44,8 +44,6 @@ public class Build {
 
     private boolean inQueue = true;
 
-    private String commitUrl;
-
     private String sha;
 
     private String currentStage;
@@ -68,16 +66,6 @@ public class Build {
 
         public Builder withProject(final Project project) {
             this.item.project = project;
-            return this;
-        }
-
-        public Builder withStages(final List<String> stages) {
-            this.item.stages = stages;
-            return this;
-        }
-
-        public Builder withCommitUrl(final String commitUrl) {
-            this.item.commitUrl = commitUrl;
             return this;
         }
 

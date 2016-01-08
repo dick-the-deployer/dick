@@ -32,6 +32,11 @@ angular.module('dick.groups')
                                 type: 'danger',
                                 message: 'Name has already been taken'
                             });
+                        } else if (response.status === statusCode.notAcceptable) {
+                            toaster.add({
+                                type: 'danger',
+                                message: 'Cannot clone repository ' + $scope.model.repository
+                            });
                         }
                     });
                 };
