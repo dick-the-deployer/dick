@@ -20,10 +20,12 @@ import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
 import com.dickthedeployer.dick.web.model.ProjectModel;
-import java.util.UUID;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
  *
@@ -35,7 +37,7 @@ public class ProjectServiceTest extends ContextTestBase {
     ProjectService projectService;
 
     @Test
-    public void shouldCreateStack() throws NameTakenException {
+    public void shouldCreateProject() throws NameTakenException {
         namespaceDao.save(new Namespace.Builder()
                 .withName("test-namespace")
                 .build()
@@ -47,10 +49,54 @@ public class ProjectServiceTest extends ContextTestBase {
         model.setNamespace("test-namespace");
 
         projectService.createProject(model);
-        Project entity = projectDao.findByName("some-semi-random-name");
+        Project entity = projectDao.findByNamespaceNameAndName("test-namespace", "some-semi-random-name");
         assertThat(entity.getId()).isNotNull();
         assertThat(entity.getRef()).isEqualTo("master");
         assertThat(entity.getCreationDate()).isNotNull();
 
+    }
+
+    @Test(expected = NameTakenException.class)
+    public void shouldThrowNameTakenException() throws NameTakenException {
+        namespaceDao.save(new Namespace.Builder()
+                .withName("test-namespace")
+                .build()
+        );
+        ProjectModel model = new ProjectModel();
+        model.setName("some-semi-random-name");
+        model.setRepository(UUID.randomUUID().toString());
+        model.setRef("master");
+        model.setNamespace("test-namespace");
+
+        projectService.createProject(model);
+        projectService.createProject(model);
+    }
+
+    @Test
+    public void shouldAllowCreatingTheSameProjectWithDifferentNamespace() throws NameTakenException {
+        namespaceDao.save(new Namespace.Builder()
+                .withName("test-namespace")
+                .build()
+        );
+        namespaceDao.save(new Namespace.Builder()
+                .withName("other-namespace")
+                .build()
+        );
+
+        ProjectModel model = new ProjectModel();
+        model.setName("some-semi-random-name");
+        model.setRepository(UUID.randomUUID().toString());
+        model.setRef("master");
+        model.setNamespace("test-namespace");
+        projectService.createProject(model);
+
+        model.setNamespace("other-namespace");
+        projectService.createProject(model);
+
+
+        Project entity = projectDao.findByNamespaceNameAndName("test-namespace", "some-semi-random-name");
+        assertThat(entity.getId()).isNotNull();
+        entity = projectDao.findByNamespaceNameAndName("other-namespace", "some-semi-random-name");
+        assertThat(entity.getId()).isNotNull();
     }
 }
