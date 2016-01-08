@@ -19,11 +19,13 @@ import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
 import com.dickthedeployer.dick.web.model.ProjectModel;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -38,44 +40,43 @@ public class ProjectServiceTest extends ContextTestBase {
     ProjectService projectService;
 
     @Test
-    public void shouldCreateProject() throws NameTakenException, RepositoryUnavailableException {
+    public void shouldCreateProject() throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
         ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name");
 
         projectService.createProject(model);
-        Project entity = projectDao.findByNamespaceNameAndName("test-namespace", "some-semi-random-name");
-        assertThat(entity.getId()).isNotNull();
-        assertThat(entity.getRef()).isEqualTo("master");
-        assertThat(entity.getCreationDate()).isNotNull();
+        Optional<Project> project = projectDao.findByNamespaceNameAndName("test-namespace", "some-semi-random-name");
+        assertThat(project.get().getRef()).isEqualTo("master");
+        assertThat(project.get().getCreationDate()).isNotNull();
 
     }
 
     @Test(expected = NameTakenException.class)
-    public void shouldThrowNameTakenException() throws NameTakenException, RepositoryUnavailableException {
-        ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name");
+    public void shouldThrowNameTakenException() throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
+        ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name-2");
 
         projectService.createProject(model);
         projectService.createProject(model);
     }
 
     @Test
-    public void shouldAllowCreatingTheSameProjectWithDifferentNamespace() throws NameTakenException, RepositoryUnavailableException {
-        ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name");
+    public void shouldAllowCreatingTheSameProjectWithDifferentNamespace() throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
+        ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name-3");
         projectService.createProject(model);
 
         model = getProjectModel("other-namespace", "some-semi-random-name");
         projectService.createProject(model);
 
 
-        Project entity = projectDao.findByNamespaceNameAndName("test-namespace", "some-semi-random-name");
-        assertThat(entity.getId()).isNotNull();
-        entity = projectDao.findByNamespaceNameAndName("other-namespace", "some-semi-random-name");
-        assertThat(entity.getId()).isNotNull();
+        Optional<Project> project = projectDao.findByNamespaceNameAndName("test-namespace", "some-semi-random-name-3");
+        assertThat(project.isPresent()).isTrue();
+        project = projectDao.findByNamespaceNameAndName("other-namespace", "some-semi-random-name");
+        assertThat(project.isPresent()).isTrue();
     }
 
     @Test(expected = RepositoryUnavailableException.class)
-    public void shouldThrowRepoUnavailableException() throws NameTakenException, RepositoryUnavailableException {
-        ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name");
-        model.setRepository("asdasd");
+    public void shouldThrowRepoUnavailableException() throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
+        ProjectModel model = getProjectModel("test-namespace", "some-semi-random-name-4");
+        model.setRepository("https://github.com/dick-the-deployer/does-not-exists.gita");
         projectService.createProject(model);
     }
 

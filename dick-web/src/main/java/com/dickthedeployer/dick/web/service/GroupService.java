@@ -21,17 +21,21 @@ import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.mapper.GroupMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.GroupModel;
 import com.dickthedeployer.dick.web.model.ProjectModel;
-import java.util.Collections;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -64,8 +68,8 @@ public class GroupService {
     }
 
     private void validateIfNameAvailable(GroupModel groupModel) throws NameTakenException {
-        Namespace namespace = namespaceDao.findByName(groupModel.getName());
-        if (namespace != null) {
+        Optional<Namespace> namespace = namespaceDao.findByName(groupModel.getName());
+        if (namespace.isPresent()) {
             throw new NameTakenException();
         }
     }
@@ -77,11 +81,9 @@ public class GroupService {
                 .collect(toList());
     }
 
-    public GroupModel getGroup(String name) {
-        Group group = groupDao.findByNamespaceName(name);
-        if (group == null) {
-            return null;
-        }
+    public GroupModel getGroup(String name) throws NotFoundException {
+        Optional<Group> groupOptional = groupDao.findByNamespaceName(name);
+        Group group = groupOptional.orElseThrow(NotFoundException::new);
         List<ProjectModel> projectModels = group.getNamespace().getProjects().stream()
                 .map((Project project) -> {
                     ProjectModel model = ProjectMapper.mapProject(project);

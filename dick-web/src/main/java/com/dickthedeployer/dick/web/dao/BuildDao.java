@@ -21,13 +21,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  *
  * @author mariusz
  */
 public interface BuildDao extends JpaRepository<Build, Long> {
 
-    Build findByProjectAndInQueueTrue(Project project);
+    Optional<Build> findByProjectAndInQueueTrue(Project project);
 
     Page<Build> findByProject(Project project, Pageable pageable);
 }

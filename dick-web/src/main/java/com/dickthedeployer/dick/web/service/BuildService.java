@@ -26,10 +26,7 @@ import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
-import com.dickthedeployer.dick.web.model.BuildDetailsModel;
-import com.dickthedeployer.dick.web.model.BuildModel;
-import com.dickthedeployer.dick.web.model.ProjectModel;
-import com.dickthedeployer.dick.web.model.TriggerModel;
+import com.dickthedeployer.dick.web.model.*;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -68,33 +66,47 @@ public class BuildService {
 
     @Transactional
     public void onTrigger(TriggerModel model) throws BuildAlreadyQueuedException {
-        List<Project> projects = projectDao.findByNameAndRef(model.getName(), model.getRef());
-        for (Project project : projects) {
-            log.info("Found project {} for name {}", project.getId(), model.getName());
-            Build inQueue = buildDao.findByProjectAndInQueueTrue(project);
-            if (inQueue != null) {
-                throw new BuildAlreadyQueuedException();
+        Optional<Project> projectOptional = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
+        Project project = projectOptional.get();
+        log.info("Found project {} for name {}", project.getId(), model.getName());
+        buildProject(project, "HEAD");
+    }
+
+    public void onHook(HookModel hookModel) {
+        projectDao.findByRepositoryHostAndRepositoryPathAndRef(hookModel.getHost(), hookModel.getPath(), hookModel.getRef()).stream()
+                .forEach(project -> {
+                    try {
+                        buildProject(project, hookModel.getSha());
+                    } catch (BuildAlreadyQueuedException ex) {
+                        log.info("Cannot queue project {}; already in queue", project.getName());
+                    }
+                });
+    }
+
+    private void buildProject(Project project, String sha) throws BuildAlreadyQueuedException {
+        Optional<Build> inQueue = buildDao.findByProjectAndInQueueTrue(project);
+        if (inQueue.isPresent()) {
+            throw new BuildAlreadyQueuedException();
+        }
+        Build build = buildDao.save(new Build.Builder()
+                .withProject(project)
+                .withSha(sha)
+                .build()
+        );
+        try {
+            Dickfile dickfile = dickYmlService.loadDickFile(build);
+            build.setStages(dickfile.getStageNames());
+            build.setStatus(Build.Status.READY);
+            buildDao.save(build);
+            Stage firstStage = dickfile.getFirstStage();
+            jobBuildService.prepareJobs(build, dickfile);
+            if (firstStage.isAutorun()) {
+                jobBuildService.buildStage(build, dickfile, firstStage);
             }
-            Build build = buildDao.save(new Build.Builder()
-                    .withProject(project)
-                    .withSha(model.getSha())
-                    .build()
-            );
-            try {
-                Dickfile dickfile = dickYmlService.loadDickFile(build);
-                build.setStages(dickfile.getStageNames());
-                build.setStatus(Build.Status.READY);
-                buildDao.save(build);
-                Stage firstStage = dickfile.getFirstStage();
-                jobBuildService.prepareJobs(build, dickfile);
-                if (firstStage.isAutorun()) {
-                    jobBuildService.buildStage(build, dickfile, firstStage);
-                }
-            } catch (DickFileMissingException ex) {
-                log.info("Dickfile is missing", ex);
-                build.setStatus(Build.Status.MISSING_DICKFILE);
-                buildDao.save(build);
-            }
+        } catch (DickFileMissingException ex) {
+            log.info("Dickfile is missing", ex);
+            build.setStatus(Build.Status.MISSING_DICKFILE);
+            buildDao.save(build);
         }
     }
 
@@ -131,8 +143,8 @@ public class BuildService {
     }
 
     public List<BuildModel> getBuilds(String namespace, String name, int page, int size) {
-        Project project = projectDao.findByNamespaceNameAndName(namespace, name);
-        Page<Build> builds = buildDao.findByProject(project, new PageRequest(page, size,
+        Optional<Project> projectOptional = projectDao.findByNamespaceNameAndName(namespace, name);
+        Page<Build> builds = buildDao.findByProject(projectOptional.get(), new PageRequest(page, size,
                 Sort.Direction.DESC, "creationDate"));
         return builds.getContent().stream()
                 .map(BuildMapper::mapBuild)

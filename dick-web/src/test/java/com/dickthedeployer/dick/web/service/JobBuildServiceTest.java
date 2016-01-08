@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -49,16 +50,16 @@ public class JobBuildServiceTest extends ContextTestBase {
         Build build = produceBuild();
         JobBuild jobBuild = produceJobBuild(worker, build, JobBuild.Status.READY);
 
-        BuildOrder buildOrder = jobBuildService.peekBuildFor("testingWorker");
+        BuildOrder buildOrder = jobBuildService.peekBuildFor("testingWorker").get();
 
         assertThat(buildOrder).isNotNull();
         assertThat(buildOrder.getBuildId()).isEqualTo(jobBuild.getId());
         assertThat(buildOrder.getCommands()).containsExactly("echo bar");
         assertThat(buildOrder.getEnvironment()).containsEntry("FOO", "bar");
 
-        buildOrder = jobBuildService.peekBuildFor("testingWorker");
+        Optional<BuildOrder> optional = jobBuildService.peekBuildFor("testingWorker");
 
-        assertThat(buildOrder).isNull();
+        assertThat(optional.isPresent()).isFalse();
     }
 
     @Test
@@ -70,7 +71,7 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.stop(build);
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
-        worker = workerDao.findByName(jobBuild.getWorkerName());
+        worker = workerDao.findByName(jobBuild.getWorkerName()).get();
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.STOPPED);
         assertThat(jobBuild.getWorker()).isNull();
         assertThat(worker.getStatus()).isEqualTo(Worker.Status.READY);
@@ -108,7 +109,7 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.reportFailure(jobBuild.getId(), "foo");
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
-        worker = workerDao.findByName(jobBuild.getWorkerName());
+        worker = workerDao.findByName(jobBuild.getWorkerName()).get();
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
         assertThat(jobBuild.getWorker()).isNull();
         assertThat(worker.getStatus()).isEqualTo(Worker.Status.READY);
@@ -128,7 +129,7 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuildService.reportFailure(jobBuild.getId(), "foo");
 
         jobBuild = jobBuildDao.findOne(jobBuild.getId());
-        worker = workerDao.findByName(jobBuild.getWorkerName());
+        worker = workerDao.findByName(jobBuild.getWorkerName()).get();
         assertThat(jobBuild.getStatus()).isEqualTo(JobBuild.Status.FAILED);
         assertThat(jobBuild.getWorker()).isNull();
         assertThat(worker.getStatus()).isEqualTo(Worker.Status.READY);

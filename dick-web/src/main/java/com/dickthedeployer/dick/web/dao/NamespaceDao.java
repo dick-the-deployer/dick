@@ -18,11 +18,13 @@ package com.dickthedeployer.dick.web.dao;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  *
  * @author mariusz
  */
 public interface NamespaceDao extends JpaRepository<Namespace, Long> {
 
-    Namespace findByName(String name);
+    Optional<Namespace> findByName(String name);
 }

@@ -21,6 +21,7 @@ import com.dickthedeployer.dick.web.domain.Worker;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -30,10 +31,10 @@ public interface JobBuildDao extends JpaRepository<JobBuild, Long> {
 
     List<JobBuild> findByBuild(Build build);
 
-    JobBuild findByBuildAndStageAndName(Build build, String stage, String name);
+    Optional<JobBuild> findByBuildAndStageAndName(Build build, String stage, String name);
 
     List<JobBuild> findByStatusAndWorkerNull(JobBuild.Status status);
 
-    JobBuild findByStatusAndWorker(JobBuild.Status status, Worker worker);
+    Optional<JobBuild> findByStatusAndWorker(JobBuild.Status status, Worker worker);
 
 }

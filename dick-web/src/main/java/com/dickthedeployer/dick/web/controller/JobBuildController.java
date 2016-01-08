@@ -42,7 +42,7 @@ public class JobBuildController {
     @RequestMapping(value = "/peek/{workerName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     BuildOrder peekBuild(@PathVariable("workerName") String workerName) {
         workerService.onHeartbeat(workerName);
-        return jobBuildService.peekBuildFor(workerName);
+        return jobBuildService.peekBuildFor(workerName).orElse(null);
     }
 
     @RequestMapping(value = "/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
