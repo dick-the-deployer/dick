@@ -13,7 +13,7 @@ angular.module('dick.projects')
                         url: '/api/projects/:id/namespace',
                         params: {id: '@id'}
                     },
-                    allSilently: {method: 'GET', isArray: true, url: '/api/projects/all'},
+                    allSilently: {method: 'GET', isArray: true, url: '/api/projects/all', ignoreLoadingBar: true},
                     builds: {method: 'GET', isArray: true, url: '/api/projects/:namespace/:name/builds'}
                 });
             }
