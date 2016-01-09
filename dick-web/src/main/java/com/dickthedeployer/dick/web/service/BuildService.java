@@ -23,6 +23,7 @@ import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
@@ -110,8 +111,8 @@ public class BuildService {
         }
     }
 
-    public void buildStage(Long buildId, String stageName) {
-        Build build = buildDao.findOne(buildId);
+    public void buildStage(Long buildId, String stageName) throws NotFoundException {
+        Build build = getAndCheckBuild(buildId);
         try {
             Dickfile dickfile = dickYmlService.loadDickFile(build);
             Stage stage = dickfile.getStage(stageName);
@@ -129,17 +130,25 @@ public class BuildService {
         return builds.getContent().isEmpty() ? null : BuildMapper.mapBuild(builds.getContent().get(0));
     }
 
-    public void kill(Long buildId) {
-        Build build = buildDao.findOne(buildId);
+    public void kill(Long buildId) throws NotFoundException {
+        Build build = getAndCheckBuild(buildId);
         jobBuildService.stop(build);
     }
 
 
-    public BuildDetailsModel getBuild(Long buildId) {
-        Build build = buildDao.findOne(buildId);
+    public BuildDetailsModel getBuild(Long buildId) throws NotFoundException {
+        Build build = getAndCheckBuild(buildId);
         ProjectModel projectModel = ProjectMapper.mapProject(build.getProject());
         List<JobBuild> jobBuilds = jobBuildDao.findByBuild(build);
         return BuildDetailsMapper.mapBuildDetails(build, projectModel, jobBuilds);
+    }
+
+    private Build getAndCheckBuild(Long buildId) throws NotFoundException {
+        Build build = buildDao.findOne(buildId);
+        if (build == null) {
+            throw new NotFoundException();
+        }
+        return build;
     }
 
     public List<BuildModel> getBuilds(String namespace, String name, int page, int size) {
@@ -149,5 +158,19 @@ public class BuildService {
         return builds.getContent().stream()
                 .map(BuildMapper::mapBuild)
                 .collect(toList());
+    }
+
+    @Transactional
+    public void removeBuilds(Project project) {
+        PageRequest pageable = new PageRequest(0, 20);
+        Page<Build> page;
+        do {
+            page = buildDao.findByProject(project, pageable);
+            page.getContent().stream()
+                    .forEach(build -> {
+                        jobBuildService.removeJobBuilds(build);
+                        buildDao.delete(build);
+                    });
+        } while (page.hasNext());
     }
 }

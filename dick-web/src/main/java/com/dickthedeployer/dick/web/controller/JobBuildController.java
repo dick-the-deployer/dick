@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.*;
 import com.dickthedeployer.dick.web.service.JobBuildService;
 import com.dickthedeployer.dick.web.service.WorkerService;
@@ -69,12 +70,12 @@ public class JobBuildController {
     @RequestMapping(value = "/{id}/chunks", method = RequestMethod.GET)
     List<LogChunkModel> getLogChunks(@PathVariable Long id,
                                      @RequestParam(required = false, name = "creationDate")
-                                     Long creationDate) {
+                                     Long creationDate) throws NotFoundException {
         return jobBuildService.getLogChunks(id, creationDate != null ? new Date(creationDate) : null);
     }
 
     @RequestMapping(value = "/{id}/output", method = RequestMethod.GET)
-    OutputModel getOutput(@PathVariable Long id) {
+    OutputModel getOutput(@PathVariable Long id) throws NotFoundException {
         return jobBuildService.getOutput(id);
     }
 

@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.BuildDetailsModel;
 import com.dickthedeployer.dick.web.service.BuildService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,17 @@ public class BuildController {
     BuildService buildService;
 
     @RequestMapping(method = POST, value = "/{buildId}/{stageName}")
-    public void buildStage(@PathVariable("buildId") Long buildId, @PathVariable("stageName") String stageName) {
+    public void buildStage(@PathVariable("buildId") Long buildId, @PathVariable("stageName") String stageName) throws NotFoundException {
         buildService.buildStage(buildId, stageName);
     }
 
     @RequestMapping(method = POST, value = "/{buildId}/kill")
-    public void kill(@PathVariable("buildId") Long buildId) {
+    public void kill(@PathVariable("buildId") Long buildId) throws NotFoundException {
         buildService.kill(buildId);
     }
 
     @RequestMapping(method = GET, value = "/{buildId}")
-    public BuildDetailsModel getBuildDetails(@PathVariable("buildId") Long buildId) {
+    public BuildDetailsModel getBuildDetails(@PathVariable("buildId") Long buildId) throws NotFoundException {
         return buildService.getBuild(buildId);
     }
 }

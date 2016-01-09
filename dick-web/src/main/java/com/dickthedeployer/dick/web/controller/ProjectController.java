@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
 import com.dickthedeployer.dick.web.model.BuildModel;
@@ -29,8 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  *
@@ -51,6 +51,30 @@ public class ProjectController {
         projectService.createProject(projectModel);
     }
 
+    @RequestMapping(method = PUT, value = "{projectId}")
+    public void updateProject(@PathVariable("projectId") Long projectId,
+                              @RequestBody ProjectModel model) throws RepositoryUnavailableException,
+            RepositoryParsingException, NotFoundException {
+        projectService.updateProject(projectId, model);
+    }
+
+    @RequestMapping(method = DELETE, value = "{projectId}")
+    public void removeProject(@PathVariable("projectId") Long projectId) throws NotFoundException {
+        projectService.removeProject(projectId);
+    }
+
+    @RequestMapping(method = PUT, value = "{projectId}/name")
+    public void renameProject(@PathVariable("projectId") Long projectId,
+                              @RequestBody ProjectModel model) throws NameTakenException, NotFoundException {
+        projectService.renameProject(projectId, model);
+    }
+
+    @RequestMapping(method = PUT, value = "{projectId}/namespace")
+    public void moveProject(@PathVariable("projectId") Long projectId,
+                            @RequestBody ProjectModel model) throws NameTakenException, NotFoundException {
+        projectService.moveProject(projectId, model);
+    }
+
     @RequestMapping(method = GET)
     public List<ProjectModel> getProjects(@RequestParam("page") int page, @RequestParam("size") int size,
                                           @RequestParam(required = false, name = "name") String name) {
@@ -67,7 +91,7 @@ public class ProjectController {
     }
 
     @RequestMapping(method = GET, value = "/{namespace}/{name}")
-    public ProjectModel getProject(@PathVariable("namespace") String namespace, @PathVariable("name") String name) {
+    public ProjectModel getProject(@PathVariable("namespace") String namespace, @PathVariable("name") String name) throws NotFoundException {
         return projectService.getProject(namespace, name);
     }
 

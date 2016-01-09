@@ -16,13 +16,14 @@
 package com.dickthedeployer.dick.web.domain;
 
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author mariusz
  */
 @Data
@@ -49,6 +50,7 @@ public class Build {
     private String currentStage;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     private List<String> stages;
 
     public static class Builder {

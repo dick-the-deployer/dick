@@ -23,20 +23,19 @@ angular.module('dick.builds')
             projectsResource.get({namespace: namespace, name: name})
                 .$promise.then(function (data) {
                 $scope.project = data;
+                projectsResource.builds({
+                    namespace: namespace,
+                    name: name,
+                    page: page,
+                    size: size
+                }).$promise.then(function (data) {
+                    $scope.builds = data;
+                    if (data.length !== 0) {
+                        page++;
+                    }
+                });
             });
-
-
-            projectsResource.builds({
-                namespace: namespace,
-                name: name,
-                page: page,
-                size: size
-            }).$promise.then(function (data) {
-                $scope.builds = data;
-                if (data.length !== 0) {
-                    page++;
-                }
-            });
+            
             var deferred;
             var subscriber = rx.Observable.interval(settings.interval)
                 .filter(function () {

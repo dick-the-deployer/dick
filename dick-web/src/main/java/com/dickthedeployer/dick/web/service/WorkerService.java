@@ -69,6 +69,8 @@ public class WorkerService {
         Worker worker = workerDao.findByName(name)
                 .orElseGet(() -> Worker.builder()
                         .name(name)
+                        .status(Worker.Status.READY)
+                        .registrationDate(new Date())
                         .build()
                 );
         worker.setLastHeartbeat(new Date());
