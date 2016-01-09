@@ -1,6 +1,16 @@
 <section>
     <section class="panel infinite-container">
-        <header class="panel-heading">
+        <header class="panel-heading clearfix">
+            <div class="pull-right">
+                <button class="btn btn-success" type="button" ui-sref="dick.projects-new" ui-sref>
+                    <i class="fa fa-plus mg-r-xs"></i>NEW PROJECT
+                </button>
+                <a class="btn btn-default" type="button"
+                   href="/groups/{{group.name}}/edit">
+                    <i class="fa fa-gear mg-r-xs"></i>SETTINGS
+                </a>
+            </div>
+
             <div>{{group.name}} <span class="text-muted">created {{group.creationDate| amTimeAgo}}</span></div>
             <span class="text-muted" ng-bind="group.description">You can browse groups here.</span>
         </header>
@@ -9,14 +19,17 @@
         <div class="panel-body" infinite-scroll="loadMore()" >
             <loader on="group"></loader>
 
+            <div ng-show="group.projects.length === 0" class="ng-hide text-muted text-center">
+                Group is empty.
+            </div>
+
             <div ng-repeat="project in group.projects track by project.id" class="panel"
                  ng-class="{
                  'col-md-12' : group.projects.length === 1,
                  'col-md-6' : group.projects.length === 2,
                  'col-md-4' : group.projects.length > 2,
                  'col-sm-12' : group.projects.length === 1,
-                 'col-sm-6' : group.projects.length > 1}"
-            >
+                 'col-sm-6' : group.projects.length > 1}">
 
                 <div ng-include=" '/views/parts/project.html'"></div>
             </div>

@@ -20,12 +20,12 @@
             <ul class="content-list">
                 <li ng-repeat="group in groups track by group.name">
                     <span class="actions">
-                        <button data-toggle="button" class="btn btn-white btn-sm">
-                            <i class="fa fa-heart"></i>
-                        </button>
-                        <button data-toggle="button" class="btn btn-white btn-sm">
-                            <i class="fa fa-heart"></i>
-                        </button>
+                        <a href="/groups/{{group.name}}/edit" class="btn btn-white btn-sm">
+                            <i class="fa fa-gears"></i>
+                        </a>
+                        <a href="/groups/{{group.name}}" class="btn btn-white btn-sm">
+                            <i class="fa fa-sign-out"></i>
+                        </a>
                     </span>
                     <div>
                         <a href="/groups/{{group.name}}"><b ng-bind="group.name"></b></a>

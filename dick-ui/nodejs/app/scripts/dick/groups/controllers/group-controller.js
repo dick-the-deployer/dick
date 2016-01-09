@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('dick.groups')
-    .controller('GroupController', ['$window', '$scope', '$stateParams', '$location', 'MetadataService', 'GroupsResource', 'rx', 'settings',
-        function ($window, $scope, $stateParams, $location, metadataService, groupsResource, rx, settings) {
+    .controller('GroupController', ['$window', '$scope', '$stateParams', '$location', 'MetadataService', 'GroupsResource', 'rx', 'settings', '$rootScope',
+        function ($window, $scope, $stateParams, $location, metadataService, groupsResource, rx, settings, $rootScope) {
             if ($window.angular.isUndefined($stateParams.name) ||
                 $stateParams.name === '') {
                 $location.path('/');
@@ -14,6 +14,7 @@ angular.module('dick.groups')
 
             groupsResource.get({name: name}).$promise.then(function (data) {
                 $scope.group = data;
+                $rootScope.group = data;
             });
             var deferred;
             var subscriber = rx.Observable.interval(settings.interval)
