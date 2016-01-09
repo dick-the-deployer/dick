@@ -27,6 +27,7 @@ angular.module('dick')
                 $rootScope.$stateParams = $stateParams;
                 $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
                     $rootScope.project = null;
+                    $rootScope.group = null;
                 });
             }
         ]);

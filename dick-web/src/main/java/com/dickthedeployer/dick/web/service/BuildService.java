@@ -161,14 +161,14 @@ public class BuildService {
     }
 
     @Transactional
-    public void removeBuilds(Project project) {
+    public void deleteBuilds(Project project) {
         PageRequest pageable = new PageRequest(0, 20);
         Page<Build> page;
         do {
             page = buildDao.findByProject(project, pageable);
             page.getContent().stream()
                     .forEach(build -> {
-                        jobBuildService.removeJobBuilds(build);
+                        jobBuildService.deleteJobBuilds(build);
                         buildDao.delete(build);
                     });
         } while (page.hasNext());

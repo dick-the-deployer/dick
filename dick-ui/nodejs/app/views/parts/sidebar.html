@@ -23,13 +23,27 @@
     <div class="separator mg-t-sm mg-b-sm"></div>
     <ul class="ng-hide" ng-show="project">
         <li ui-sref-active="active">
-            <a href="/{{project.namespace}}/{{project.name}}">
+            <a ui-sref="dick.builds({name: project.name, namespace: project.namespace})">
                 <i class="fa fa-dashboard"></i>
                 <span>Builds</span>
             </a>
         </li>
         <li ui-sref-active="active">
-            <a href="/{{project.namespace}}/{{project.name}}/edit">
+            <a ui-sref="dick.project({name: project.name, namespace: project.namespace})">
+                <i class="fa fa-gears"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="ng-hide" ng-show="group">
+        <li ui-sref-active="active">
+            <a ui-sref="dick.group-details({name: group.name})">
+                <i class="fa fa-dashboard"></i>
+                <span>{{group.name}}</span>
+            </a>
+        </li>
+        <li ui-sref-active="active">
+            <a ui-sref="dick.group-edit({name: group.name})">
                 <i class="fa fa-gears"></i>
                 <span>Settings</span>
             </a>

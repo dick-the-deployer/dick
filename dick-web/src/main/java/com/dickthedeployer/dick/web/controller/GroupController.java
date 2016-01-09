@@ -43,6 +43,17 @@ public class GroupController {
         groupService.createGroup(groupModel);
     }
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/{groupId}")
+    public void updateGroup(@PathVariable("groupId") Long groupId,
+                            @RequestBody GroupModel groupModel) throws NameTakenException {
+        groupService.updateGroup(groupId, groupModel);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{groupId}")
+    public void deleteGroup(@PathVariable("groupId") Long groupId) {
+        groupService.deleteGroup(groupId);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<GroupModel> getGroups(@RequestParam("page") int page, @RequestParam("size") int size) {
         return groupService.getGroups(page, size);

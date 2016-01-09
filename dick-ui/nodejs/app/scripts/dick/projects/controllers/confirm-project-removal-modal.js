@@ -12,7 +12,7 @@ angular.module('dick.groups')
                     .$promise.then(function () {
                     toaster.add({
                         type: 'success',
-                        message: 'Project \'' + $scope.project.name + '\' name was removed.'
+                        message: 'Project \'' + $scope.project.name + '\' was removed.'
                     });
                     $uibModalInstance.close();
                     $location.path('/');

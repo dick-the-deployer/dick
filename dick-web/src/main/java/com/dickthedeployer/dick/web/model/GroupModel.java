@@ -15,13 +15,14 @@
  */
 package com.dickthedeployer.dick.web.model;
 
-import java.util.Date;
-import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -36,6 +37,7 @@ public class GroupModel {
     @NotNull
     private String name;
 
+    private Long id;
     private Date creationDate;
     private String description;
     private List<ProjectModel> projects;

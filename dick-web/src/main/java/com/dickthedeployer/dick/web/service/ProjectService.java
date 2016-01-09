@@ -154,9 +154,14 @@ public class ProjectService {
     }
 
     @Transactional
-    public void removeProject(Long projectId) throws NotFoundException {
+    public void deleteProject(Long projectId) throws NotFoundException {
         Project project = getAndCheckProject(projectId);
-        buildService.removeBuilds(project);
+        deleteProject(project);
+    }
+
+    @Transactional
+    public void deleteProject(Project project) {
+        buildService.deleteBuilds(project);
         projectDao.delete(project);
     }
 }

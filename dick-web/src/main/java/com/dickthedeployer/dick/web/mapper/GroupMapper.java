@@ -16,8 +16,9 @@
 package com.dickthedeployer.dick.web.mapper;
 
 import com.dickthedeployer.dick.web.domain.Group;
-import static com.dickthedeployer.dick.web.mapper.ProjectMapper.mapProject;
 import com.dickthedeployer.dick.web.model.GroupModel;
+
+import static com.dickthedeployer.dick.web.mapper.ProjectMapper.mapProject;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -28,6 +29,7 @@ public class GroupMapper {
 
     public static GroupModel mapGroup(Group group) {
         return GroupModel.builder()
+                .id(group.getId())
                 .creationDate(group.getCreationDate())
                 .description(group.getDescription())
                 .name(group.getNamespace().getName())
@@ -40,6 +42,7 @@ public class GroupMapper {
 
     public static GroupModel mapGroupShallow(Group group) {
         return GroupModel.builder()
+                .id(group.getId())
                 .creationDate(group.getCreationDate())
                 .description(group.getDescription())
                 .name(group.getNamespace().getName())

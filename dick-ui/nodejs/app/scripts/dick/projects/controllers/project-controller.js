@@ -92,7 +92,6 @@ angular.module('dick.groups')
                             return $scope.project;
                         }
                     }
-
                 });
             };
         }

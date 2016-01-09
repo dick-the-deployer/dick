@@ -1,0 +1,64 @@
+<section class="panel panel-default">
+    <header class="panel-heading">
+        <h4>Group settings</h4>
+    </header>
+    <form role="editForm" name="editForm" class="form-validation" ng-submit="edit()">
+        <div class="panel-body">
+            <loader on="group"></loader>
+
+            <div ng-show="group">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">Group name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="my-project" required
+                                   ng-model="group.name">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-10 col-sm-offset-2 alert alert-danger">
+                        <ul>
+                            <li>Be careful. Changing the group's name can have unintended side effects.</li>
+                            <li>All links to resources related to the group will change.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">
+                            Description <span class="text-muted">(optional)</span>
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" ng-model="group.description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn btn-success" type="submit" ng-disabled="editForm.$invalid">SAVE CHANGES
+            </button>
+        </div>
+    </form>
+</section>
+
+
+<section class="panel panel-danger">
+    <header class="panel-heading">
+        <h4>Remove group</h4>
+    </header>
+    <div class="panel-body">
+        <loader on="group"></loader>
+        <div ng-show="group">
+            Removing the group will delete its data and all related resources including projects, builds, logs etc.
+            <div><b>Removed groups cannot be restored!</b></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-danger" ng-click="confirm()">
+            REMOVE GROUP
+        </button>
+    </div>
+</section>

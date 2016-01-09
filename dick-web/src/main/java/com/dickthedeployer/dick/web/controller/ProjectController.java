@@ -59,8 +59,8 @@ public class ProjectController {
     }
 
     @RequestMapping(method = DELETE, value = "{projectId}")
-    public void removeProject(@PathVariable("projectId") Long projectId) throws NotFoundException {
-        projectService.removeProject(projectId);
+    public void deleteProject(@PathVariable("projectId") Long projectId) throws NotFoundException {
+        projectService.deleteProject(projectId);
     }
 
     @RequestMapping(method = PUT, value = "{projectId}/name")

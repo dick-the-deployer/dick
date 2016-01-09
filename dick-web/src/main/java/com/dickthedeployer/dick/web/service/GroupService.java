@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +53,9 @@ public class GroupService {
 
     @Autowired
     BuildService buildService;
+
+    @Autowired
+    ProjectService projectService;
 
     public void createGroup(GroupModel groupModel) throws NameTakenException {
         validateIfNameAvailable(groupModel);
@@ -94,5 +98,24 @@ public class GroupService {
         Collections.reverse(projectModels);
         model.setProjects(projectModels);
         return model;
+    }
+
+    @Transactional
+    public void updateGroup(Long groupId, GroupModel groupModel) throws NameTakenException {
+        Group group = groupDao.findOne(groupId);
+        if (!groupModel.getName().equals(group.getNamespace().getName())) {
+            validateIfNameAvailable(groupModel);
+            group.getNamespace().setName(groupModel.getName());
+        }
+        group.setDescription(groupModel.getDescription());
+        groupDao.save(group);
+    }
+
+    @Transactional
+    public void deleteGroup(Long groupId) {
+        Group group = groupDao.findOne(groupId);
+        group.getNamespace().getProjects().stream()
+                .forEach(projectService::deleteProject);
+        groupDao.delete(group);
     }
 }

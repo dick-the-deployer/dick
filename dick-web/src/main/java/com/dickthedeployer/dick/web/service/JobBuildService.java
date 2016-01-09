@@ -45,7 +45,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author mariusz
  */
 @Slf4j
@@ -173,10 +172,8 @@ public class JobBuildService {
     }
 
     private void clearJob(String fullLog, JobBuild jobBuild) {
-        if (jobBuild.getWorker() != null) {
-            workerService.readyWorker(jobBuild.getWorker());
-            jobBuild.setWorker(null);
-        }
+        workerService.readyWorker(Optional.ofNullable((jobBuild.getWorker())));
+        jobBuild.setWorker(null);
         jobBuild.getBuildLog().setOutput(fullLog);
         jobBuildDao.save(jobBuild);
         logChunkDao.deleteByJobBuild(jobBuild);
@@ -225,7 +222,7 @@ public class JobBuildService {
                 .filter(jobBuild -> jobBuild.getStatus().equals(JobBuild.Status.IN_PROGRESS))
                 .forEach(jobBuild -> {
                     jobBuild.setStatus(JobBuild.Status.STOPPED);
-                    workerService.readyWorker(jobBuild.getWorker());
+                    workerService.readyWorker(Optional.of(jobBuild.getWorker()));
                     jobBuild.setWorker(null);
                     jobBuildDao.save(jobBuild);
                 });
@@ -233,7 +230,7 @@ public class JobBuildService {
                 .filter(jobBuild -> jobBuild.getStatus().equals(JobBuild.Status.READY))
                 .forEach(jobBuild -> {
                     jobBuild.setStatus(JobBuild.Status.STOPPED);
-                    workerService.readyWorker(jobBuild.getWorker());
+                    workerService.readyWorker(Optional.ofNullable(jobBuild.getWorker()));
                     jobBuild.setWorker(null);
                     jobBuildDao.save(jobBuild);
                 });
@@ -272,11 +269,11 @@ public class JobBuildService {
     }
 
     @Transactional
-    public void removeJobBuilds(Build build) {
+    public void deleteJobBuilds(Build build) {
         jobBuildDao.findByBuild(build).stream()
                 .forEach(jobBuild -> {
                     logChunkDao.deleteByJobBuild(jobBuild);
-                    workerService.readyWorker(jobBuild.getWorker());
+                    workerService.readyWorker(Optional.ofNullable(jobBuild.getWorker()));
                     jobBuildDao.delete(jobBuild);
                 });
     }
