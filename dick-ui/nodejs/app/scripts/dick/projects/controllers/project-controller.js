@@ -2,9 +2,9 @@
 
 angular.module('dick.groups')
     .controller('ProjectController', ['ProjectsResource', '$scope', 'MetadataService', '$stateParams', '$window',
-        'toaster', 'statusCode', '$location', 'NamespacesResource', '$uibModal',
+        'toaster', 'statusCode', '$location', 'NamespacesResource', '$uibModal', '$rootScope',
         function (projectsResource, $scope, metadataService, $stateParams, $window, toaster, statusCode,
-                  $location, namespacesResource, $uibModal) {
+                  $location, namespacesResource, $uibModal, $rootScope) {
 
             if ($window.angular.isUndefined($stateParams.namespace) ||
                 $stateParams.namespace === '' || $window.angular.isUndefined($stateParams.name) ||
@@ -24,6 +24,7 @@ angular.module('dick.groups')
             projectsResource.get({namespace: namespace, name: name})
                 .$promise.then(function (data) {
                 $scope.project = data;
+                $rootScope.project = data;
             });
 
             $scope.addVariable = function () {

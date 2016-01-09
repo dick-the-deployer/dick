@@ -2,8 +2,9 @@
 
 angular.module('dick.builds')
     .controller('BuildsController', ['MetadataService', '$scope', 'toaster', 'BuildsResource', '$window', '$stateParams',
-        '$location', 'ProjectsResource', 'rx', 'settings',
-        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, projectsResource, rx, settings) {
+        '$location', 'ProjectsResource', 'rx', 'settings', '$rootScope',
+        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, projectsResource,
+                  rx, settings, $rootScope) {
             if ($window.angular.isUndefined($stateParams.namespace) ||
                 $stateParams.namespace === '' || $window.angular.isUndefined($stateParams.name) ||
                 $stateParams.name === '') {
@@ -23,6 +24,7 @@ angular.module('dick.builds')
             projectsResource.get({namespace: namespace, name: name})
                 .$promise.then(function (data) {
                 $scope.project = data;
+                $rootScope.project = data;
                 projectsResource.builds({
                     namespace: namespace,
                     name: name,

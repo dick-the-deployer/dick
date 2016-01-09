@@ -21,6 +21,20 @@
         </li>
     </ul>
     <div class="separator mg-t-sm mg-b-sm"></div>
+    <ul class="ng-hide" ng-show="project">
+        <li ui-sref-active="active">
+            <a href="/{{project.namespace}}/{{project.name}}">
+                <i class="fa fa-dashboard"></i>
+                <span>Builds</span>
+            </a>
+        </li>
+        <li ui-sref-active="active">
+            <a href="/{{project.namespace}}/{{project.name}}/edit">
+                <i class="fa fa-gears"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+    </ul>
 </nav>
 <!-- /main navigation -->
 

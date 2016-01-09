@@ -41,25 +41,9 @@
             <loader on="build"></loader>
 
             <div ng-show="build">
-                <div class="list-group col-md-2">
-                    <div href="#" class="list-group-item active">
-                        Jobs in {{stage.name}}
-                    </div>
-                    <a href="#" ng-click="selectJob(job)" class="list-group-item"
-                       ng-repeat="job in stage.jobBuilds track by job.id">
-                        <span class="badge" ng-class="{
-                        'text-success': job.status === 'DEPLOYED',
-                        'text-danger': job.status === 'FAILED',
-                        'text-info': job.status === 'IN_PROGRESS',
-                        'text-warning': job.status === 'STOPPED'
-                        }" ng-bind-html="job.status | jobStatusIcon"></span>
-                        {{job.name}}
-                        <div class="text-muted">{{job.status | jobStatus}}</div>
-                    </a>
-                </div>
 
                 <div class="col-md-10 ">
-                    <div class="panel box-shadow panel-default">
+                    <div class="panel">
                         <header class="panel-heading">
                             <span class="text-muted">Console Log </span>
                             {{job.name}}
@@ -84,6 +68,22 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="list-group col-md-2">
+                    <div href="#" class="list-group-item active">
+                        Jobs in {{stage.name}}
+                    </div>
+                    <a href="#" ng-click="selectJob(job)" class="list-group-item"
+                       ng-repeat="job in stage.jobBuilds track by job.id">
+                        <span class="badge" ng-class="{
+                        'text-success': job.status === 'DEPLOYED',
+                        'text-danger': job.status === 'FAILED',
+                        'text-info': job.status === 'IN_PROGRESS',
+                        'text-warning': job.status === 'STOPPED'
+                        }" ng-bind-html="job.status | jobStatusIcon"></span>
+                        {{job.name}}
+                        <div class="text-muted">{{job.status | jobStatus}}</div>
+                    </a>
                 </div>
             </div>
         </div>
