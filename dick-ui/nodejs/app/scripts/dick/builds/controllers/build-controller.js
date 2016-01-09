@@ -2,8 +2,9 @@
 
 angular.module('dick.builds')
     .controller('BuildController', ['MetadataService', '$scope', 'toaster', 'BuildsResource', '$window', '$stateParams',
-        '$location', 'JobBuildsResource', 'rx', 'settings',
-        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, jobBuildsResource, rx, settings) {
+        '$location', 'JobBuildsResource', 'rx', 'settings', '$rootScope',
+        function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, jobBuildsResource,
+                  rx, settings, $rootScope) {
             if ($window.angular.isUndefined($stateParams.id) ||
                 $stateParams.id === '' || $window.angular.isUndefined($stateParams.namespace) ||
                 $stateParams.namespace === '' || $window.angular.isUndefined($stateParams.name) ||
@@ -94,6 +95,7 @@ angular.module('dick.builds')
 
             buildsResource.get({id: id}).$promise.then(function (data) {
                 $scope.build = data;
+                $rootScope.project = data.project;
                 $scope.stage = data.stages.find(function (candidate) {
                     return candidate.name === stage;
                 });
