@@ -10,6 +10,8 @@ RUN ./mvnw install -DskipTests -DskipGit=true
 RUN bash -c 'cp /usr/src/app/dick-web/target/dick-web-1.0-SNAPSHOT.jar /app.jar'
 RUN bash -c 'touch /app.jar'
 RUN bash -c 'rm -rf /usr/src/app'
+RUN bash -c 'echo "Host *" > ~/.ssh/config'
+RUN bash -c 'echo "  StrictHostKeyChecking no" >> ~/.ssh/config'
 
 EXPOSE 8080
 
