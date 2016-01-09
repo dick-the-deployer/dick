@@ -137,11 +137,7 @@ public class JobBuildService {
             if (!jobBuild.getStatus().equals(JobBuild.Status.STOPPED)) {
                 jobBuild.setStatus(JobBuild.Status.FAILED);
             }
-            workerService.readyWorker(jobBuild.getWorker());
-            jobBuild.setWorker(null);
-            jobBuild.getBuildLog().setOutput(fullLog);
-            jobBuildDao.save(jobBuild);
-            logChunkDao.deleteByJobBuild(jobBuild);
+            clearJob(fullLog, jobBuild);
 
             updateBuildStatus(jobBuild.getBuild());
         }
@@ -153,11 +149,7 @@ public class JobBuildService {
         log.info("Reporting success on {}", id);
         if (jobBuild != null) {
             jobBuild.setStatus(JobBuild.Status.DEPLOYED);
-            workerService.readyWorker(jobBuild.getWorker());
-            jobBuild.setWorker(null);
-            jobBuild.getBuildLog().setOutput(fullLog);
-            jobBuildDao.save(jobBuild);
-            logChunkDao.deleteByJobBuild(jobBuild);
+            clearJob(fullLog, jobBuild);
 
             Build build = jobBuild.getBuild();
             Build.Status status = updateBuildStatus(build);
@@ -178,6 +170,16 @@ public class JobBuildService {
                 }
             }
         }
+    }
+
+    private void clearJob(String fullLog, JobBuild jobBuild) {
+        if (jobBuild.getWorker() != null) {
+            workerService.readyWorker(jobBuild.getWorker());
+            jobBuild.setWorker(null);
+        }
+        jobBuild.getBuildLog().setOutput(fullLog);
+        jobBuildDao.save(jobBuild);
+        logChunkDao.deleteByJobBuild(jobBuild);
     }
 
     public Build.Status updateBuildStatus(Build build) {
