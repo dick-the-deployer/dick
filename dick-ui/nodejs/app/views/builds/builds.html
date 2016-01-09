@@ -2,10 +2,14 @@
     <section class="panel">
         <header class="panel-heading">
             <div class="pull-right">
-                <button class="btn btn-default" type="button"
+                <button class="btn btn-info" type="button"
                         ng-controller="HookController" ng-click="startBuild(project)">
                     <i class="fa fa-chevron-right mg-r-xs"></i>BUILD PROJECT
                 </button>
+                <a class="btn btn-default" type="button"
+                   href="/{{project.namespace}}/{{project.name}}/edit">
+                    <i class="fa fa-gear mg-r-xs"></i>EDIT PROJECT
+                </a>
             </div>
             <div>
                 <span class="text-muted">Repository: </span>{{project.repository}}
@@ -43,11 +47,11 @@
                         </div>
                         <div class="col-md-10">
                             <div ng-repeat="stage in build.stages"
-                                 ng-class="{'col-lg-12' : project.lastBuild.stages.length === 1,
-                 'col-lg-6' : project.lastBuild.stages.length === 2,
-                 'col-lg-4' : project.lastBuild.stages.length > 2,
-                 'col-md-12' : project.lastBuild.stages.length === 1,
-                 'col-md-6' : project.lastBuild.stages.length > 1}"
+                                 ng-class="{'col-lg-12' : build.stages.length === 1,
+                 'col-lg-6' : build.stages.length === 2,
+                 'col-lg-4' : build.stages.length > 2,
+                 'col-md-12' : build.stages.length === 1,
+                 'col-md-6' : build.stages.length > 1}"
                             >
                                 <div class="row">
                                     <div class="mg-b-xs">

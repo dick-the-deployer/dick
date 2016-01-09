@@ -21,6 +21,7 @@ import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.Namespace;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.NameTakenException;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
 import com.dickthedeployer.dick.web.hook.RepositoryMapper;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +58,7 @@ public class ProjectService {
     RepositoryService repositoryService;
 
     public void createProject(ProjectModel model) throws NameTakenException, RepositoryUnavailableException, RepositoryParsingException {
-        validateIfNameAvailable(model);
+        validateIfNameAvailable(model.getNamespace(), model.getName());
         Namespace namespace = namespaceDao.findByName(model.getNamespace()).get();
         Project project = new Project.Builder()
                 .withRef(model.getRef())
@@ -66,20 +68,24 @@ public class ProjectService {
                 .withRepository(model.getRepository())
                 .withRepositoryHost(RepositoryMapper.getHost(model.getRepository()))
                 .withRepositoryPath(RepositoryMapper.getPath(model.getRepository()))
-                .withEnvironmentVariables(model.getEnvironmentVariables().stream()
-                        .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
-                        .collect(toList())
-                ).build();
+                .withEnvironmentVariables(getEnvironment(model))
+                .build();
         validateIfRepositoryAvailable(project);
         projectDao.save(project);
+    }
+
+    private List<EnvironmentVariable> getEnvironment(ProjectModel model) {
+        return model.getEnvironmentVariables().stream()
+                .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
+                .collect(toList());
     }
 
     private void validateIfRepositoryAvailable(Project project) throws RepositoryUnavailableException {
         repositoryService.checkoutRepository(project);
     }
 
-    private void validateIfNameAvailable(ProjectModel model) throws NameTakenException {
-        Optional<Project> project = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
+    private void validateIfNameAvailable(String namespace, String name) throws NameTakenException {
+        Optional<Project> project = projectDao.findByNamespaceNameAndName(namespace, name);
         if (project.isPresent()) {
             throw new NameTakenException();
         }
@@ -100,14 +106,57 @@ public class ProjectService {
                 .map(this::mapProject).collect(toList());
     }
 
-    public ProjectModel getProject(String namespaceName, String name) {
+    public ProjectModel getProject(String namespaceName, String name) throws NotFoundException {
         Optional<Project> project = projectDao.findByNamespaceNameAndName(namespaceName, name);
-        return mapProject(project.get());
+        return mapProject(project.orElseThrow(NotFoundException::new));
     }
 
     private ProjectModel mapProject(Project project) {
         ProjectModel model = ProjectMapper.mapProject(project);
         model.setLastBuild(buildService.findLastBuild(project));
         return model;
+    }
+
+    public void updateProject(Long projectId, ProjectModel model) throws RepositoryParsingException, RepositoryUnavailableException, NotFoundException {
+        Project project = getAndCheckProject(projectId);
+        project.setRepository(model.getRepository());
+        project.setRef(model.getRef());
+        project.setDescription(model.getDescription());
+        project.setRepositoryHost(RepositoryMapper.getHost(model.getRepository()));
+        project.setRepositoryPath(RepositoryMapper.getPath(model.getRepository()));
+        project.setEnvironmentVariables(getEnvironment(model));
+
+        validateIfRepositoryAvailable(project);
+        projectDao.save(project);
+    }
+
+    private Project getAndCheckProject(Long projectId) throws NotFoundException {
+        Project project = projectDao.findOne(projectId);
+        if (project == null) {
+            throw new NotFoundException();
+        }
+        return project;
+    }
+
+    public void renameProject(Long projectId, ProjectModel model) throws NameTakenException, NotFoundException {
+        Project project = getAndCheckProject(projectId);
+        validateIfNameAvailable(project.getNamespace().getName(), model.getName());
+        project.setName(model.getName());
+        projectDao.save(project);
+    }
+
+    public void moveProject(Long projectId, ProjectModel model) throws NameTakenException, NotFoundException {
+        Project project = getAndCheckProject(projectId);
+        validateIfNameAvailable(model.getNamespace(), project.getName());
+        Namespace namespace = namespaceDao.findByName(model.getNamespace()).get();
+        project.setNamespace(namespace);
+        projectDao.save(project);
+    }
+
+    @Transactional
+    public void removeProject(Long projectId) throws NotFoundException {
+        Project project = getAndCheckProject(projectId);
+        buildService.removeBuilds(project);
+        projectDao.delete(project);
     }
 }

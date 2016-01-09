@@ -14,6 +14,11 @@ angular.module('dick.projects')
                 controller: 'ProjectsController',
                 templateUrl: '/views/projects/projects.html'
             })
+            .state('dick.project', {
+                url: '/:namespace/:name/edit',
+                controller: 'ProjectController',
+                templateUrl: '/views/projects/project.html'
+            })
             .state('dick.projects-new', {
                 url: '/projects/new',
                 controller: 'NewProjectController',

@@ -1,0 +1,173 @@
+<section class="panel panel-default">
+    <header class="panel-heading">
+        <h4>Project settings</h4>
+    </header>
+    <form role="editForm" name="editForm" class="form-validation" ng-submit="edit()">
+        <div class="panel-body">
+            <loader on="project"></loader>
+
+            <div ng-show="project">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">Repository</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   placeholder="git@github.com:dick-the-deployer/dick.git"
+                                   required ng-model="project.repository">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">Ref</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="master" required
+                                   ng-model="project.ref">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">Environment</label>
+                        <div class="col-sm-10">
+                            <div class="row">
+                                <div class="col-sm-11">
+                                    <div ng-repeat="variable in project.environmentVariables" class="row">
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control mg-b-md" placeholder="USER.HOME"
+                                                   required
+                                                   ng-model="variable.key">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control mg-b-md" placeholder="/home/foo"
+                                                   required
+                                                   ng-model="variable.value">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <button class="btn btn-white btn-sm" ng-click="removeVariable(variable)"
+                                                    type="button"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <div class="pull-right">
+                                        <button class="btn btn-white btn-sm" ng-click="addVariable()" type="button"><i
+                                                class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">
+                            Description <span class="text-muted">(optional)</span>
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" ng-model="project.description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn btn-success" type="submit" ng-disabled="editForm.$invalid">SAVE CHANGES
+            </button>
+        </div>
+    </form>
+</section>
+
+<section class="panel panel-warning">
+    <header class="panel-heading">
+        <h4>Rename project</h4>
+    </header>
+    <form role="renameForm" name="renameForm" class="form-validation" ng-submit="rename()">
+        <div class="panel-body">
+            <loader on="project"></loader>
+            <div ng-show="project">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">Project name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="my-project" required
+                                   ng-model="project.name">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <ul class="list-initial">
+                                <li>Be careful. Changing the project's name can have unintended side effects.</li>
+                                <li>All links to resources related to the project will change.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn btn-warning" type="submit" ng-disabled="renameForm.$invalid">RENAME
+            </button>
+        </div>
+    </form>
+</section>
+
+
+<section class="panel panel-danger">
+    <header class="panel-heading">
+        <h4>Transfer project</h4>
+    </header>
+    <form role="transferForm" name="transferForm" class="form-validation" ng-submit="transfer()">
+        <div class="panel-body">
+            <loader on="project"></loader>
+            <div ng-show="project">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label text-right mg-t-sm">Namespace</label>
+                        <div class="col-sm-10">
+                            <select ng-model="project.namespace" class="form-control selectpicker" required>
+                                <option ng-repeat="option in namespaces" value="{{option}}">{{option}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <ul class="list-initial">
+                                <li>Be careful. Changing the project's namespace can have unintended side effects.</li>
+                                <li>You can only transfer the project to namespaces you manage.</li>
+                                <li>All links to resources related to the project will change.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn btn-danger" type="submit" ng-disabled="transferForm.$invalid">
+                TRANSFER
+            </button>
+        </div>
+    </form>
+</section>
+
+<section class="panel panel-danger">
+    <header class="panel-heading">
+        <h4>Remove project</h4>
+    </header>
+    <div class="panel-body">
+        <loader on="project"></loader>
+        <div ng-show="project">
+            Removing the project will delete its data and all related resources including builds, logs etc.
+            <div><b>Removed projects cannot be restored!</b></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-danger" ng-click="confirm()">
+            REMOVE PROJECT
+        </button>
+    </div>
+</section>

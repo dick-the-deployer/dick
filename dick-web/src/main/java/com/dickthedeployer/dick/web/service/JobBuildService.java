@@ -24,6 +24,7 @@ import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.LogChunk;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.model.LogChunkModel;
 import com.dickthedeployer.dick.web.model.OutputModel;
@@ -111,61 +112,70 @@ public class JobBuildService {
 
     public boolean isStopped(Long id) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        return jobBuild.isStopped();
+        return jobBuild == null || jobBuild.isStopped();
     }
 
     @Transactional
-    public void reportProgress(Long id, String log) {
+    public void reportProgress(Long id, String partialLog) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        LogChunk logChunk = new LogChunk();
-        logChunk.setJobBuild(jobBuild);
-        logChunk.getBuildLog().setOutput(log);
-        logChunkDao.save(logChunk);
+        log.info("Reporting progress on {}", id);
+        if (jobBuild != null) {
+            LogChunk logChunk = new LogChunk();
+            logChunk.setJobBuild(jobBuild);
+            logChunk.getBuildLog().setOutput(partialLog);
+            logChunkDao.save(logChunk);
 
-        updateBuildStatus(jobBuild.getBuild());
-    }
-
-    @Transactional
-    public void reportFailure(Long id, String log) {
-        JobBuild jobBuild = jobBuildDao.findOne(id);
-        if (!jobBuild.getStatus().equals(JobBuild.Status.STOPPED)) {
-            jobBuild.setStatus(JobBuild.Status.FAILED);
+            updateBuildStatus(jobBuild.getBuild());
         }
-        workerService.readyWorker(jobBuild.getWorker());
-        jobBuild.setWorker(null);
-        jobBuild.getBuildLog().setOutput(log);
-        jobBuildDao.save(jobBuild);
-        logChunkDao.deleteByJobBuild(jobBuild);
-
-        updateBuildStatus(jobBuild.getBuild());
     }
 
     @Transactional
-    public void reportSuccess(Long id, String buildOutput) {
+    public void reportFailure(Long id, String fullLog) {
         JobBuild jobBuild = jobBuildDao.findOne(id);
-        jobBuild.setStatus(JobBuild.Status.DEPLOYED);
-        workerService.readyWorker(jobBuild.getWorker());
-        jobBuild.setWorker(null);
-        jobBuild.getBuildLog().setOutput(buildOutput);
-        jobBuildDao.save(jobBuild);
-        logChunkDao.deleteByJobBuild(jobBuild);
+        log.info("Reporting failure on {}", id);
+        if (jobBuild != null) {
+            if (!jobBuild.getStatus().equals(JobBuild.Status.STOPPED)) {
+                jobBuild.setStatus(JobBuild.Status.FAILED);
+            }
+            workerService.readyWorker(jobBuild.getWorker());
+            jobBuild.setWorker(null);
+            jobBuild.getBuildLog().setOutput(fullLog);
+            jobBuildDao.save(jobBuild);
+            logChunkDao.deleteByJobBuild(jobBuild);
 
-        Build build = jobBuild.getBuild();
-        Build.Status status = updateBuildStatus(build);
-        if (status.equals(Build.Status.DEPLOYED_STAGE)) {
-            log.info("Build status after job build {} is {}", id, status);
-            try {
-                Dickfile dickfile = dickYmlService.loadDickFile(build);
-                Stage nextStage = dickfile.getNextStage(dickfile.getStage(build.getCurrentStage()));
-                log.info("Next stage is {}", nextStage);
-                if (nextStage == null) {
-                    build.setStatus(Build.Status.DEPLOYED);
-                    buildDao.save(build);
-                } else if (nextStage.isAutorun()) {
-                    buildStage(build, dickfile, nextStage);
+            updateBuildStatus(jobBuild.getBuild());
+        }
+    }
+
+    @Transactional
+    public void reportSuccess(Long id, String fullLog) {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        log.info("Reporting success on {}", id);
+        if (jobBuild != null) {
+            jobBuild.setStatus(JobBuild.Status.DEPLOYED);
+            workerService.readyWorker(jobBuild.getWorker());
+            jobBuild.setWorker(null);
+            jobBuild.getBuildLog().setOutput(fullLog);
+            jobBuildDao.save(jobBuild);
+            logChunkDao.deleteByJobBuild(jobBuild);
+
+            Build build = jobBuild.getBuild();
+            Build.Status status = updateBuildStatus(build);
+            if (status.equals(Build.Status.DEPLOYED_STAGE)) {
+                log.info("Build status after job build {} is {}", id, status);
+                try {
+                    Dickfile dickfile = dickYmlService.loadDickFile(build);
+                    Stage nextStage = dickfile.getNextStage(dickfile.getStage(build.getCurrentStage()));
+                    log.info("Next stage is {}", nextStage);
+                    if (nextStage == null) {
+                        build.setStatus(Build.Status.DEPLOYED);
+                        buildDao.save(build);
+                    } else if (nextStage.isAutorun()) {
+                        buildStage(build, dickfile, nextStage);
+                    }
+                } catch (DickFileMissingException ex) {
+                    throw Throwables.propagate(ex);
                 }
-            } catch (DickFileMissingException ex) {
-                throw Throwables.propagate(ex);
             }
         }
     }
@@ -229,8 +239,8 @@ public class JobBuildService {
     }
 
     @Transactional
-    public List<LogChunkModel> getLogChunks(Long id, Date creationDate) {
-        JobBuild jobBuild = jobBuildDao.findOne(id);
+    public List<LogChunkModel> getLogChunks(Long id, Date creationDate) throws NotFoundException {
+        JobBuild jobBuild = getAndCheckJobBuild(id);
         List<LogChunk> logChunks = creationDate == null ?
                 logChunkDao.findByJobBuild(jobBuild) :
                 logChunkDao.findByJobBuildAndCreationDateAfter(jobBuild, creationDate);
@@ -244,10 +254,28 @@ public class JobBuildService {
     }
 
     @Transactional
-    public OutputModel getOutput(Long id) {
-        JobBuild jobBuild = jobBuildDao.findOne(id);
+    public OutputModel getOutput(Long id) throws NotFoundException {
+        JobBuild jobBuild = getAndCheckJobBuild(id);
         return OutputModel.builder()
                 .output(jobBuild.getBuildLog().getOutput())
                 .build();
+    }
+
+    private JobBuild getAndCheckJobBuild(Long id) throws NotFoundException {
+        JobBuild jobBuild = jobBuildDao.findOne(id);
+        if (jobBuild == null) {
+            throw new NotFoundException();
+        }
+        return jobBuild;
+    }
+
+    @Transactional
+    public void removeJobBuilds(Build build) {
+        jobBuildDao.findByBuild(build).stream()
+                .forEach(jobBuild -> {
+                    logChunkDao.deleteByJobBuild(jobBuild);
+                    workerService.readyWorker(jobBuild.getWorker());
+                    jobBuildDao.delete(jobBuild);
+                });
     }
 }

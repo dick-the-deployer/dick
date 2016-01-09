@@ -6,21 +6,22 @@ angular.module('dick.groups')
                 metadataService.setTitle('Groups');
                 metadataService.setPageTitle('Groups');
                 var page = 0, size = 20;
+                $scope.groups = [];
 
                 groupsResource.query({page: page, size: size}).$promise.then(function (data) {
                     $scope.groups = data;
                     if (data.length !== 0) {
                         page++;
                     }
-                });
 
-                $scope.loadMore = function () {
-                    groupsResource.query({page: page, size: size}).$promise.then(function (data) {
-                        $scope.groups = $scope.groups.concat(data);
-                        if (data.length !== 0) {
-                            page++;
-                        }
-                    });
-                };
+                    $scope.loadMore = function () {
+                        groupsResource.query({page: page, size: size}).$promise.then(function (data) {
+                            $scope.groups = $scope.groups.concat(data);
+                            if (data.length !== 0) {
+                                page++;
+                            }
+                        });
+                    };
+                });
             }
         ]);
