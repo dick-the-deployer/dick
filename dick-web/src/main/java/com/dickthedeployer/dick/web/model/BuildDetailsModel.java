@@ -40,5 +40,6 @@ public class BuildDetailsModel {
     private String currentStage;
     private Date creationDate;
     private Build.Status status;
+    private String lastMessage;
 
 }

@@ -59,6 +59,26 @@ public class RepositoryService {
                 });
     }
 
+    public String getLastMessage(Project project, String sha) {
+        Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
+        REPOS.computeIfAbsent(repo, key -> checkoutRepository(key));
+        Path path = REPOS.get(repo);
+        synchronized (path) {
+            checkoutRevision(path, project.getRef(), sha);
+            return commandService.invoke(path, "git", "log", "--pretty=format:%s", "-1");
+        }
+    }
+
+    public String getLastSha(Project project) {
+        Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
+        REPOS.computeIfAbsent(repo, key -> checkoutRepository(key));
+        Path path = REPOS.get(repo);
+        synchronized (path) {
+            checkoutRevision(path, project.getRef(), "HEAD");
+            return commandService.invoke(path, "git", "log", "--pretty=format:%H", "-1");
+        }
+    }
+
     public void checkoutRepository(Project project) throws RepositoryUnavailableException {
         Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
         if (!REPOS.contains(repo)) {

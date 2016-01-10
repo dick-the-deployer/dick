@@ -35,7 +35,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- *
  * @author mariusz
  */
 public class WorkerServiceTest extends ContextTestBase {
@@ -84,7 +83,7 @@ public class WorkerServiceTest extends ContextTestBase {
                 .withRepository(UUID.randomUUID().toString())
                 .withNamespace(namespace)
                 .withEnvironmentVariables(asList(
-                                new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
+                        new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
                         )
                 ).build();
         projectDao.save(project);

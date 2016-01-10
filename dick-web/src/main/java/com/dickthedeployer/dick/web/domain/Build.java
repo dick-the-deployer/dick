@@ -49,6 +49,8 @@ public class Build {
 
     private String currentStage;
 
+    private String lastMessage;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     private List<String> stages;
@@ -73,6 +75,11 @@ public class Build {
 
         public Builder withSha(final String sha) {
             this.item.sha = sha;
+            return this;
+        }
+
+        public Builder withLastMessage(final String lastMessage) {
+            this.item.lastMessage = lastMessage;
             return this;
         }
 

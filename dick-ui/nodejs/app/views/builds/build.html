@@ -3,19 +3,28 @@
         <header class="panel-heading" ng-controller="HookController">
 
             <div class="row">
-                <div class="col-md-2">
-                    <div>
-                        <span class="text-muted">Number: </span>{{build.id}}
-                    </div>
-                    <div>
-                        <span class="text-muted">Created: </span>{{build.creationDate| amTimeAgo}}
-                    </div>
-                    <div>
-                        <span class="text-muted">Stage: </span>{{build.currentStage}}
-                    </div>
+                <div class="col-md-3">
+                    <table class="table mg-b-xs table-condensed">
+                        <tr>
+                            <td class="text-muted text-right no-border">Number:</td>
+                            <td class="no-border">{{build.id}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted text-right">Created:</td>
+                            <td>{{build.creationDate| amTimeAgo}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted text-right">Stage:</td>
+                            <td>{{build.currentStage}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted text-right">Commit:</td>
+                            <td>{{build.lastMessage}}</td>
+                        </tr>
+                    </table>
                 </div>
 
-                <div class="col-md-10">
+                <div class="col-md-9">
                     <div ng-repeat="stage in build.stages"
                          ng-class="{'col-lg-12' : build.stages.length === 1,
                  'col-lg-6' : build.stages.length === 2,

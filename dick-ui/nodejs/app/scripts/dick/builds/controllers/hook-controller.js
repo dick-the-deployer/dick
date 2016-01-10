@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('dick.builds')
-    .controller('HookController', ['HooksResource', '$scope', 'toaster', 'BuildsResource', 'statusCode',
-        function (hooksResource, $scope, toaster, buildsResource, statusCode) {
+    .controller('HookController', ['$scope', 'toaster', 'BuildsResource', 'statusCode',
+        function ($scope, toaster, buildsResource, statusCode) {
             $scope.startBuild = function (project) {
-                hooksResource.save({namespace: project.namespace, name: project.name}).$promise.then(function () {
+                buildsResource.save({namespace: project.namespace, name: project.name}).$promise.then(function () {
                     toaster.add({
                         type: 'success',
                         message: 'Build was successfully queued.'

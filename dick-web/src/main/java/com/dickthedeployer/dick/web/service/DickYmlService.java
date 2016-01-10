@@ -19,15 +19,15 @@ import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.google.common.base.Throwables;
-import java.io.IOException;
-import java.io.InputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
- *
  * @author mariusz
  */
 @Service

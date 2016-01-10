@@ -65,26 +65,31 @@ public class BuildService {
     @Autowired
     JobBuildService jobBuildService;
 
+    @Autowired
+    RepositoryService repositoryService;
+
     @Transactional
     public void onTrigger(TriggerModel model) throws BuildAlreadyQueuedException {
         Optional<Project> projectOptional = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
         Project project = projectOptional.get();
         log.info("Found project {} for name {}", project.getId(), model.getName());
-        buildProject(project, "HEAD");
+        String lastSha = repositoryService.getLastSha(project);
+        String lastMessage = repositoryService.getLastMessage(project, lastSha);
+        buildProject(project, lastSha, lastMessage);
     }
 
     public void onHook(HookModel hookModel) {
         projectDao.findByRepositoryHostAndRepositoryPathAndRef(hookModel.getHost(), hookModel.getPath(), hookModel.getRef()).stream()
                 .forEach(project -> {
                     try {
-                        buildProject(project, hookModel.getSha());
+                        buildProject(project, hookModel.getSha(), hookModel.getLastMessage());
                     } catch (BuildAlreadyQueuedException ex) {
                         log.info("Cannot queue project {}; already in queue", project.getName());
                     }
                 });
     }
 
-    private void buildProject(Project project, String sha) throws BuildAlreadyQueuedException {
+    private void buildProject(Project project, String sha, String lastMessage) throws BuildAlreadyQueuedException {
         Optional<Build> inQueue = buildDao.findByProjectAndInQueueTrue(project);
         if (inQueue.isPresent()) {
             throw new BuildAlreadyQueuedException();
@@ -92,6 +97,7 @@ public class BuildService {
         Build build = buildDao.save(new Build.Builder()
                 .withProject(project)
                 .withSha(sha)
+                .withLastMessage(lastMessage)
                 .build()
         );
         try {

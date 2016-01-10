@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
- *
  * @author mariusz
  */
 public class DickYmlServiceTest extends ContextTestBase {

@@ -31,17 +31,20 @@
             <span ng-show="project.lastBuild.status === 'MISSING_DICKFILE'">
                 <i class="fa fa-warning"></i> Configuration .dick.yml file missing!
             </span>
-
-            <div ng-show="project.lastBuild">
-                <span class="text-muted">Number:</span> {{project.lastBuild.id}}
+            
+            <div ng-show="project.lastBuild.currentStage" class="col-sm-12 row">
+                <span class="text-muted text-right col-lg-4">Stage:</span>
+                <span class="pd-l-xs">{{project.lastBuild.currentStage}}</span>
             </div>
 
-            <div ng-show="project.lastBuild.currentStage">
-                <span class="text-muted">Status:</span> {{project.lastBuild.status | buildStatus}}
+            <div ng-show="project.lastBuild.currentStage" class="col-sm-12 row">
+                <span class="text-muted text-right col-lg-4">Status:</span>
+                <span class="pd-l-xs">{{project.lastBuild.status | buildStatus}}</span>
             </div>
 
-            <div ng-show="project.lastBuild.currentStage">
-                <span class="text-muted">Stage:</span> {{project.lastBuild.currentStage}}
+            <div ng-show="project.lastBuild" class="col-sm-12 row">
+                <span class="text-muted text-right col-lg-4">Commit:</span>
+                <span class="pd-l-xs">{{project.lastBuild.lastMessage}}</span>
             </div>
         </div>
     </div>
@@ -50,7 +53,7 @@
             <i class="fa fa-chevron-right"></i>
         </button>
         <span class="mg-l-xs" ng-show="project.lastBuild">
-            <span class="text-muted">Started</span> {{project.lastBuild.creationDate| amTimeAgo}}
+            <span class="text-muted">Started</span> {{project.lastBuild.id}} <span class="text-muted">build</span> {{project.lastBuild.creationDate| amTimeAgo}}
         </span>
     </div>
 </div>

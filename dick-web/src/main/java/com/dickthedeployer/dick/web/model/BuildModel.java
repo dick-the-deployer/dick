@@ -16,12 +16,13 @@
 package com.dickthedeployer.dick.web.model;
 
 import com.dickthedeployer.dick.web.domain.Build;
-import java.util.Date;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -38,4 +39,5 @@ public class BuildModel {
     private String currentStage;
     private Date creationDate;
     private Build.Status status;
+    private String lastMessage;
 }
