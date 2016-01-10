@@ -28,7 +28,7 @@ import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.*;
-import com.dickthedeployer.dick.web.model.dickfile.DickFile;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,17 +101,17 @@ public class BuildService {
                 .build()
         );
         try {
-            DickFile dickFile = dickYmlService.loadDickFile(build);
-            build.setStages(dickFile.getStageNames());
+            Dickfile dickfile = dickYmlService.loadDickFile(build);
+            build.setStages(dickfile.getStageNames());
             build.setStatus(Build.Status.READY);
             buildDao.save(build);
-            Stage firstStage = dickFile.getFirstStage();
-            jobBuildService.prepareJobs(build, dickFile);
+            Stage firstStage = dickfile.getFirstStage();
+            jobBuildService.prepareJobs(build, dickfile);
             if (firstStage.isAutorun()) {
-                jobBuildService.buildStage(build, dickFile, firstStage);
+                jobBuildService.buildStage(build, dickfile, firstStage);
             }
         } catch (DickFileMissingException ex) {
-            log.info("DickFile is missing", ex);
+            log.info("Dickfile is missing", ex);
             build.setStatus(Build.Status.MISSING_DICKFILE);
             buildDao.save(build);
         }
@@ -120,11 +120,11 @@ public class BuildService {
     public void buildStage(Long buildId, String stageName) throws NotFoundException {
         Build build = getAndCheckBuild(buildId);
         try {
-            DickFile dickFile = dickYmlService.loadDickFile(build);
-            Stage stage = dickFile.getStage(stageName);
-            jobBuildService.buildStage(build, dickFile, stage);
+            Dickfile dickfile = dickYmlService.loadDickFile(build);
+            Stage stage = dickfile.getStage(stageName);
+            jobBuildService.buildStage(build, dickfile, stage);
         } catch (DickFileMissingException ex) {
-            log.info("DickFile is missing", ex);
+            log.info("Dickfile is missing", ex);
             build.setStatus(Build.Status.MISSING_DICKFILE);
             buildDao.save(build);
         }

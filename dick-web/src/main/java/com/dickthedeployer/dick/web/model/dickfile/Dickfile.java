@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.toList;
  * @author mariusz
  */
 @Data
-public class DickFile {
+public class Dickfile {
 
     private Pipeline pipeline = new Pipeline();
 

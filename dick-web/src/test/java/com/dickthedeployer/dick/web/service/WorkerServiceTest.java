@@ -61,10 +61,10 @@ public class WorkerServiceTest extends ContextTestBase {
     public void shouldScheduleExecution() {
         Build build = prepareBuild();
         Stage firstStage = new Stage("first", true);
-        DickFile dickFile = prepareDickfile(firstStage);
+        Dickfile dickfile = prepareDickfile(firstStage);
 
-        jobBuildService.prepareJobs(build, dickFile);
-        workerService.scheduleJobBuild(build, "first", dickFile.getJobs(firstStage).get(0));
+        jobBuildService.prepareJobs(build, dickfile);
+        workerService.scheduleJobBuild(build, "first", dickfile.getJobs(firstStage).get(0));
 
         List<JobBuild> builds = jobBuildDao.findByBuild(build);
         assertThat(builds).hasSize(1);
@@ -94,13 +94,13 @@ public class WorkerServiceTest extends ContextTestBase {
         return build;
     }
 
-    private DickFile prepareDickfile(Stage firstStage) {
-        DickFile dickFile = new DickFile();
+    private Dickfile prepareDickfile(Stage firstStage) {
+        Dickfile dickfile = new Dickfile();
         Pipeline pipeline = new Pipeline();
         pipeline.setStages(asList(
                 firstStage
         ));
-        dickFile.setPipeline(pipeline);
+        dickfile.setPipeline(pipeline);
         Job first = new Job();
         first.setEnvironmentVariables(asList(
                 new EnvironmentVariable("FOOKEY", "foo")
@@ -108,8 +108,8 @@ public class WorkerServiceTest extends ContextTestBase {
         first.setName("first job");
         first.setStage("first");
         first.setDeploy(asList("echo foo"));
-        dickFile.setJobs(asList(first));
-        return dickFile;
+        dickfile.setJobs(asList(first));
+        return dickfile;
     }
 
     @Test

@@ -28,7 +28,7 @@ import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
 import com.dickthedeployer.dick.web.model.LogChunkModel;
 import com.dickthedeployer.dick.web.model.OutputModel;
-import com.dickthedeployer.dick.web.model.dickfile.DickFile;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.google.common.base.Throwables;
@@ -73,11 +73,11 @@ public class JobBuildService {
     LogChunkDao logChunkDao;
 
     @Transactional
-    public void prepareJobs(Build build, DickFile dickFile) {
-        dickFile.getStageNames().stream()
-                .map(dickFile::getStage)
+    public void prepareJobs(Build build, Dickfile dickfile) {
+        dickfile.getStageNames().stream()
+                .map(dickfile::getStage)
                 .forEach(stage ->
-                        dickFile.getJobs(stage).stream()
+                        dickfile.getJobs(stage).stream()
                                 .map(job -> {
                                     JobBuild jobBuild = new JobBuild();
                                     jobBuild.setName(job.getName());
@@ -91,8 +91,8 @@ public class JobBuildService {
     }
 
     @Transactional
-    public void buildStage(Build build, DickFile dickFile, Stage stage) {
-        List<Job> jobs = dickFile.getJobs(stage);
+    public void buildStage(Build build, Dickfile dickfile, Stage stage) {
+        List<Job> jobs = dickfile.getJobs(stage);
         build.setCurrentStage(stage.getName());
         buildDao.save(build);
         jobs.stream()
@@ -155,14 +155,14 @@ public class JobBuildService {
             if (status.equals(Build.Status.DEPLOYED_STAGE)) {
                 log.info("Build status after job build {} is {}", id, status);
                 try {
-                    DickFile dickFile = dickYmlService.loadDickFile(build);
-                    Stage nextStage = dickFile.getNextStage(dickFile.getStage(build.getCurrentStage()));
+                    Dickfile dickfile = dickYmlService.loadDickFile(build);
+                    Stage nextStage = dickfile.getNextStage(dickfile.getStage(build.getCurrentStage()));
                     log.info("Next stage is {}", nextStage);
                     if (nextStage == null) {
                         build.setStatus(Build.Status.DEPLOYED);
                         buildDao.save(build);
                     } else if (nextStage.isAutorun()) {
-                        buildStage(build, dickFile, nextStage);
+                        buildStage(build, dickfile, nextStage);
                     }
                 } catch (DickFileMissingException ex) {
                     throw Throwables.propagate(ex);
