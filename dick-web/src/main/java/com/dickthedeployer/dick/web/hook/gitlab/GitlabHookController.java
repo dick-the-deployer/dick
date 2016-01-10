@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dickthedeployer.dick.web.hook.gitlabci;
+package com.dickthedeployer.dick.web.hook.gitlab;
 
 import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-/**
- * @author mariusz
- */
 @Slf4j
 @RestController
-public class GitlabCiHookController {
+public class GitlabHookController {
 
     @Autowired
-    GitlabCiService gitlabCiService;
+    GitlabService gitlabService;
 
-    @RequestMapping(method = POST, value = "/api/hooks/gitlab-ci")
-    public void receiveHook(@RequestBody GitlabCiTrigger trigger) throws BuildAlreadyQueuedException {
-        gitlabCiService.onTrigger(trigger);
+    @RequestMapping(method = POST, value = "/api/hooks/gitlab")
+    public void receiveHook(@RequestBody GitlabTrigger trigger) throws BuildAlreadyQueuedException {
+        gitlabService.onTrigger(trigger);
     }
 
 }
+
+

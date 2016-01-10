@@ -16,13 +16,15 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
-import com.dickthedeployer.dick.web.model.TriggerModel;
+import com.dickthedeployer.dick.web.model.HookModel;
 import com.dickthedeployer.dick.web.service.BuildService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -38,7 +40,7 @@ public class HookController {
     BuildService buildService;
 
     @RequestMapping(method = POST, value = "/api/hooks")
-    public void receiveHook(@RequestBody TriggerModel trigger) throws BuildAlreadyQueuedException {
-        buildService.onTrigger(trigger);
+    public void receiveHook(@RequestBody @Valid HookModel hook) throws BuildAlreadyQueuedException {
+        buildService.onHook(hook);
     }
 }

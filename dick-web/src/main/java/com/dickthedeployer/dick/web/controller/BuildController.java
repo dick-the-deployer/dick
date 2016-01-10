@@ -15,11 +15,14 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
+import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.BuildDetailsModel;
+import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.service.BuildService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +39,11 @@ public class BuildController {
 
     @Autowired
     BuildService buildService;
+
+    @RequestMapping(method = POST)
+    public void onTrigger(@RequestBody TriggerModel trigger) throws BuildAlreadyQueuedException {
+        buildService.onTrigger(trigger);
+    }
 
     @RequestMapping(method = POST, value = "/{buildId}/{stageName}")
     public void buildStage(@PathVariable("buildId") Long buildId, @PathVariable("stageName") String stageName) throws NotFoundException {
