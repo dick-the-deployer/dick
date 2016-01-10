@@ -15,13 +15,11 @@
  */
 package com.dickthedeployer.dick.web.hook.gitlabci;
 
-import com.dickthedeployer.dick.web.hook.gitlab.GitlabTrigger;
 import com.google.common.base.Throwables;
 import lombok.Data;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 /**
  * @author mariusz
@@ -35,15 +33,6 @@ public class GitlabCiTrigger {
     String gitlab_url;
     String ref;
     String sha;
-    PushData pushData;
-
-    public String getLastMessage() {
-        return pushData.getCommits().stream()
-                .filter(commit -> commit.getId().equals(sha))
-                .map(GitlabTrigger.Commit::getMessage)
-                .findAny()
-                .orElseGet(() -> null);
-    }
 
     public String getHost() {
         try {
@@ -57,8 +46,4 @@ public class GitlabCiTrigger {
         return getProject_name().replaceAll(" ", "");
     }
 
-    @Data
-    public static class PushData {
-        List<GitlabTrigger.Commit> commits;
-    }
 }
