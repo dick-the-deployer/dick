@@ -75,25 +75,27 @@ public class BuildService {
         log.info("Found project {} for name {}", project.getId(), model.getName());
         String lastSha = repositoryService.getLastSha(project);
         String lastMessage = repositoryService.getLastMessage(project, lastSha);
-        buildProject(project, lastSha, lastMessage);
+        buildProject(project, lastSha, Optional.ofNullable(lastMessage));
     }
 
     public void onHook(HookModel hookModel) {
         projectDao.findByRepositoryHostAndRepositoryPathAndRef(hookModel.getHost(), hookModel.getPath(), hookModel.getRef()).stream()
                 .forEach(project -> {
                     try {
-                        buildProject(project, hookModel.getSha(), hookModel.getLastMessage());
+                        buildProject(project, hookModel.getSha(), Optional.ofNullable(hookModel.getLastMessage()));
                     } catch (BuildAlreadyQueuedException ex) {
                         log.info("Cannot queue project {}; already in queue", project.getName());
                     }
                 });
     }
 
-    private void buildProject(Project project, String sha, String lastMessage) throws BuildAlreadyQueuedException {
+    private void buildProject(Project project, String sha, Optional<String> lastMessageOptional) throws BuildAlreadyQueuedException {
         Optional<Build> inQueue = buildDao.findByProjectAndInQueueTrue(project);
         if (inQueue.isPresent()) {
             throw new BuildAlreadyQueuedException();
         }
+        String lastMessage = lastMessageOptional.orElseGet(() -> repositoryService.getLastMessage(project, sha));
+
         Build build = buildDao.save(new Build.Builder()
                 .withProject(project)
                 .withSha(sha)

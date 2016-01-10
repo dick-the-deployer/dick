@@ -40,7 +40,6 @@ public class GitlabCiService {
             model.setRef(trigger.getRef());
             model.setSha(trigger.getSha());
             model.setHost(trigger.getHost());
-            model.setLastMessage(trigger.getLastMessage());
             buildService.onHook(model);
         }
     }
