@@ -18,12 +18,14 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.google.common.base.Charsets;
-import java.io.IOException;
-import java.io.InputStream;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
  *
@@ -44,5 +46,30 @@ public class RepositoryServiceTest extends ContextTestBase {
 
         String content = StreamUtils.copyToString(file, Charsets.UTF_8);
         assertThat(content).isNotNull().contains("foo: bar");
+    }
+
+
+    @Test
+    public void shouldGetLastSha() throws IOException {
+        Project project = getProject();
+        String lastSha = service.getLastSha(project);
+
+        assertThat(lastSha).isNotEmpty();
+    }
+
+    @Test
+    public void shouldGetLastMessage() throws IOException {
+        Project project = getProject();
+        String lastMessage = service.getLastMessage(project, "cdc902352d18080292daea9b4f99ba5d16801b88");
+
+        assertThat(lastMessage).isEqualTo("failure");
+    }
+
+    private Project getProject() {
+        return new Project.Builder()
+                .withName("dick-the-deployer/dick")
+                .withRepository("https://github.com/dick-the-deployer/examples.git")
+                .withRef("master")
+                .build();
     }
 }

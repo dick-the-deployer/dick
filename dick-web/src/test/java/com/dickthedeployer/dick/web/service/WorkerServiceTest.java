@@ -35,7 +35,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- *
  * @author mariusz
  */
 public class WorkerServiceTest extends ContextTestBase {
@@ -62,10 +61,10 @@ public class WorkerServiceTest extends ContextTestBase {
     public void shouldScheduleExecution() {
         Build build = prepareBuild();
         Stage firstStage = new Stage("first", true);
-        Dickfile dickfile = prepareDickfile(firstStage);
+        DickFile dickFile = prepareDickfile(firstStage);
 
-        jobBuildService.prepareJobs(build, dickfile);
-        workerService.scheduleJobBuild(build, "first", dickfile.getJobs(firstStage).get(0));
+        jobBuildService.prepareJobs(build, dickFile);
+        workerService.scheduleJobBuild(build, "first", dickFile.getJobs(firstStage).get(0));
 
         List<JobBuild> builds = jobBuildDao.findByBuild(build);
         assertThat(builds).hasSize(1);
@@ -84,7 +83,7 @@ public class WorkerServiceTest extends ContextTestBase {
                 .withRepository(UUID.randomUUID().toString())
                 .withNamespace(namespace)
                 .withEnvironmentVariables(asList(
-                                new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
+                        new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
                         )
                 ).build();
         projectDao.save(project);
@@ -95,13 +94,13 @@ public class WorkerServiceTest extends ContextTestBase {
         return build;
     }
 
-    private Dickfile prepareDickfile(Stage firstStage) {
-        Dickfile dickfile = new Dickfile();
+    private DickFile prepareDickfile(Stage firstStage) {
+        DickFile dickFile = new DickFile();
         Pipeline pipeline = new Pipeline();
         pipeline.setStages(asList(
                 firstStage
         ));
-        dickfile.setPipeline(pipeline);
+        dickFile.setPipeline(pipeline);
         Job first = new Job();
         first.setEnvironmentVariables(asList(
                 new EnvironmentVariable("FOOKEY", "foo")
@@ -109,8 +108,8 @@ public class WorkerServiceTest extends ContextTestBase {
         first.setName("first job");
         first.setStage("first");
         first.setDeploy(asList("echo foo"));
-        dickfile.setJobs(asList(first));
-        return dickfile;
+        dickFile.setJobs(asList(first));
+        return dickFile;
     }
 
     @Test

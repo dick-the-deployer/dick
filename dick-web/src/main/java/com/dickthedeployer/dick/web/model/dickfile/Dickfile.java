@@ -15,17 +15,18 @@
  */
 package com.dickthedeployer.dick.web.model.dickfile;
 
-import java.util.Collections;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 import lombok.Data;
 
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 /**
- *
  * @author mariusz
  */
 @Data
-public class Dickfile {
+public class DickFile {
 
     private Pipeline pipeline = new Pipeline();
 

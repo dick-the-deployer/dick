@@ -1,26 +1,34 @@
 <section>
     <section class="panel">
         <header class="panel-heading">
-            <div class="pull-right">
-                <button class="btn btn-info" type="button"
-                        ng-controller="HookController" ng-click="startBuild(project)">
-                    <i class="fa fa-chevron-right mg-r-xs"></i>BUILD PROJECT
-                </button>
-                <a class="btn btn-default" type="button"
-                   href="/{{project.namespace}}/{{project.name}}/edit">
-                    <i class="fa fa-gear mg-r-xs"></i>SETTINGS
-                </a>
+            <div class="row">
+                <div class="pull-right mg-r-sm">
+                    <button class="btn btn-info" type="button"
+                            ng-controller="HookController" ng-click="startBuild(project)">
+                        <i class="fa fa-chevron-right mg-r-xs"></i>BUILD PROJECT
+                    </button>
+                    <a class="btn btn-default" type="button"
+                       href="/{{project.namespace}}/{{project.name}}/edit">
+                        <i class="fa fa-gear mg-r-xs"></i>SETTINGS
+                    </a>
+                </div>
+                <div class="col-md-7">
+                    <table class="table mg-b-xs table-condensed no-border">
+                        <tr>
+                            <td class="text-muted text-right">Repository:</td>
+                            <td>{{project.repository}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted text-right">Ref:</td>
+                            <td>{{project.ref}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted text-right">Created:</td>
+                            <td>{{project.creationDate| amTimeAgo}}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <div>
-                <span class="text-muted">Repository: </span>{{project.repository}}
-            </div>
-            <div>
-                <span class="text-muted">Ref: </span>{{project.ref}}
-            </div>
-            <div>
-                <span class="text-muted">Created: </span>{{project.creationDate| amTimeAgo}}
-            </div>
-
         </header>
 
 
@@ -34,18 +42,28 @@
             <ul class="content-list">
                 <li ng-repeat="build in builds track by build.id">
                     <div class="row">
-                        <div class="col-md-2">
-                            <div>
-                                <span class="text-muted">Number: </span> {{build.id}}
-                            </div>
-                            <div>
-                                <span class="text-muted">Started: </span>{{build.creationDate| amTimeAgo}}
-                            </div>
-                            <div>
-                                <span class="text-muted">Stage: </span>{{build.currentStage}}
-                            </div>
+                        <div class="col-md-3">
+
+                            <table class="table mg-b-xs table-condensed no-border no-pd">
+                                <tr>
+                                    <td class="text-muted text-right no-pd-t no-pd-b">Number:</td>
+                                    <td class="no-pd-t no-pd-b">{{build.id}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted text-right no-pd-t no-pd-b">Started:</td>
+                                    <td class="no-pd-t no-pd-b">{{build.creationDate| amTimeAgo}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted text-right no-pd-t no-pd-b">Stage:</td>
+                                    <td class="no-pd-t no-pd-b">{{build.currentStage}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted text-right no-pd-t no-pd-b">Commit:</td>
+                                    <td class="no-pd-t no-pd-b">{{build.lastMessage}}</td>
+                                </tr>
+                            </table>
                         </div>
-                        <div class="col-md-10">
+                        <div class="col-md-9">
                             <div ng-repeat="stage in build.stages"
                                  ng-class="{'col-lg-12' : build.stages.length === 1,
                  'col-lg-6' : build.stages.length === 2,

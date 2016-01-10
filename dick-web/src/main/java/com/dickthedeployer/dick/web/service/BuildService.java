@@ -28,7 +28,7 @@ import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.*;
-import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.DickFile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,26 +65,31 @@ public class BuildService {
     @Autowired
     JobBuildService jobBuildService;
 
+    @Autowired
+    RepositoryService repositoryService;
+
     @Transactional
     public void onTrigger(TriggerModel model) throws BuildAlreadyQueuedException {
         Optional<Project> projectOptional = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
         Project project = projectOptional.get();
         log.info("Found project {} for name {}", project.getId(), model.getName());
-        buildProject(project, "HEAD");
+        String lastSha = repositoryService.getLastSha(project);
+        String lastMessage = repositoryService.getLastMessage(project, lastSha);
+        buildProject(project, lastSha, lastMessage);
     }
 
     public void onHook(HookModel hookModel) {
         projectDao.findByRepositoryHostAndRepositoryPathAndRef(hookModel.getHost(), hookModel.getPath(), hookModel.getRef()).stream()
                 .forEach(project -> {
                     try {
-                        buildProject(project, hookModel.getSha());
+                        buildProject(project, hookModel.getSha(), hookModel.getLastMessage());
                     } catch (BuildAlreadyQueuedException ex) {
                         log.info("Cannot queue project {}; already in queue", project.getName());
                     }
                 });
     }
 
-    private void buildProject(Project project, String sha) throws BuildAlreadyQueuedException {
+    private void buildProject(Project project, String sha, String lastMessage) throws BuildAlreadyQueuedException {
         Optional<Build> inQueue = buildDao.findByProjectAndInQueueTrue(project);
         if (inQueue.isPresent()) {
             throw new BuildAlreadyQueuedException();
@@ -92,20 +97,21 @@ public class BuildService {
         Build build = buildDao.save(new Build.Builder()
                 .withProject(project)
                 .withSha(sha)
+                .withLastMessage(lastMessage)
                 .build()
         );
         try {
-            Dickfile dickfile = dickYmlService.loadDickFile(build);
-            build.setStages(dickfile.getStageNames());
+            DickFile dickFile = dickYmlService.loadDickFile(build);
+            build.setStages(dickFile.getStageNames());
             build.setStatus(Build.Status.READY);
             buildDao.save(build);
-            Stage firstStage = dickfile.getFirstStage();
-            jobBuildService.prepareJobs(build, dickfile);
+            Stage firstStage = dickFile.getFirstStage();
+            jobBuildService.prepareJobs(build, dickFile);
             if (firstStage.isAutorun()) {
-                jobBuildService.buildStage(build, dickfile, firstStage);
+                jobBuildService.buildStage(build, dickFile, firstStage);
             }
         } catch (DickFileMissingException ex) {
-            log.info("Dickfile is missing", ex);
+            log.info("DickFile is missing", ex);
             build.setStatus(Build.Status.MISSING_DICKFILE);
             buildDao.save(build);
         }
@@ -114,11 +120,11 @@ public class BuildService {
     public void buildStage(Long buildId, String stageName) throws NotFoundException {
         Build build = getAndCheckBuild(buildId);
         try {
-            Dickfile dickfile = dickYmlService.loadDickFile(build);
-            Stage stage = dickfile.getStage(stageName);
-            jobBuildService.buildStage(build, dickfile, stage);
+            DickFile dickFile = dickYmlService.loadDickFile(build);
+            Stage stage = dickFile.getStage(stageName);
+            jobBuildService.buildStage(build, dickFile, stage);
         } catch (DickFileMissingException ex) {
-            log.info("Dickfile is missing", ex);
+            log.info("DickFile is missing", ex);
             build.setStatus(Build.Status.MISSING_DICKFILE);
             buildDao.save(build);
         }

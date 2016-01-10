@@ -17,17 +17,17 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
-import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.DickFile;
 import com.google.common.base.Throwables;
-import java.io.IOException;
-import java.io.InputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
- *
  * @author mariusz
  */
 @Service
@@ -36,20 +36,20 @@ public class DickYmlService {
     @Autowired
     RepositoryService repositoryService;
 
-    public Dickfile loadDickFile(Build build) throws DickFileMissingException {
+    public DickFile loadDickFile(Build build) throws DickFileMissingException {
         InputStream file = repositoryService.getFile(build.getProject(), build.getSha(), ".dick.yml");
         if (file == null) {
             throw new DickFileMissingException();
         }
-        Yaml yaml = new Yaml(new Constructor(Dickfile.class));
-        Dickfile dickfile = (Dickfile) yaml.load(file);
+        Yaml yaml = new Yaml(new Constructor(DickFile.class));
+        DickFile dickFile = (DickFile) yaml.load(file);
         try {
             file.close();
         } catch (IOException ex) {
             throw Throwables.propagate(ex);
         }
 
-        return dickfile;
+        return dickFile;
     }
 
 }

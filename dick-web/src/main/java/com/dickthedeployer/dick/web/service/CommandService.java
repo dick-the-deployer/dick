@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Scanner;
-
-import static java.util.Collections.emptyMap;
 
 /**
  *
@@ -35,28 +32,20 @@ import static java.util.Collections.emptyMap;
 @Service
 public class CommandService {
 
-    public void invoke(Path workingDir, String... command) {
-        invokeWithEnvironment(workingDir, emptyMap(), command);
-    }
 
-    public void invokeWithEnvironment(Path workingDir, Map<String, String> environment, String... command) throws RuntimeException {
+    public String invoke(Path workingDir, String... command) throws RuntimeException {
         try {
             log.info("Executing command {} in path {}", Arrays.toString(command), workingDir.toString());
             StringBuilder text = new StringBuilder();
-            text.append("Executing command ").append(Arrays.toString(command)).append("\n");
             ProcessBuilder builder = new ProcessBuilder(command);
             builder.directory(workingDir.toFile());
             builder.redirectErrorStream(true);
-            environment.forEach((key, value)
-                    -> text.append("Setting environment variable: ").append(key).append("=").append(value).append("\n")
-            );
-            builder.environment().putAll(environment);
+
             Process process = builder.start();
 
             try (Scanner s = new Scanner(process.getInputStream())) {
                 while (s.hasNextLine()) {
                     text.append(s.nextLine());
-                    text.append("\n");
                 }
                 int result = process.waitFor();
                 log.info("Process exited with result {} and output {}", result, text);
@@ -64,6 +53,7 @@ public class CommandService {
                 if (result != 0) {
                     throw new CommandExecutionException();
                 }
+                return text.toString();
             }
         } catch (IOException | InterruptedException ex) {
             throw new CommandExecutionException(ex);

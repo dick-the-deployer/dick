@@ -39,6 +39,7 @@ public class BuildDetailsMapper {
                 .project(projectModel)
                 .creationDate(build.getCreationDate())
                 .currentStage(build.getCurrentStage())
+                .lastMessage(build.getLastMessage())
                 .id(build.getId())
                 .stages(
                         build.getStages().stream()
