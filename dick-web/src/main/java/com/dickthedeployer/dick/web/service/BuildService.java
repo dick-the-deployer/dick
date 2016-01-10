@@ -136,9 +136,12 @@ public class BuildService {
         return builds.getContent().isEmpty() ? null : BuildMapper.mapBuild(builds.getContent().get(0));
     }
 
+    @Transactional
     public void kill(Long buildId) throws NotFoundException {
         Build build = getAndCheckBuild(buildId);
         jobBuildService.stop(build);
+        build.setInQueue(false);
+        buildDao.save(build);
     }
 
 
