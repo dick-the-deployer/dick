@@ -28,11 +28,11 @@ curl -s https://raw.githubusercontent.com/dick-the-deployer/dickthedeployer.com/
 
 Nowadays there exists several good, fully-blown tools for Continous Integration. Unfortunately these tools are build in a way that makes it really hard to build Continuous Delivery process aroud them, lacking scalability, pipelines or quick and easy configuration. 
 
-Dick the Deployer address this issues, providing relatively simple on-premises service. Main features delivered by Dick are:
+Dick the Deployer address these issues, providing relatively simple on-premises service. Main features delivered by Dick are:
 
 * High Scallablity through distributed architecture.
 * Reactive interface.
-* Familliar concepts like project's nad group's.
+* Familliar concepts like project's and group's.
 * Configuration stored inside the project repository.
 
 ## Components
