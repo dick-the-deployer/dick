@@ -30,7 +30,7 @@ Nowadays there exists several good, fully-blown tools for Continous Integration.
 
 Dick the Deployer address these issues, providing relatively simple on-premises service. Main features delivered by Dick are:
 
-* High Scallablity through distributed architecture.
+* High Scalablity through distributed architecture.
 * Reactive interface.
 * Familliar concepts like project's and group's.
 * Configuration stored inside the project repository.
