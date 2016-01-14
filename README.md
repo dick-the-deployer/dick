@@ -26,21 +26,21 @@ curl -s https://raw.githubusercontent.com/dick-the-deployer/dickthedeployer.com/
 
 ## Why another CD tool?
 
-Nowadays there exists several good, fully-blown tools for Continous Integration. Unfortunately these tools are build in a way that makes it really hard to build Continuous Delivery process aroud them, lacking scalability, pipelines or quick and easy configuration. 
+Nowadays there exists several good, fully-blown tools for Continuous Integration. Unfortunately these tools are built in a way that makes it really hard to build Continuous Delivery process around them, lacking scalability, pipelines or quick and easy configuration. 
 
-Dick the Deployer address these issues, providing relatively simple on-premises service. Main features delivered by Dick are:
+Dick the Deployer addresses these issues, providing relatively simple on-premises service. Main features delivered by Dick are:
 
-* High Scalablity through distributed architecture.
+* High Scalability through distributed architecture.
 * Reactive interface.
-* Familliar concepts like project's and group's.
+* Familiar concepts like projects and groups.
 * Configuration stored inside the project repository.
 
 ## Components
 
-Dick the Deployer consist of three modules:
+Dick the Deployer consists of three modules:
 
 ### Web
-`Web` is a java-based application used to present and manage pipelines, assign job's and presenting results.
+`Web` is a java-based application used to present and manage pipelines, assign jobs and present results.
 
 ### Worker
 `Worker` is a java-based application responsible for building jobs fetched from `Web`
