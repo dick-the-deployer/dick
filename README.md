@@ -23,6 +23,9 @@ For full options:
 ```
 curl -s https://raw.githubusercontent.com/dick-the-deployer/dickthedeployer.com/master/static/deploy | bash -s -- -h
 ```
+## Documentation
+
+Full docs are available at [Dick the Deployer](http://dickthedeployer.com).
 
 ## Why another CD tool?
 
