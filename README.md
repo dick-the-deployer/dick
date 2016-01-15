@@ -25,7 +25,7 @@ curl -s https://raw.githubusercontent.com/dick-the-deployer/dickthedeployer.com/
 ```
 ## Documentation
 
-Full docs are available at [Dick the Deployer](http://dickthedeployer.com).
+Full docs are available at [http://dickthedeployer.com](http://dickthedeployer.com).
 
 ## Why another CD tool?
 
