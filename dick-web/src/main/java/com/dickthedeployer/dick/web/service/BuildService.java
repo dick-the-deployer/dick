@@ -115,6 +115,7 @@ public class BuildService {
         } catch (DickFileMissingException ex) {
             log.info("Dickfile is missing", ex);
             build.setStatus(Build.Status.MISSING_DICKFILE);
+            build.setInQueue(false);
             buildDao.save(build);
         }
     }
