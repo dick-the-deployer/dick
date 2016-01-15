@@ -92,6 +92,7 @@ public class WorkerService {
     private Map<String, String> getEnvironment(Build build, Job job) {
         Map<String, String> environment = new HashMap<>();
         environment.put("SHA", build.getSha());
+        environment.put("REPOSITORY", build.getProject().getRepository());
         environment.put("REF", build.getProject().getRef());
         build.getProject().getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
         job.getEnvironmentVariables().forEach(variable -> environment.put(variable.getKey(), variable.getValue()));
