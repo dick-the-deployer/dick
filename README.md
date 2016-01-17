@@ -38,6 +38,33 @@ Dick the Deployer addresses these issues, providing relatively simple on-premise
 * Familiar concepts like projects and groups.
 * Configuration stored inside the project repository.
 
+
+## Building
+
+### Basic Compile and Test
+
+To build the source you will need to install JDK 1.8.
+
+Dick the Deployer uses maven for most buil-related tasks, so you should be able to start by cloning the project and
+typing
+
+```
+./mvnw install
+```
+
+### How to develop 
+
+As Dick the Deployer uses database you should have PostgresDB up and running. You can configure connection settings
+in `dick/dick-we/src/main/resources/application.yml` file. 
+
+The easiest way to run the project locally though is using debugger. This setup requires breakpoint in any context-based test,
+changing breakpoint mode to `Suspend: thread` and simply debugging that test. In this case Dick will be using H2 database.
+
+Front-end is based on node and grunt, and uses proxy server to communicate with Dick the Deployer. To start 
+the front-end project you need to have Dick the Deployer working (normally or suspended on debugger), and then start 
+`grunt serve` task in `dick-ui/nodejs/` directory. Please note that during the build node, npm and grunt are downloaded 
+from the web, and located in `dick-ui/nodejs/node` and `dick-ui/nodejs/node-modules/grunt-cli`.
+
 ## Components
 
 Dick the Deployer consists of three modules:
