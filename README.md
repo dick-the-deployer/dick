@@ -14,14 +14,14 @@ for quick installation.
 > Note: you must already have a Docker available.
 
 ```
-curl https://raw.githubusercontent.com/dick-the-deployer/dickthedeployer.com/master/static/deploy | bash -s
+curl https://dickthedeployer.com/deploy | bash -s
 ```
 After installation of database and web module follow printed instructions for worker installation.
 
 For full options:
 
 ```
-curl -s https://raw.githubusercontent.com/dick-the-deployer/dickthedeployer.com/master/static/deploy | bash -s -- -h
+curl -s https://dickthedeployer.com/deploy | bash -s -- -h
 ```
 ## Documentation
 
