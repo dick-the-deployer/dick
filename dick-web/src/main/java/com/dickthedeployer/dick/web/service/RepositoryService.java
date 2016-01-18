@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -41,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class RepositoryService {
 
-    private final static ConcurrentHashMap<Repo, Path> REPOS = new ConcurrentHashMap<>();
+    private final static Map<Repo, Path> REPOS = new ConcurrentHashMap<>();
 
     @Autowired
     CommandService commandService;
@@ -81,7 +82,7 @@ public class RepositoryService {
 
     public void checkoutRepository(Project project) throws RepositoryUnavailableException {
         Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
-        if (!REPOS.contains(repo)) {
+        if (!REPOS.containsKey(repo)) {
             try {
                 Path path = checkoutRepository(repo);
                 REPOS.put(repo, path);
