@@ -127,9 +127,7 @@ public class RepositoryService {
     }
 
     private void initializeRepository(Path path, Repo repository) {
-        commandService.invoke(path, "git", "init");
-        commandService.invoke(path, "git", "clone", repository.getRepository());
-        commandService.invoke(path, "git", "remote", "add", "origin", repository.getRepository());
+        commandService.invoke(path, "git", "clone", repository.getRepository(), ".");
     }
 
     private void checkoutRevision(Path path, String ref, String sha) {
