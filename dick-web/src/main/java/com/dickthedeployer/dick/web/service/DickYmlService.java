@@ -37,19 +37,15 @@ public class DickYmlService {
     RepositoryService repositoryService;
 
     public Dickfile loadDickFile(Build build) throws DickFileMissingException {
-        InputStream file = repositoryService.getFile(build.getProject(), build.getSha(), ".dick.yml");
-        if (file == null) {
-            throw new DickFileMissingException();
+        try (InputStream file = repositoryService.getFile(build.getProject(), build.getSha(), ".dick.yml")) {
+            if (file == null) {
+                throw new DickFileMissingException();
+            }
+            Yaml yaml = new Yaml(new Constructor(Dickfile.class));
+            return (Dickfile) yaml.load(file);
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
         }
-        Yaml yaml = new Yaml(new Constructor(Dickfile.class));
-        Dickfile dickfile = (Dickfile) yaml.load(file);
-        try {
-            file.close();
-        } catch (IOException ex) {
-            throw Throwables.propagate(ex);
-        }
-
-        return dickfile;
     }
 
 }
