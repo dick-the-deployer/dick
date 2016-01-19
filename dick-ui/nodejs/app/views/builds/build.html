@@ -54,13 +54,17 @@
                 <div class="col-md-10 ">
                     <div class="panel">
                         <header class="panel-heading">
+                            <a href="#bottom" ng-click="followLog()" class="btn btn-default btn-xs pull-right">
+                                <i class="fa fa-arrow-down"/> Follow log
+                            </a>
                             <span class="text-muted">Console Log </span>
                             {{job.name}}
                             <span class="text-muted" ng-show="job.worker">on</span>
                             <span ng-show="job.worker">{{job.worker}}</span>
                             <span class="text-muted" ng-show="job.worker">worker</span>
                         </header>
-                        <div class="panel-body">
+                        <div class="panel-body output">
+
                             <div class="text-center text-muted"
                                  ng-show="job.status === 'READY' || job.status === 'WAITING'">
                                 Not started yet.
@@ -74,6 +78,12 @@
                                 </div>
                                 <span ng-hide="job.status === 'IN_PROGRESS'"
                                       style="white-space: pre;">{{output.output}}</span>
+
+
+                                <a href="#bottom" id="bottom" ng-click="followLog()"
+                                   class="btn btn-default btn-xs pull-right">
+                                    <i class="fa fa-arrow-down"/> Follow log
+                                </a>
                             </div>
                         </div>
                     </div>

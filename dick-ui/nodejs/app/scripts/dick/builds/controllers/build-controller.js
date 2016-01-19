@@ -2,9 +2,9 @@
 
 angular.module('dick.builds')
     .controller('BuildController', ['MetadataService', '$scope', 'toaster', 'BuildsResource', '$window', '$stateParams',
-        '$location', 'JobBuildsResource', 'rx', 'settings', '$rootScope',
+        '$location', 'JobBuildsResource', 'rx', 'settings', '$rootScope', '$anchorScroll', '$timeout',
         function (metadataService, $scope, toaster, buildsResource, $window, $stateParams, $location, jobBuildsResource,
-                  rx, settings, $rootScope) {
+                  rx, settings, $rootScope, $anchorScroll, $timeout) {
             if ($window.angular.isUndefined($stateParams.id) ||
                 $stateParams.id === '' || $window.angular.isUndefined($stateParams.namespace) ||
                 $stateParams.namespace === '' || $window.angular.isUndefined($stateParams.name) ||
@@ -23,6 +23,12 @@ angular.module('dick.builds')
 
             $scope.selectJob = function (newJob) {
                 $scope.job = newJob;
+            }
+
+            $scope.followLog = function () {
+                $scope.following = true;
+                $location.hash('bottom');
+                $anchorScroll();
             }
 
             var deferred;
@@ -71,6 +77,12 @@ angular.module('dick.builds')
                                     creationDate: creationDate
                                 }).$promise.then(function (data) {
                                     $scope.output = $scope.output.concat(data);
+                                    if ($scope.following) {
+                                        $timeout(function () {
+                                            $location.hash('bottom');
+                                            $anchorScroll();
+                                        }, 100);
+                                    }
                                 });
                             })
                             .subscribe();
