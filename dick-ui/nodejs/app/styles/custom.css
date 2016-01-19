@@ -2,6 +2,7 @@
     Created on : Dec 13, 2015, 10:37:44 PM
     Author     : mariusz
 */
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,300,600,700,800);
 
 .header .brand::after{
     content: '';
@@ -151,4 +152,5 @@
 
 .output {
     word-wrap: break-word;
+    font-family: "Ubuntu Mono";
 }

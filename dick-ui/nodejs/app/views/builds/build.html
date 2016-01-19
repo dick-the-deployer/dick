@@ -63,13 +63,13 @@
                             <span ng-show="job.worker">{{job.worker}}</span>
                             <span class="text-muted" ng-show="job.worker">worker</span>
                         </header>
-                        <div class="panel-body output">
+                        <div class="panel-body">
 
                             <div class="text-center text-muted"
                                  ng-show="job.status === 'READY' || job.status === 'WAITING'">
                                 Not started yet.
                             </div>
-                            <div ng-hide="job.status === 'READY' || job.status === 'WAITING'">
+                            <div ng-hide="job.status === 'READY' || job.status === 'WAITING'" class="output">
                                 <loader on="output"></loader>
                                 <div ng-show="job.status === 'IN_PROGRESS'">
                                 <span ng-repeat="chunk in output"
@@ -78,13 +78,12 @@
                                 </div>
                                 <span ng-hide="job.status === 'IN_PROGRESS'"
                                       style="white-space: pre;">{{output.output}}</span>
-
-
-                                <a href="#bottom" id="bottom" ng-click="followLog()"
-                                   class="btn btn-default btn-xs pull-right">
-                                    <i class="fa fa-arrow-down"/> Follow log
-                                </a>
+                                
                             </div>
+                            <a href="#bottom" id="bottom" ng-click="followLog()"
+                               class="btn btn-default btn-xs pull-right">
+                                <i class="fa fa-arrow-down"/> Follow log
+                            </a>
                         </div>
                     </div>
                 </div>
