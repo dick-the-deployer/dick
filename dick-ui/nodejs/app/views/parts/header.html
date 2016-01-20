@@ -34,12 +34,14 @@
         </li>
     </ul>
 
-    <form class="navbar-form navbar-right hidden-xs" role="search">
+    <form class="navbar-form navbar-right hidden-xs" role="search" ng-controller="SearchWorkspaceController"
+          ng-submit="search()">
         <div class="form-group">
             <button class="btn no-border no-margin bg-none no-pd-l" type="submit">
                 <i class="fa fa-search"></i>
             </button>
-            <input type="text" class="form-control no-border no-padding search" placeholder="Search Workspace">
+            <input type="text" class="form-control no-border no-padding search"
+                   ng-model="name" placeholder="Search Workspace">
         </div>
     </form>
 </div>
