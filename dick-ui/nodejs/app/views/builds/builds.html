@@ -15,18 +15,21 @@
                 <div class="col-md-7">
                     <table class="table mg-b-xs table-condensed no-border">
                         <tr>
-                            <td class="text-muted text-right">Repository:</td>
-                            <td>{{project.repository}}</td>
+                            <td class="text-muted text-right no-pd-t no-pd-b">Repository:</td>
+                            <td class="no-pd-t no-pd-b">{{project.repository}}</td>
                         </tr>
                         <tr>
-                            <td class="text-muted text-right">Ref:</td>
-                            <td>{{project.ref}}</td>
+                            <td class="text-muted text-right no-pd-t no-pd-b">Ref:</td>
+                            <td class="no-pd-t no-pd-b">{{project.ref}}</td>
                         </tr>
                         <tr>
-                            <td class="text-muted text-right">Created:</td>
-                            <td>{{project.creationDate| amTimeAgo}}</td>
+                            <td class="text-muted text-right no-pd-t no-pd-b">Created:</td>
+                            <td class="no-pd-t no-pd-b">{{project.creationDate| amTimeAgo}}</td>
                         </tr>
                     </table>
+                </div>
+                <div class="col-md-12" marked="project.description">
+
                 </div>
             </div>
         </header>
