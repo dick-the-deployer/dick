@@ -35,6 +35,8 @@ public interface JobBuildDao extends JpaRepository<JobBuild, Long> {
 
     List<JobBuild> findByStatusAndWorkerNull(JobBuild.Status status);
 
+    Long countByWorker(Worker worker);
+
     Optional<JobBuild> findByStatusAndWorker(JobBuild.Status status, Worker worker);
 
 }

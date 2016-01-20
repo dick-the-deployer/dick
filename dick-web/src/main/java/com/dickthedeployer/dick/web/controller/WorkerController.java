@@ -15,16 +15,19 @@
  */
 package com.dickthedeployer.dick.web.controller;
 
+import com.dickthedeployer.dick.web.exception.NotFoundException;
+import com.dickthedeployer.dick.web.exception.WorkerBusyException;
 import com.dickthedeployer.dick.web.model.RegistrationData;
 import com.dickthedeployer.dick.web.model.WorkerModel;
 import com.dickthedeployer.dick.web.service.WorkerService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  *
@@ -46,5 +49,15 @@ public class WorkerController {
     @RequestMapping(method = RequestMethod.GET)
     public List<WorkerModel> getWorkers(@RequestParam("page") int page, @RequestParam("size") int size) {
         return workerService.getWorkers(page, size);
+    }
+
+    @RequestMapping(method = DELETE, value = "/{workerName}")
+    public void deleteWorker(@PathVariable("workerName") String workerName) throws NotFoundException, WorkerBusyException {
+        workerService.deleteWorker(workerName);
+    }
+
+    @RequestMapping(method = GET, value = "/{workerName}")
+    public WorkerModel getWorker(@PathVariable("workerName") String workerName) throws NotFoundException {
+        return workerService.getWorker(workerName);
     }
 }

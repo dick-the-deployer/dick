@@ -15,12 +15,9 @@
             <ul class="content-list">
                 <li ng-repeat="worker in workers">
                     <span class="actions">
-                        <button data-toggle="button" class="btn btn-white btn-sm">
-                            <i class="fa fa-heart"></i>
-                        </button>
-                        <button data-toggle="button" class="btn btn-white btn-sm">
-                            <i class="fa fa-heart"></i>
-                        </button>
+                        <a href="/workers/{{worker.name}}" class="btn btn-white btn-sm">
+                            <i class="fa fa-gears"></i>
+                        </a>
                     </span>
                     <div>
                         <b ng-bind="worker.name"></b> with status {{worker.status}}

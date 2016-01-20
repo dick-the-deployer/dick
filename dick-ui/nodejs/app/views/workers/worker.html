@@ -1,0 +1,18 @@
+<section class="panel panel-danger">
+    <header class="panel-heading">
+        <h4>Remove worker</h4>
+    </header>
+    <div class="panel-body">
+        <loader on="worker"></loader>
+        <div ng-show="worker">
+            Removing the worker will delete its data. You can only remove workers in READY state.
+            Please stop worker image before removal, as active workers use auto-register feature.
+            <div><b>Removed workers cannot be restored!</b></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-danger" ng-click="confirm()">
+            REMOVE WORKER
+        </button>
+    </div>
+</section>

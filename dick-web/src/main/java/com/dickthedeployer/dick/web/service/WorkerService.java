@@ -20,6 +20,8 @@ import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
+import com.dickthedeployer.dick.web.exception.NotFoundException;
+import com.dickthedeployer.dick.web.exception.WorkerBusyException;
 import com.dickthedeployer.dick.web.mapper.WorkerMapper;
 import com.dickthedeployer.dick.web.model.WorkerModel;
 import com.dickthedeployer.dick.web.model.dickfile.Job;
@@ -114,6 +116,24 @@ public class WorkerService {
                 .map(WorkerMapper::mapWorker)
                 .collect(toList());
     }
+
+    public WorkerModel getWorker(String name) throws NotFoundException {
+        return workerDao.findByName(name)
+                .map(WorkerMapper::mapWorker)
+                .orElseThrow(NotFoundException::new);
+    }
+
+    @Transactional
+    public void deleteWorker(String name) throws NotFoundException, WorkerBusyException {
+        Optional<Worker> workerOptional = workerDao.findByName(name);
+        Worker worker = workerOptional.orElseThrow(NotFoundException::new);
+        Long assigned = jobBuildDao.countByWorker(worker);
+        if (assigned != 0) {
+            throw new WorkerBusyException();
+        }
+        workerDao.delete(worker);
+    }
+
 
     @Transactional
     public void readyWorker(Optional<Worker> workerOptional) {
