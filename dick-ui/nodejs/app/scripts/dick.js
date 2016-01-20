@@ -11,6 +11,7 @@ angular.module('dick', [
     'gc.toaster',
     'angularMoment',
     'rx',
+    'hc.marked',
     'dick.tools',
     'dick.errors',
     'dick.groups',

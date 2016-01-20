@@ -33,7 +33,8 @@
     "nicescroll": "~3.6.0",
     "angular-moment": "~0.10.3",
     "rxjs": "~4.0.6",
-    "angular-rx": "~1.0.4"
+    "angular-rx": "~1.0.4",
+    "angular-marked": "~1.0.1"
   },
   "resolutions": {
     "angular": "1.4.8",
