@@ -1,10 +1,15 @@
 'use strict';
 
 angular.module('dick.groups')
-    .controller('ProjectsController', ['ProjectsResource', '$scope', 'MetadataService', 'rx', 'settings',
-        function (projectsResource, $scope, metadataService, rx, settings) {
+    .controller('ProjectsController', ['ProjectsResource', '$scope', 'MetadataService', 'rx', 'settings', 'observeOnScope',
+        '$rootScope',
+        function (projectsResource, $scope, metadataService, rx, settings, observeOnScope, $rootScope) {
             metadataService.setTitle('Projects');
             metadataService.setPageTitle('Projects');
+            if (angular.isDefined($rootScope.filterName)) {
+                $scope.name = $rootScope.filterName;
+                $rootScope.filterName = null;
+            }
             var page = 0, size = 20;
             var load = function (filter) {
                 projectsResource.query(filter).$promise.then(function (data) {
@@ -14,13 +19,24 @@ angular.module('dick.groups')
                     }
                 });
             };
+            observeOnScope($rootScope, 'filterName')
+                .subscribe(function (change) {
+                    $scope.name = change.newValue;
+                });
 
-            $scope.$watch('name', function (value) {
-                page = 0;
-                load({page: page, size: size, name: value});
-            });
+            observeOnScope($scope, 'name')
+                .debounce(500)
+                .subscribe(function (change) {
+                    page = 0;
+                    load({page: page, size: size, name: change.newValue});
+                });
 
-            load({page: page, size: size});
+            if ($scope.name) {
+                var filter = {page: page, size: size, name: $scope.name};
+            } else {
+                var filter = {page: page, size: size};
+            }
+            load(filter);
 
             $scope.loadMore = function () {
                 if ($scope.data) {
