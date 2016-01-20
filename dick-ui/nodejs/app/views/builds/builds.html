@@ -70,9 +70,11 @@
                             <div ng-repeat="stage in build.stages"
                                  ng-class="{'col-lg-12' : build.stages.length === 1,
                  'col-lg-6' : build.stages.length === 2,
-                 'col-lg-4' : build.stages.length > 2,
+                 'col-lg-4' : build.stages.length === 3,
+                 'col-lg-3' : build.stages.length > 3,
                  'col-md-12' : build.stages.length === 1,
-                 'col-md-6' : build.stages.length > 1}"
+                 'col-md-6' : build.stages.length === 2,
+                 'col-md-4' : build.stages.length > 2}"
                             >
                                 <div class="row">
                                     <div class="mg-b-xs">
