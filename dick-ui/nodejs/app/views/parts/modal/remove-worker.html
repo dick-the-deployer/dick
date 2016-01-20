@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h3 class="modal-title">Confirmation required</h3>
+</div>
+<div class="modal-body">
+    <form role="form" name="form" class="form-validation" ng-submit="remove()">
+        <h3 class="text-danger">
+            You are going to remove {{worker.name}}.
+            Removed workers CANNOT be restored! Are you ABSOLUTELY sure?
+        </h3>
+        <p>
+            This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.
+            Please type {{worker.name}} to proceed or close this modal to cancel
+        </p>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control" placeholder="my-worker" required
+                           ng-pattern="regexp" ng-model="confirm">
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-danger" type="submit()" ng-disabled="form.$invalid">
+            CONFIRM
+        </button>
+    </form>
+</div>
