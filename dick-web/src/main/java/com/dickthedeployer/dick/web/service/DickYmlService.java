@@ -37,7 +37,7 @@ public class DickYmlService {
     RepositoryService repositoryService;
 
     public Dickfile loadDickFile(Build build) throws DickFileMissingException {
-        try (InputStream file = repositoryService.getFile(build.getProject(), build.getSha(), ".dick.yml")) {
+        try (InputStream file = repositoryService.getFile(build, ".dick.yml")) {
             if (file == null) {
                 throw new DickFileMissingException();
             }

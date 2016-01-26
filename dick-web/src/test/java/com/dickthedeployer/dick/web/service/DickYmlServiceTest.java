@@ -37,6 +37,8 @@ public class DickYmlServiceTest extends ContextTestBase {
     public void shouldLoadDickfile() throws DickFileMissingException {
         Dickfile dickfile = dickYmlService.loadDickFile(new Build.Builder()
                 .withSha("cdc902352d18080292daea9b4f99ba5d16801b88")
+                .withRef("master")
+                .withRepository("https://github.com/dick-the-deployer/examples.git")
                 .withProject(new Project.Builder()
                         .withRef("master")
                         .withName("dick-the-deployer/dick")

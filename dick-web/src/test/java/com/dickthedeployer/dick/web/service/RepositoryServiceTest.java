@@ -16,6 +16,7 @@
 package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
+import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.google.common.base.Charsets;
 import org.junit.Test;
@@ -38,11 +39,14 @@ public class RepositoryServiceTest extends ContextTestBase {
 
     @Test
     public void shouldCloneRepository() throws IOException {
-        InputStream file = service.getFile(new Project.Builder()
-                .withName("dick-the-deployer/dick")
+        InputStream file = service.getFile(new Build.Builder()
+                .withProject(new Project.Builder()
+                        .withName("dick-the-deployer/dick")
+                        .build())
                 .withRepository("https://github.com/dick-the-deployer/dick.git")
                 .withRef("master")
-                .build(), "74ab161c6b4df731ded57dd434c8df120d140832", ".dick.yml");
+                .withSha("74ab161c6b4df731ded57dd434c8df120d140832")
+                .build(), ".dick.yml");
 
         String content = StreamUtils.copyToString(file, Charsets.UTF_8);
         assertThat(content).isNotNull().contains("foo: bar");
