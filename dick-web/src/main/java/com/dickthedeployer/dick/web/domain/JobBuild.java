@@ -52,6 +52,8 @@ public class JobBuild {
 
     private String stage;
 
+    private boolean requireRepository;
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.READY;
 

@@ -15,9 +15,10 @@
  */
 package com.dickthedeployer.dick.web.model.dickfile;
 
+import lombok.Data;
+
 import java.util.Collections;
 import java.util.List;
-import lombok.Data;
 
 /**
  *
@@ -29,6 +30,8 @@ public class Job {
     private String stage;
 
     private String name;
+
+    private boolean requireRepository;
 
     private List<EnvironmentVariable> environmentVariables = Collections.emptyList();
 
