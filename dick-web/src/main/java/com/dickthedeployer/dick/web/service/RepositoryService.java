@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.service;
 
+import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.CommandExecutionException;
 import com.dickthedeployer.dick.web.exception.RepositoryUnavailableException;
@@ -93,12 +94,12 @@ public class RepositoryService {
 
     }
 
-    public InputStream getFile(Project project, String sha, String filePath) {
-        Repo repo = new Repo(project.getName(), project.getRepository(), project.getRef());
+    public InputStream getFile(Build build, String filePath) {
+        Repo repo = new Repo(build.getProject().getName(), build.getRepository(), build.getRef());
         REPOS.computeIfAbsent(repo, key -> checkoutRepository(key));
         Path path = REPOS.get(repo);
         synchronized (path) {
-            checkoutRevision(path, project.getRef(), sha);
+            checkoutRevision(path, build.getRef(), build.getSha());
             Path file = path.resolve(filePath);
             try {
                 if (Files.exists(file)) {

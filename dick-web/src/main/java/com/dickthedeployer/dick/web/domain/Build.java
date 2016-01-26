@@ -44,12 +44,11 @@ public class Build {
     private Date creationDate = new Date();
 
     private boolean inQueue = true;
-
     private String sha;
-
     private String currentStage;
-
     private String lastMessage;
+    private String repository;
+    private String ref;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -63,8 +62,13 @@ public class Build {
             this.item = new Build();
         }
 
-        public Builder withId(final Long id) {
-            this.item.id = id;
+        public Builder withRepository(final String repository) {
+            this.item.repository = repository;
+            return this;
+        }
+
+        public Builder withRef(final String ref) {
+            this.item.ref = ref;
             return this;
         }
 

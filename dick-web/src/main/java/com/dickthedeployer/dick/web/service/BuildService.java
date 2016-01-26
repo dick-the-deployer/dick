@@ -99,6 +99,8 @@ public class BuildService {
         Build build = buildDao.save(new Build.Builder()
                 .withProject(project)
                 .withSha(sha)
+                .withRef(project.getRef())
+                .withRepository(project.getRepository())
                 .withLastMessage(lastMessage)
                 .build()
         );
