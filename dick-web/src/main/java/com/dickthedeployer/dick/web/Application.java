@@ -39,7 +39,10 @@ public class Application {
         return new RandomNameGenerator();
     }
 
-    @RequestMapping(value = "/{path:[^\\.]*}")
+    @RequestMapping(value = {"/{path:[^\\.]*}",
+            "/{path:[^\\.]*}/{path:[^\\.]*}",
+            "/{path:[^\\.]*}/{path:[^\\.]*}/{path:[^\\.]*}",
+            "/{path:[^\\.]*}/{path:[^\\.]*}/{path:[^\\.]*}/{path:[^\\.]*}"})
     public String redirect() {
         return "forward:/";
     }
