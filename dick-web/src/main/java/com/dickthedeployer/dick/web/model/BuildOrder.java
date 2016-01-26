@@ -15,22 +15,29 @@
  */
 package com.dickthedeployer.dick.web.model;
 
-import java.util.List;
-import java.util.Map;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author mariusz
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BuildOrder {
 
     private Long buildId;
     private List<String> commands;
+    private boolean requireRepository;
+    private String repository;
+    private String ref;
+    private String sha;
     private Map<String, String> environment;
 }

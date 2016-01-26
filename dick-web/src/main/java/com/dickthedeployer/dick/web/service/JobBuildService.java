@@ -85,6 +85,7 @@ public class JobBuildService {
                                     jobBuild.setStage(stage.getName());
                                     jobBuild.setDeploy(job.getDeploy());
                                     jobBuild.setStatus(JobBuild.Status.WAITING);
+                                    jobBuild.setRequireRepository(job.isRequireRepository());
                                     return jobBuild;
                                 }).forEach(jobBuildDao::save)
                 );
@@ -212,7 +213,15 @@ public class JobBuildService {
         worker.setStatus(Worker.Status.BUSY);
         workerDao.save(worker);
 
-        return new BuildOrder(jobBuild.getId(), jobBuild.getDeploy(), jobBuild.getEnvironment());
+        return BuildOrder.builder()
+                .buildId(jobBuild.getId())
+                .commands(jobBuild.getDeploy())
+                .environment(jobBuild.getEnvironment())
+                .requireRepository(jobBuild.isRequireRepository())
+                .ref(jobBuild.getBuild().getRef())
+                .sha(jobBuild.getBuild().getSha())
+                .repository(jobBuild.getBuild().getRepository())
+                .build();
     }
 
     @Transactional
