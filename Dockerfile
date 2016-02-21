@@ -4,13 +4,7 @@ VOLUME /tmp
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 ADD . /usr/src/app
-RUN bash -c 'chmod +x mvnw'
-RUN bash -c './mvnw install -DskipTests -DskipGit=true'
-RUN bash -c 'cp /usr/src/app/dick-web/target/dick-web-1.0-SNAPSHOT.jar /app.jar'
-RUN bash -c 'rm -rf /usr/src/app'
-
-RUN git config --global user.email "dick@deployer.com"  
-RUN git config --global user.name "Dick the Deployer"
+RUN bash -c './mvnw install -DskipTests -DskipGit=true && cp /usr/src/app/dick-web/target/dick-web-1.0-SNAPSHOT.jar /app.jar && rm -rf /usr/src/app /root/.m2'
 
 EXPOSE 8080
 
