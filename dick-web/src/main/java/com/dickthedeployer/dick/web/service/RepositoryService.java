@@ -132,6 +132,7 @@ public class RepositoryService {
     }
 
     private void checkoutRevision(Path path, String ref, String sha) {
+        commandService.invoke(path, "git", "fetch", "origin");
         commandService.invoke(path, "git", "clean", "-fdx");
         commandService.invoke(path, "git", "reset", "-q", "--hard");
         commandService.invoke(path, "git", "pull", "origin", ref);
