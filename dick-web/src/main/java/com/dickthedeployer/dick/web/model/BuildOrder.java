@@ -39,5 +39,6 @@ public class BuildOrder {
     private String repository;
     private String ref;
     private String sha;
+    private String dockerImage;
     private Map<String, String> environment;
 }

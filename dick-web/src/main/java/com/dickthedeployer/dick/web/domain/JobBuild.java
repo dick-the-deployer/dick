@@ -54,6 +54,8 @@ public class JobBuild {
 
     private boolean requireRepository;
 
+    private String dockerImage;
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.READY;
 

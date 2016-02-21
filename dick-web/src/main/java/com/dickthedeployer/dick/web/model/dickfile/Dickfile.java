@@ -28,6 +28,8 @@ import static java.util.stream.Collectors.toList;
 @Data
 public class Dickfile {
 
+    private String image;
+
     private Pipeline pipeline = new Pipeline();
 
     private List<Job> jobs = Collections.emptyList();

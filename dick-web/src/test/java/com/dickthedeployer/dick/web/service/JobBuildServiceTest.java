@@ -55,6 +55,7 @@ public class JobBuildServiceTest extends ContextTestBase {
         assertThat(buildOrder).isNotNull();
         assertThat(buildOrder.getBuildId()).isEqualTo(jobBuild.getId());
         assertThat(buildOrder.getCommands()).containsExactly("echo bar");
+        assertThat(buildOrder.getDockerImage()).isEqualTo("centos");
         assertThat(buildOrder.getEnvironment()).containsEntry("FOO", "bar");
 
         Optional<BuildOrder> optional = jobBuildService.peekBuildFor("testingWorker");
@@ -156,6 +157,7 @@ public class JobBuildServiceTest extends ContextTestBase {
         jobBuild.setBuild(build);
         jobBuild.setStatus(status);
         jobBuild.setDeploy(asList("echo bar"));
+        jobBuild.setDockerImage("centos");
         jobBuild.setEnvironment(singletonMap("FOO", "bar"));
         jobBuildDao.save(jobBuild);
         return jobBuild;

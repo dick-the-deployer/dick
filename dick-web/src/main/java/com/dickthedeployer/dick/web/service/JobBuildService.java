@@ -85,6 +85,7 @@ public class JobBuildService {
                                     jobBuild.setStage(stage.getName());
                                     jobBuild.setDeploy(job.getDeploy());
                                     jobBuild.setStatus(JobBuild.Status.WAITING);
+                                    jobBuild.setDockerImage(dickfile.getImage());
                                     jobBuild.setRequireRepository(job.isRequireRepository());
                                     return jobBuild;
                                 }).forEach(jobBuildDao::save)
@@ -218,6 +219,7 @@ public class JobBuildService {
                 .commands(jobBuild.getDeploy())
                 .environment(jobBuild.getEnvironment())
                 .requireRepository(jobBuild.isRequireRepository())
+                .dockerImage(jobBuild.getDockerImage())
                 .ref(jobBuild.getBuild().getRef())
                 .sha(jobBuild.getBuild().getSha())
                 .repository(jobBuild.getBuild().getRepository())
