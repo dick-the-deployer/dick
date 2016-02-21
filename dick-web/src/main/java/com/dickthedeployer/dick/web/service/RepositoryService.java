@@ -135,7 +135,7 @@ public class RepositoryService {
         commandService.invoke(path, "git", "fetch", "origin");
         commandService.invoke(path, "git", "clean", "-fdx");
         commandService.invoke(path, "git", "reset", "-q", "--hard");
-        commandService.invoke(path, "git", "pull", "origin");
+        commandService.invoke(path, "git", "pull", "origin", ref);
         commandService.invoke(path, "git", "checkout", sha);
     }
 
