@@ -19,17 +19,21 @@ import com.dickthedeployer.dick.web.dao.BuildDao;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.dao.ProjectDao;
 import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Project;
 import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
+import com.dickthedeployer.dick.web.exception.CommandExecutionException;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
+import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.*;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
+import static java.util.Collections.emptyList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,6 +46,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import org.springframework.util.StringUtils;
 
 /**
  * @author mariusz
@@ -69,27 +74,41 @@ public class BuildService {
     RepositoryService repositoryService;
 
     @Transactional
-    public void onTrigger(TriggerModel model) throws BuildAlreadyQueuedException {
+    public void onTrigger(TriggerModel model) throws BuildAlreadyQueuedException, RepositoryParsingException {
         Optional<Project> projectOptional = projectDao.findByNamespaceNameAndName(model.getNamespace(), model.getName());
         Project project = projectOptional.get();
         log.info("Found project {} for name {}", project.getId(), model.getName());
-        String lastSha = repositoryService.getLastSha(project);
-        String lastMessage = repositoryService.getLastMessage(project, lastSha);
-        buildProject(project, lastSha, Optional.ofNullable(lastMessage));
+        String sha = model.getSha();
+        if (StringUtils.isEmpty(sha)) {
+            sha = repositoryService.getLastSha(project);
+        }
+        List<EnvironmentVariable> environment = getEnvironment(model);
+        try {
+            String lastMessage = repositoryService.getLastMessage(project, sha);
+            buildProject(project, sha, Optional.ofNullable(lastMessage), environment);
+        } catch (CommandExecutionException ex) {
+            throw new RepositoryParsingException(ex);
+        }
+    }
+
+    private List<EnvironmentVariable> getEnvironment(TriggerModel model) {
+        return model.getEnvironmentVariables().stream()
+                .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
+                .collect(toList());
     }
 
     public void onHook(HookModel hookModel) {
         projectDao.findByRepositoryHostAndRepositoryPathAndRef(hookModel.getHost(), hookModel.getPath(), hookModel.getRef()).stream()
                 .forEach(project -> {
                     try {
-                        buildProject(project, hookModel.getSha(), Optional.ofNullable(hookModel.getLastMessage()));
+                        buildProject(project, hookModel.getSha(), Optional.ofNullable(hookModel.getLastMessage()), emptyList());
                     } catch (BuildAlreadyQueuedException ex) {
                         log.info("Cannot queue project {}; already in queue", project.getName());
                     }
                 });
     }
 
-    private void buildProject(Project project, String sha, Optional<String> lastMessageOptional) throws BuildAlreadyQueuedException {
+    private void buildProject(Project project, String sha, Optional<String> lastMessageOptional, List<EnvironmentVariable> variables) throws BuildAlreadyQueuedException {
         Optional<Build> inQueue = buildDao.findByProjectAndInQueueTrue(project);
         if (inQueue.isPresent()) {
             throw new BuildAlreadyQueuedException();
@@ -102,6 +121,7 @@ public class BuildService {
                 .withRef(project.getRef())
                 .withRepository(project.getRepository())
                 .withLastMessage(lastMessage)
+                .withEnvironmentVariables(variables)
                 .build()
         );
         try {
@@ -148,7 +168,6 @@ public class BuildService {
         build.setInQueue(false);
         buildDao.save(build);
     }
-
 
     public BuildDetailsModel getBuild(Long buildId) throws NotFoundException {
         Build build = getAndCheckBuild(buildId);

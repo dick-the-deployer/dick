@@ -98,6 +98,7 @@ public class WorkerService {
         environment.put("REF", build.getProject().getRef());
         build.getProject().getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
         job.getEnvironmentVariables().forEach(variable -> environment.put(variable.getKey(), variable.getValue()));
+        build.getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
         return environment;
     }
 
@@ -133,7 +134,6 @@ public class WorkerService {
         }
         workerDao.delete(worker);
     }
-
 
     @Transactional
     public void readyWorker(Optional<Worker> workerOptional) {

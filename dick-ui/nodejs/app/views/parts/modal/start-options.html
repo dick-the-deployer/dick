@@ -1,0 +1,54 @@
+<div class="modal-header">
+    <h3 class="modal-title">Queue parameterized build of {{project.name}}</h3>
+</div>
+<div class="modal-body">
+    <form role="form" name="form" class="form-validation" ng-submit="queue()">
+        <p class="text-muted">
+            You can specify commit SHA to build. If left blank latest SHA will be used.
+        </p>
+        <div class="form-group">
+            <div class="row">
+                <label class="col-sm-2 control-label text-right mg-t-sm">SHA</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="sha" name="sha">
+                </div>
+            </div>
+        </div>
+        <p class="text-muted">
+            You can specify any number of custom environment variables. This values will take precedence over
+            ones defined in project configuration.
+        </p>
+        <div class="form-group">
+            <div class="row">
+                <label class="col-sm-2 control-label text-right mg-t-sm">Environment</label>
+                <div class="col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div ng-repeat="variable in environmentVariables" class="row">
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control mg-b-md" placeholder="USER.HOME" required
+                                           ng-model="variable.key" >
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control mg-b-md" placeholder="/home/foo" required
+                                           ng-model="variable.value" >
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-white btn-sm" ng-click="removeVariable(variable)" type="button"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="pull-right">
+                                <button class="btn btn-white btn-sm" ng-click="addVariable()" type="button"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit()" ng-disabled="form.$invalid">
+            CONFIRM
+        </button>
+    </form>
+</div>

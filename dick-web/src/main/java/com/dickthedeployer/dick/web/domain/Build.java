@@ -43,6 +43,9 @@ public class Build {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<EnvironmentVariable> environmentVariables;
+
     private boolean inQueue = true;
     private String sha;
     private String currentStage;
@@ -84,6 +87,11 @@ public class Build {
 
         public Builder withLastMessage(final String lastMessage) {
             this.item.lastMessage = lastMessage;
+            return this;
+        }
+
+        public Builder withEnvironmentVariables(final List<EnvironmentVariable> environmentVariables) {
+            this.item.environmentVariables = environmentVariables;
             return this;
         }
 
