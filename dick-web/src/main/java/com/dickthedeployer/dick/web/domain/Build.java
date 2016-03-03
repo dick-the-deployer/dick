@@ -15,6 +15,7 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
+import static java.util.Collections.emptyList;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -44,7 +45,7 @@ public class Build {
     private Date creationDate = new Date();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EnvironmentVariable> environmentVariables;
+    private List<EnvironmentVariable> environmentVariables = emptyList();
 
     private boolean inQueue = true;
     private String sha;
