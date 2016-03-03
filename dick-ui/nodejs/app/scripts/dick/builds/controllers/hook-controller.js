@@ -1,63 +1,75 @@
 'use strict';
 
 angular.module('dick.builds')
-    .controller('HookController', ['$scope', 'toaster', 'BuildsResource', 'statusCode',
-        function ($scope, toaster, buildsResource, statusCode) {
-            $scope.startBuild = function (project) {
-                buildsResource.save({namespace: project.namespace, name: project.name}).$promise.then(function () {
-                    toaster.add({
-                        type: 'success',
-                        message: 'Build was successfully queued.'
-                    });
-                }, function (response) {
-                    if (response.status === statusCode.preconditionFailed) {
+        .controller('HookController', ['$scope', 'toaster', 'BuildsResource', 'statusCode', '$uibModal',
+            function ($scope, toaster, buildsResource, statusCode, $uibModal) {
+                $scope.startBuild = function (project) {
+                    buildsResource.save({namespace: project.namespace, name: project.name}).$promise.then(function () {
                         toaster.add({
-                            type: 'warning',
-                            message: 'Build already queued!'
+                            type: 'success',
+                            message: 'Build was successfully queued.'
                         });
-                    }
-                });
-            };
+                    }, function (response) {
+                        if (response.status === statusCode.preconditionFailed) {
+                            toaster.add({
+                                type: 'warning',
+                                message: 'Build already queued!'
+                            });
+                        }
+                    });
+                };
 
-            $scope.buildStage = function (build, stage) {
-                var nextStageIndex = build.stages.indexOf(stage) + 1;
-                buildStage(build, nextStageIndex);
-            }
+                $scope.startWithOptions = function (project) {
+                    $uibModal.open({
+                        templateUrl: '/views/parts/modal/start-options.html',
+                        controller: 'StartWithOptionsModal',
+                        resolve: {
+                            project: function () {
+                                return project;
+                            }
+                        }
+                    });
+                };
 
-            $scope.rebuildStage = function (build, stage) {
-                var nextStageIndex = build.stages.indexOf(stage);
-                buildStage(build, nextStageIndex);
-            }
+                $scope.buildStage = function (build, stage) {
+                    var nextStageIndex = build.stages.indexOf(stage) + 1;
+                    buildStage(build, nextStageIndex);
+                };
 
-            $scope.buildFirstStage = function (build) {
-                buildStage(build, 0);
-            }
+                $scope.rebuildStage = function (build, stage) {
+                    var nextStageIndex = build.stages.indexOf(stage);
+                    buildStage(build, nextStageIndex);
+                };
 
-            $scope.kill = function (build) {
-                buildsResource.kill({id: build.id}).$promise.then(function () {
-                    toaster.add({
-                        type: 'success',
-                        message: 'Build stopped'
-                    })
-                });
-            }
+                $scope.buildFirstStage = function (build) {
+                    buildStage(build, 0);
+                };
 
-            function buildStage(build, nextStageIndex) {
-                buildsResource.save({
-                    id: build.id,
-                    stage: build.stages[nextStageIndex].name
-                }).$promise.then(function () {
-                    toaster.add({
-                        type: 'success',
-                        message: 'Stage was successfully queued.'
-                    })
-                });
-            }
+                $scope.kill = function (build) {
+                    buildsResource.kill({id: build.id}).$promise.then(function () {
+                        toaster.add({
+                            type: 'success',
+                            message: 'Build stopped'
+                        });
+                    });
+                };
 
-            $scope.checkProgress = function () {
-                if (project.lastBuild.stages.indexOf(stage) < project.lastBuild.stages.indexOf(project.lastBuild.currentStage)) {
-                    '100%';
+                function buildStage(build, nextStageIndex) {
+                    buildsResource.save({
+                        id: build.id,
+                        stage: build.stages[nextStageIndex].name
+                    }).$promise.then(function () {
+                        toaster.add({
+                            type: 'success',
+                            message: 'Stage was successfully queued.'
+                        })
+                    });
                 }
+
+                $scope.checkProgress = function () {
+                    if (project.lastBuild.stages.indexOf(stage) < project.lastBuild.stages.indexOf(project.lastBuild.currentStage)) {
+                        '100%';
+                    }
+                };
             }
-        }
         ]);

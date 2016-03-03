@@ -17,6 +17,7 @@ package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
+import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
 import com.dickthedeployer.dick.web.model.BuildDetailsModel;
 import com.dickthedeployer.dick.web.model.TriggerModel;
 import com.dickthedeployer.dick.web.service.BuildService;
@@ -41,7 +42,7 @@ public class BuildController {
     BuildService buildService;
 
     @RequestMapping(method = POST)
-    public void onTrigger(@RequestBody TriggerModel trigger) throws BuildAlreadyQueuedException {
+    public void onTrigger(@RequestBody TriggerModel trigger) throws BuildAlreadyQueuedException, RepositoryParsingException {
         buildService.onTrigger(trigger);
     }
 

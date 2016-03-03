@@ -15,6 +15,9 @@
  */
 package com.dickthedeployer.dick.web.model;
 
+import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
+import static java.util.Collections.emptyList;
+import java.util.List;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -30,4 +33,7 @@ public class TriggerModel {
     String namespace;
     @NotNull
     String name;
+    String sha;
+    List<EnvironmentVariable> environmentVariables = emptyList();
+
 }
