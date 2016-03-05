@@ -1,0 +1,38 @@
+image: java:8
+
+pipeline:
+  stages:
+  - name: Release
+    autorun: true
+  - name: Deploy to UAT
+    autorun: true
+  - name: Deploy to PRD
+    autorun: false
+
+jobs:
+  - stage: Release
+    name: Tests 2
+    requireRepository: true
+    deploy:
+      - ./mvnw test
+  - stage: Release
+    name: Deploy to nexus
+    requireRepository: true
+    deploy:
+      - ./mvnw install
+  - stage: Deploy to UAT
+    name: Ssh deploy to foo-bar.uat.example.com
+    deploy:
+      - echo "Deploying app to uat"
+      - echo "."
+      - echo "."
+      - echo "."
+      - echo "Success"
+  - stage: Deploy to PRD
+    name: Ssh deploy to foo-bar.example.com
+    deploy:
+      - echo "Deploying app to prd"
+      - echo "."
+      - echo "."
+      - echo "."
+      - echo "Success"
