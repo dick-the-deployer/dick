@@ -11,6 +11,6 @@ import java.util.List;
 public interface GithubFacade {
 
     @RequestMapping(value = "/commits", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    List<GithubCommita> getCommits();
+    List<GithubCommit> getCommits();
 
 }
