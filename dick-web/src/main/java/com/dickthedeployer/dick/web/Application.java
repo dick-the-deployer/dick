@@ -18,20 +18,24 @@ package com.dickthedeployer.dick.web;
 import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- *
  * @author mariusz
  */
 @EnableAsync
 @Controller
 @EnableScheduling
 @SpringBootApplication
+@EnableFeignClients
+@PropertySource(value = "META-INF/maven/com.dickthedeployer/dick-web/pom.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "git.properties", ignoreResourceNotFound = true)
 public class Application {
 
     @Bean
