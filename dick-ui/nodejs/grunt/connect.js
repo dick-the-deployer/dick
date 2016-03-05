@@ -5,14 +5,14 @@ module.exports = {
         livereload: 35729
     },
     proxies: [{
-            context: ['/api/'],
-            host: 'localhost',
-            port: 8080,
-            changeOrigin: true,
-            headers: {
-                "host": 'localhost'
-            }
-        }],
+        context: ['/api/'],
+        host: 'localhost',
+        port: 8080,
+        changeOrigin: true,
+        headers: {
+            "host": 'localhost'
+        }
+    }],
     livereload: {
         options: {
             open: true,
@@ -38,6 +38,7 @@ module.exports = {
                     '^/workers.*$ /index.html',
                     '^/asd.*$ /index.html',
                     '^/403$ /index.html',
+                    '^/help$ /index.html',
                     '^/404$ /index.html',
                     '^/500$ /index.html'
                 ]));

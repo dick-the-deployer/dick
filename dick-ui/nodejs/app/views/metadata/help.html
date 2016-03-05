@@ -1,0 +1,50 @@
+<section>
+    <section class="panel">
+        <div class="panel-body">
+            <loader on="info"></loader>
+            <div ng-show="info">
+                <h2>
+                    Dick the Deployer {{info.version}} <span class="text-muted">{{info.commitShort}}</span>
+                    <span ng-hide="info.versionUpToDate" class="label label-info">New version out</span>
+                    <span ng-hide="info.versionUpToDate" class="label label-success">Up to date</span>
+                </h2>
+                <p class="text-muted mg-t-lg">
+                    Dick the Deployer is open source software to implement Continous Delivery
+                    <br/>
+                    Manage pipelines with fine-grained access controls.
+                    <br/>
+                    Perform code release and deployment in a flexible and scallable way.
+                    <br/>
+                    Read more about Dick the Deployer at <a href="https://dickthedeployer.com">dickthedeployer.com</a>.
+                </p>
+
+                <p>
+                    <a href="https://dickthedeployer.slack.com" class="btn btn-default"><i class="fa fa-slack"></i>
+                        slack
+                    </a>
+                    <a href="https://github.com/dick-the-deployer/dick" class="btn btn-default"><i
+                            class="fa fa-github-alt"></i>
+                        github
+                    </a>
+                </p>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <h3>Public key</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-2 text-justify">
+                            This public key is used by Dick the Deployer to clone code from repositories using 'git://'
+                            schema.
+                        </div>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" disabled rows="6">
+                                {{info.publicKey}}
+                            </textarea>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
