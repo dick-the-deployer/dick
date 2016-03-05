@@ -17,8 +17,10 @@ package com.dickthedeployer.dick.web.service;
 
 import com.dickthedeployer.dick.web.ContextTestBase;
 import com.dickthedeployer.dick.web.domain.*;
-import com.dickthedeployer.dick.web.model.dickfile.*;
-import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
+import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
+import com.dickthedeployer.dick.web.model.dickfile.Job;
+import com.dickthedeployer.dick.web.model.dickfile.Pipeline;
+import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.dickthedeployer.dick.web.service.util.OptymisticLockService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +91,11 @@ public class WorkerServiceTest extends ContextTestBase {
         projectDao.save(project);
         Build build = new Build.Builder()
                 .withSha("somesha")
-                .withProject(project).build();
+                .withProject(project)
+                .withEnvironmentVariables(asList(
+                        new EnvironmentVariable("FOOKEY", "foo")
+                ))
+                .build();
         buildDao.save(build);
         return build;
     }
@@ -102,9 +108,6 @@ public class WorkerServiceTest extends ContextTestBase {
         ));
         dickfile.setPipeline(pipeline);
         Job first = new Job();
-        first.setEnvironmentVariables(asList(
-                new EnvironmentVariable("FOOKEY", "foo")
-        ));
         first.setName("first job");
         first.setStage("first");
         first.setDeploy(asList("echo foo"));

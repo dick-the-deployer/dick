@@ -38,7 +38,6 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author mariusz
  */
 @Slf4j
@@ -97,7 +96,6 @@ public class WorkerService {
         environment.put("REPOSITORY", build.getProject().getRepository());
         environment.put("REF", build.getProject().getRef());
         build.getProject().getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
-        job.getEnvironmentVariables().forEach(variable -> environment.put(variable.getKey(), variable.getValue()));
         build.getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
         return environment;
     }

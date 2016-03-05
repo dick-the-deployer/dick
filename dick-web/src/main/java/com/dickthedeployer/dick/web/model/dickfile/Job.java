@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
  * @author mariusz
  */
 @Data
@@ -32,8 +31,6 @@ public class Job {
     private String name;
 
     private boolean requireRepository;
-
-    private List<EnvironmentVariable> environmentVariables = Collections.emptyList();
 
     private List<String> deploy = Collections.emptyList();
 }
