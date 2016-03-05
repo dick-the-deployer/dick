@@ -23,7 +23,7 @@ public class InfoService {
     @Value("${version:DEV}")
     String version;
 
-    @Value("${git.commit.id.describe:LATEST}")
+    @Value("${git.commit.id.abbrev:LATEST}")
     String commitShort;
 
     String publicKey;
