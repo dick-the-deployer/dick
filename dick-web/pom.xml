@@ -83,6 +83,7 @@
                 <artifactId>git-commit-id-plugin</artifactId>
                 <configuration>
                     <skip>${skipGit}</skip>
+                    <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
                 </configuration>
             </plugin>
             <!--            <plugin>
