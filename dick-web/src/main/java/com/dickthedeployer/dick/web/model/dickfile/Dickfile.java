@@ -30,7 +30,7 @@ public class Dickfile {
 
     private String image;
 
-    private List<EnvironmentVariable> variables;
+    private List<EnvironmentVariable> variables = Collections.emptyList();
 
     private Pipeline pipeline = new Pipeline();
 
