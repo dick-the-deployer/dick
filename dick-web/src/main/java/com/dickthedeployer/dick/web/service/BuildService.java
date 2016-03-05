@@ -22,18 +22,13 @@ import com.dickthedeployer.dick.web.domain.Build;
 import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Project;
-import com.dickthedeployer.dick.web.exception.BuildAlreadyQueuedException;
-import com.dickthedeployer.dick.web.exception.CommandExecutionException;
-import com.dickthedeployer.dick.web.exception.DickFileMissingException;
-import com.dickthedeployer.dick.web.exception.NotFoundException;
-import com.dickthedeployer.dick.web.exception.RepositoryParsingException;
+import com.dickthedeployer.dick.web.exception.*;
 import com.dickthedeployer.dick.web.mapper.BuildDetailsMapper;
 import com.dickthedeployer.dick.web.mapper.BuildMapper;
 import com.dickthedeployer.dick.web.mapper.ProjectMapper;
 import com.dickthedeployer.dick.web.model.*;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
-import static java.util.Collections.emptyList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,12 +36,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import org.springframework.util.StringUtils;
 
 /**
  * @author mariusz
@@ -101,7 +97,7 @@ public class BuildService {
         projectDao.findByRepositoryHostAndRepositoryPathAndRef(hookModel.getHost(), hookModel.getPath(), hookModel.getRef()).stream()
                 .forEach(project -> {
                     try {
-                        buildProject(project, hookModel.getSha(), Optional.ofNullable(hookModel.getLastMessage()), emptyList());
+                        buildProject(project, hookModel.getSha(), Optional.ofNullable(hookModel.getLastMessage()), new ArrayList<>());
                     } catch (BuildAlreadyQueuedException ex) {
                         log.info("Cannot queue project {}; already in queue", project.getName());
                     }
@@ -126,6 +122,7 @@ public class BuildService {
         );
         try {
             Dickfile dickfile = dickYmlService.loadDickFile(build);
+            addGlobalVariables(build, dickfile);
             build.setStages(dickfile.getStageNames());
             build.setStatus(Build.Status.READY);
             buildDao.save(build);
@@ -140,6 +137,14 @@ public class BuildService {
             build.setInQueue(false);
             buildDao.save(build);
         }
+    }
+
+    private void addGlobalVariables(Build build, Dickfile dickfile) {
+        dickfile.getVariables().stream()
+                .filter(variable -> !build.getEnvironmentVariables().contains(variable))
+                .forEach(variable -> build.getEnvironmentVariables().add(
+                        new EnvironmentVariable(variable.getKey(), variable.getValue())
+                ));
     }
 
     public void buildStage(Long buildId, String stageName) throws NotFoundException {
