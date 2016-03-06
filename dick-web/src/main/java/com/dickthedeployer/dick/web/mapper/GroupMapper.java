@@ -18,11 +18,10 @@ package com.dickthedeployer.dick.web.mapper;
 import com.dickthedeployer.dick.web.domain.Group;
 import com.dickthedeployer.dick.web.model.GroupModel;
 
-import static com.dickthedeployer.dick.web.mapper.ProjectMapper.mapProject;
+import static com.dickthedeployer.dick.web.mapper.ProjectMapper.mapProjectView;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author mariusz
  */
 public class GroupMapper {
@@ -35,7 +34,7 @@ public class GroupMapper {
                 .name(group.getNamespace().getName())
                 .projects(group.getNamespace().getProjects().stream()
                         .map(project
-                                -> mapProject(project)
+                                -> mapProjectView(project)
                         ).collect(toList())
                 ).build();
     }

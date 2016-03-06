@@ -26,6 +26,7 @@ import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.exception.DickFileMissingException;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
 import com.dickthedeployer.dick.web.model.BuildOrder;
+import com.dickthedeployer.dick.web.model.EnvironmentVariable;
 import com.dickthedeployer.dick.web.model.LogChunkModel;
 import com.dickthedeployer.dick.web.model.OutputModel;
 import com.dickthedeployer.dick.web.model.dickfile.Dickfile;
@@ -217,8 +218,14 @@ public class JobBuildService {
         return BuildOrder.builder()
                 .buildId(jobBuild.getId())
                 .commands(jobBuild.getDeploy())
-                .environment(jobBuild.getEnvironment())
-                .requireRepository(jobBuild.isRequireRepository())
+                .environment(jobBuild.getEnvironmentVariables().stream()
+                        .map(variable -> EnvironmentVariable.builder()
+                                .value(variable.getVariableValue())
+                                .name(variable.getVariableKey())
+                                .secure(variable.isSecure())
+                                .build())
+                        .collect(Collectors.toList())
+                ).requireRepository(jobBuild.isRequireRepository())
                 .dockerImage(jobBuild.getDockerImage())
                 .ref(jobBuild.getBuild().getRef())
                 .sha(jobBuild.getBuild().getSha())

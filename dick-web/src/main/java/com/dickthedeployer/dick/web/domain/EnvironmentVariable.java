@@ -15,13 +15,13 @@
  */
 package com.dickthedeployer.dick.web.domain;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import lombok.Data;
 
 /**
- *
  * @author mariusz
  */
 @Data
@@ -34,6 +34,7 @@ public class EnvironmentVariable {
 
     private String variableKey;
     private String variableValue;
+    private boolean secure;
 
     public EnvironmentVariable() {
     }
@@ -41,6 +42,12 @@ public class EnvironmentVariable {
     public EnvironmentVariable(String variableKey, String variableValue) {
         this.variableKey = variableKey;
         this.variableValue = variableValue;
+    }
+
+    public EnvironmentVariable(String variableKey, String variableValue, boolean secure) {
+        this.variableKey = variableKey;
+        this.variableValue = variableValue;
+        this.secure = secure;
     }
 
 }

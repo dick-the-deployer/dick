@@ -12,6 +12,7 @@ angular.module('dick', [
     'angularMoment',
     'rx',
     'hc.marked',
+    'uiSwitch',
     'dick.tools',
     'dick.errors',
     'dick.groups',

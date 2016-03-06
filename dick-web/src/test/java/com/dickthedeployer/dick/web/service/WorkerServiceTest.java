@@ -22,6 +22,7 @@ import com.dickthedeployer.dick.web.model.dickfile.Job;
 import com.dickthedeployer.dick.web.model.dickfile.Pipeline;
 import com.dickthedeployer.dick.web.model.dickfile.Stage;
 import com.dickthedeployer.dick.web.service.util.OptymisticLockService;
+import org.assertj.core.groups.Tuple;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -70,7 +71,8 @@ public class WorkerServiceTest extends ContextTestBase {
 
         List<JobBuild> builds = jobBuildDao.findByBuild(build);
         assertThat(builds).hasSize(1);
-        assertThat(builds.get(0).getEnvironment()).containsEntry("FOOKEY", "foo");
+        assertThat(builds.get(0).getEnvironmentVariables()).extracting("variableKey", "variableValue")
+                .contains(Tuple.tuple("FOOKEY", "foo"));
         assertThat(builds.get(0).getDeploy()).containsExactly("echo foo");
     }
 
