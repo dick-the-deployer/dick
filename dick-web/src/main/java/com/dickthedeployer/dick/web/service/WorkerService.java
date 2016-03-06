@@ -34,10 +34,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -95,19 +93,22 @@ public class WorkerService {
     }
 
     private List<EnvironmentVariable> getEnvironment(Build build) {
-        List<EnvironmentVariable> environment = new ArrayList<>();
-        environment.add(new EnvironmentVariable("SHA", build.getSha()));
-        environment.add(new EnvironmentVariable("REPOSITORY", build.getProject().getRepository()));
-        environment.add(new EnvironmentVariable("REF", build.getProject().getRef()));
+        Map<String, EnvironmentVariable> environment = new HashMap<>();
+
+        environment.put("SHA", new EnvironmentVariable("SHA", build.getSha()));
+        environment.put("REPOSITORY", new EnvironmentVariable("REPOSITORY", build.getProject().getRepository()));
+        environment.put("REF", new EnvironmentVariable("REF", build.getProject().getRef()));
         build.getProject().getEnvironmentVariables()
-                .forEach(variable -> environment.add(
+                .forEach(variable -> environment.put(
+                        variable.getVariableKey(),
                         new EnvironmentVariable(variable.getVariableKey(), variable.getVariableValue(), variable.isSecure()))
                 );
         build.getEnvironmentVariables()
-                .forEach(variable -> environment.add(
+                .forEach(variable -> environment.put(
+                        variable.getVariableKey(),
                         new EnvironmentVariable(variable.getVariableKey(), variable.getVariableValue(), variable.isSecure()))
                 );
-        return environment;
+        return environment.values().stream().collect(Collectors.toList());
     }
 
     private void assignToWorker(JobBuild jobBuild, Worker worker) {
