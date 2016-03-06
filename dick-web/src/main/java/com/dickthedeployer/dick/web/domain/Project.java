@@ -19,7 +19,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author mariusz
@@ -38,7 +38,7 @@ public class Project {
     private Date creationDate = new Date();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<EnvironmentVariable> environmentVariables;
+    private Set<EnvironmentVariable> environmentVariables;
 
     @ManyToOne(optional = false)
     private Namespace namespace;
@@ -99,7 +99,7 @@ public class Project {
             return this;
         }
 
-        public Builder withEnvironmentVariables(final List<EnvironmentVariable> environmentVariables) {
+        public Builder withEnvironmentVariables(final Set<EnvironmentVariable> environmentVariables) {
             this.item.environmentVariables = environmentVariables;
             return this;
         }

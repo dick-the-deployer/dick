@@ -35,8 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author mariusz
@@ -73,10 +75,10 @@ public class ProjectService {
         projectDao.save(project);
     }
 
-    private List<EnvironmentVariable> getEnvironment(ProjectModel model) {
+    private Set<EnvironmentVariable> getEnvironment(ProjectModel model) {
         return model.getEnvironmentVariables().stream()
                 .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue(), variable.isSecure()))
-                .collect(toList());
+                .collect(toSet());
     }
 
     private void validateIfRepositoryAvailable(Project project) throws RepositoryUnavailableException {

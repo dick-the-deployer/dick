@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -86,7 +87,7 @@ public class WorkerServiceTest extends ContextTestBase {
                 .withName(UUID.randomUUID().toString())
                 .withRepository(UUID.randomUUID().toString())
                 .withNamespace(namespace)
-                .withEnvironmentVariables(asList(
+                .withEnvironmentVariables(Collections.singleton(
                         new com.dickthedeployer.dick.web.domain.EnvironmentVariable("BARKEY", "bar")
                         )
                 ).build();
