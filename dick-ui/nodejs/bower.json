@@ -27,6 +27,7 @@
     "angular-resource": "1.4.8",
     "angular-sanitize": "1.4.8",
     "angular-ui-router": "^0.2.15",
+    "angular-ui-switch": "^0.1.1",
     "angular-loading-bar": "~0.8.0",
     "angular-bootstrap": "~0.14.3",
     "gc-angular-toaster": "~1.0.0",

@@ -18,22 +18,22 @@ package com.dickthedeployer.dick.web.model.dickfile;
 import lombok.Data;
 
 /**
- *
  * @author mariusz
  */
 @Data
 public class EnvironmentVariable {
 
     private String key;
-
     private String value;
+    private boolean secure;
 
     public EnvironmentVariable() {
     }
 
-    public EnvironmentVariable(String key, String value) {
+    public EnvironmentVariable(String key, String value, boolean secure) {
         this.key = key;
         this.value = value;
+        this.secure = secure;
     }
 
 }

@@ -18,6 +18,7 @@ package com.dickthedeployer.dick.web.service;
 import com.dickthedeployer.dick.web.dao.JobBuildDao;
 import com.dickthedeployer.dick.web.dao.WorkerDao;
 import com.dickthedeployer.dick.web.domain.Build;
+import com.dickthedeployer.dick.web.domain.EnvironmentVariable;
 import com.dickthedeployer.dick.web.domain.JobBuild;
 import com.dickthedeployer.dick.web.domain.Worker;
 import com.dickthedeployer.dick.web.exception.NotFoundException;
@@ -33,7 +34,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -79,7 +83,7 @@ public class WorkerService {
         JobBuild jobBuild = jobBuildDao.findByBuildAndStageAndName(build, stageName, job.getName()).get();
         jobBuild.setStatus(JobBuild.Status.READY);
         jobBuild.setWorkerName(null);
-        jobBuild.setEnvironment(getEnvironment(build, job));
+        jobBuild.setEnvironmentVariables(getEnvironment(build));
         jobBuildDao.save(jobBuild);
     }
 
@@ -90,13 +94,19 @@ public class WorkerService {
                 .ifPresent(worker -> assignToWorker(jobBuild, worker));
     }
 
-    private Map<String, String> getEnvironment(Build build, Job job) {
-        Map<String, String> environment = new HashMap<>();
-        environment.put("SHA", build.getSha());
-        environment.put("REPOSITORY", build.getProject().getRepository());
-        environment.put("REF", build.getProject().getRef());
-        build.getProject().getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
-        build.getEnvironmentVariables().forEach(variable -> environment.put(variable.getVariableKey(), variable.getVariableValue()));
+    private List<EnvironmentVariable> getEnvironment(Build build) {
+        List<EnvironmentVariable> environment = new ArrayList<>();
+        environment.add(new EnvironmentVariable("SHA", build.getSha()));
+        environment.add(new EnvironmentVariable("REPOSITORY", build.getProject().getRepository()));
+        environment.add(new EnvironmentVariable("REF", build.getProject().getRef()));
+        build.getProject().getEnvironmentVariables()
+                .forEach(variable -> environment.add(
+                        new EnvironmentVariable(variable.getVariableKey(), variable.getVariableValue(), variable.isSecure()))
+                );
+        build.getEnvironmentVariables()
+                .forEach(variable -> environment.add(
+                        new EnvironmentVariable(variable.getVariableKey(), variable.getVariableValue(), variable.isSecure()))
+                );
         return environment;
     }
 

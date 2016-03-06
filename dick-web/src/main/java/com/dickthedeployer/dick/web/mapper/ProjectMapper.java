@@ -22,20 +22,26 @@ import com.dickthedeployer.dick.web.model.dickfile.EnvironmentVariable;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author mariusz
  */
 public class ProjectMapper {
 
     public static ProjectModel mapProject(Project project) {
+        ProjectModel projectModel = mapProjectView(project);
+        projectModel.setEnvironmentVariables(
+                project.getEnvironmentVariables().stream()
+                        .map(envVariable -> new EnvironmentVariable(envVariable.getVariableKey(), envVariable.getVariableValue(), envVariable.isSecure()))
+                        .collect(toList())
+        );
+        return projectModel;
+    }
+
+
+    public static ProjectModel mapProjectView(Project project) {
         return ProjectModel.builder()
                 .creationDate(project.getCreationDate())
                 .description(project.getDescription())
-                .environmentVariables(
-                        project.getEnvironmentVariables().stream()
-                        .map(envVariable -> new EnvironmentVariable(envVariable.getVariableKey(), envVariable.getVariableValue()))
-                        .collect(toList())
-                ).name(project.getName())
+                .name(project.getName())
                 .namespace(project.getNamespace().getName())
                 .ref(project.getRef())
                 .repository(project.getRepository())

@@ -39,7 +39,6 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author mariusz
  */
 @Service
@@ -76,7 +75,7 @@ public class ProjectService {
 
     private List<EnvironmentVariable> getEnvironment(ProjectModel model) {
         return model.getEnvironmentVariables().stream()
-                .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
+                .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue(), variable.isSecure()))
                 .collect(toList());
     }
 
@@ -93,22 +92,28 @@ public class ProjectService {
 
     public List<ProjectModel> getProjects(List<Long> ids) {
         return projectDao.findByIdIn(ids, new Sort(Sort.Direction.DESC, "creationDate")).stream()
-                .map(this::mapProject).collect(toList());
+                .map(this::mapProjectView).collect(toList());
     }
 
     public List<ProjectModel> getProjectsLikeName(String name, int page, int size) {
         return projectDao.findByNameContaining(name, new PageRequest(page, size, Sort.Direction.DESC, "creationDate")).getContent().stream()
-                .map(this::mapProject).collect(toList());
+                .map(this::mapProjectView).collect(toList());
     }
 
     public List<ProjectModel> getProjects(int page, int size) {
         return projectDao.findAll(new PageRequest(page, size, Sort.Direction.DESC, "creationDate")).getContent().stream()
-                .map(this::mapProject).collect(toList());
+                .map(this::mapProjectView).collect(toList());
     }
 
     public ProjectModel getProject(String namespaceName, String name) throws NotFoundException {
         Optional<Project> project = projectDao.findByNamespaceNameAndName(namespaceName, name);
         return mapProject(project.orElseThrow(NotFoundException::new));
+    }
+
+    private ProjectModel mapProjectView(Project project) {
+        ProjectModel model = ProjectMapper.mapProjectView(project);
+        model.setLastBuild(buildService.findLastBuild(project));
+        return model;
     }
 
     private ProjectModel mapProject(Project project) {

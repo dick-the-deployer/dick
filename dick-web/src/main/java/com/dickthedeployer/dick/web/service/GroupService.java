@@ -39,7 +39,6 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author mariusz
  */
 @Service
@@ -64,8 +63,8 @@ public class GroupService {
                 .withDescription(groupModel.getDescription())
                 .withNamespace(
                         new Namespace.Builder()
-                        .withName(groupModel.getName())
-                        .build()
+                                .withName(groupModel.getName())
+                                .build()
                 ).build();
 
         groupDao.save(group);
@@ -90,7 +89,7 @@ public class GroupService {
         Group group = groupOptional.orElseThrow(NotFoundException::new);
         List<ProjectModel> projectModels = group.getNamespace().getProjects().stream()
                 .map((Project project) -> {
-                    ProjectModel model = ProjectMapper.mapProject(project);
+                    ProjectModel model = ProjectMapper.mapProjectView(project);
                     model.setLastBuild(buildService.findLastBuild(project));
                     return model;
                 }).collect(toList());

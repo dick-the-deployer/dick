@@ -19,14 +19,12 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import static java.util.Collections.emptyList;
 import static javax.persistence.FetchType.LAZY;
 
 /**
- *
  * @author mariusz
  */
 @Data
@@ -65,11 +63,8 @@ public class JobBuild {
     @Version
     private int versionNo = 0;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name = "entry_name")
-    @Column(name = "entry_value")
-    @CollectionTable(name = "job_build_attributes", joinColumns = @JoinColumn(name = "job_build_id"))
-    Map<String, String> environment = new HashMap<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<EnvironmentVariable> environmentVariables = emptyList();
 
     @ElementCollection(fetch = FetchType.EAGER)
     List<String> deploy;

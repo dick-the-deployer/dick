@@ -21,10 +21,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- *
  * @author mariusz
  */
 @Data
@@ -40,5 +38,5 @@ public class BuildOrder {
     private String ref;
     private String sha;
     private String dockerImage;
-    private Map<String, String> environment;
+    private List<EnvironmentVariable> environment;
 }

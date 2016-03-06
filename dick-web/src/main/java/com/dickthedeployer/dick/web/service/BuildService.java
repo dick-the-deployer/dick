@@ -89,7 +89,7 @@ public class BuildService {
 
     private List<EnvironmentVariable> getEnvironment(TriggerModel model) {
         return model.getEnvironmentVariables().stream()
-                .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue()))
+                .map(variable -> new EnvironmentVariable(variable.getKey(), variable.getValue(), variable.isSecure()))
                 .collect(toList());
     }
 
@@ -176,7 +176,7 @@ public class BuildService {
 
     public BuildDetailsModel getBuild(Long buildId) throws NotFoundException {
         Build build = getAndCheckBuild(buildId);
-        ProjectModel projectModel = ProjectMapper.mapProject(build.getProject());
+        ProjectModel projectModel = ProjectMapper.mapProjectView(build.getProject());
         List<JobBuild> jobBuilds = jobBuildDao.findByBuild(build);
         return BuildDetailsMapper.mapBuildDetails(build, projectModel, jobBuilds);
     }
