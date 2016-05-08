@@ -5,7 +5,9 @@ angular.module('dick.errors')
             var interceptor = {
                 responseError: function (response) {
                     $log.info("Received response error: " + response.status);
-                    if (response.status === statusCode.forbidden) {
+                    if (response.status === statusCode.unauthorized) {
+                        $location.path('/login');
+                    } else if (response.status === statusCode.forbidden) {
                         $location.path('/403');
                     } else if (response.status === statusCode.notFound) {
                         $location.path('/404');

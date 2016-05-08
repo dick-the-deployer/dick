@@ -5,7 +5,7 @@ angular.module('dick.projects')
 
         $urlRouterProvider.when('/projects/new', function ($state) {
             $state.go('dick.projects-new');
-        })
+        });
     }])
     .config(['$stateProvider', function ($stateProvider) {
         $stateProvider

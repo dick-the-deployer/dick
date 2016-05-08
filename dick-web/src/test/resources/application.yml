@@ -5,4 +5,4 @@ dick.repos.dir: /tmp
 spring:
   datasource.url: jdbc:h2:file:${dick.db.file}
   jpa:
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: create-drop

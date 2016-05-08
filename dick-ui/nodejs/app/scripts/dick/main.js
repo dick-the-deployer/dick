@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('dick')
-    .controller('MainCtrl', ['$scope',
-        function ($scope) {
-            // config
-            $scope.app = {
-                name: 'dick',
-                version: '1.0.0'
+    .controller('MainCtrl', ['$scope', '$rootScope', '$state', '$http',
+        function ($scope, $rootScope, $state, $http) {
+            $scope.logout = function() {
+                $http.post('/logout', {}).finally(function() {
+                    $rootScope.user = null;
+                    $state.go('401');
+                });
             };
         }
     ])
@@ -19,6 +20,6 @@ angular.module('dick')
         serverError: 500,
         notFound: 404,
         preconditionFailed: 412,
-        unauthorized: 403,
+        unauthorized: 401,
         ok: 200
     });
