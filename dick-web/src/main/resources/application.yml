@@ -11,3 +11,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
+
+security:
+  ignored: /views/**, /fonts/**, /styles/**, /scripts/**, /, /img/**
