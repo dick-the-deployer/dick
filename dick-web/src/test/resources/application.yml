@@ -11,6 +11,7 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.web: DEBUG
 
 security:
   schema: oauth2

@@ -16,18 +16,20 @@
 package com.dickthedeployer.dick.web.controller;
 
 import com.dickthedeployer.dick.web.exception.NotFoundException;
-import com.dickthedeployer.dick.web.model.*;
+import com.dickthedeployer.dick.web.model.LogChunkModel;
+import com.dickthedeployer.dick.web.model.OutputModel;
 import com.dickthedeployer.dick.web.service.JobBuildService;
-import com.dickthedeployer.dick.web.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author mariusz
  */
 @RestController
@@ -36,36 +38,6 @@ public class JobBuildController {
 
     @Autowired
     JobBuildService jobBuildService;
-
-    @Autowired
-    WorkerService workerService;
-
-    @RequestMapping(value = "/peek/{workerName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    BuildOrder peekBuild(@PathVariable("workerName") String workerName) {
-        workerService.onHeartbeat(workerName);
-        return jobBuildService.peekBuildFor(workerName).orElse(null);
-    }
-
-    @RequestMapping(value = "/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    BuildStatus checkStatus(@PathVariable("id") Long id) {
-        boolean isStopped = jobBuildService.isStopped(id);
-        return new BuildStatus(isStopped);
-    }
-
-    @RequestMapping(value = "/{id}/failure", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    void reportFailure(@PathVariable Long id, @RequestBody BuildForm form) {
-        jobBuildService.reportFailure(id, form.getLog());
-    }
-
-    @RequestMapping(value = "/{id}/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    void reportSuccess(@PathVariable Long id, @RequestBody BuildForm form) {
-        jobBuildService.reportSuccess(id, form.getLog());
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    void reportProgress(@PathVariable Long id, @RequestBody BuildForm form) {
-        jobBuildService.reportProgress(id, form.getLog());
-    }
 
     @RequestMapping(value = "/{id}/chunks", method = RequestMethod.GET)
     List<LogChunkModel> getLogChunks(@PathVariable Long id,

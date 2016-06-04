@@ -72,13 +72,14 @@
                             <div ng-hide="job.status === 'READY' || job.status === 'WAITING'" class="output">
                                 <loader on="output"></loader>
                                 <div ng-show="job.status === 'IN_PROGRESS'">
-                                <span ng-repeat="chunk in output"
-                                      style="white-space: pre;">{{chunk.output}}&#10;</span>
+                                    <div ng-repeat="chunk in output"
+                                         style="white-space: pre; overflow-x: scroll;">{{chunk.output}}&#10;</div>
                                     <i class="fa fa-spinner fa-spin"></i>
                                 </div>
-                                <span ng-hide="job.status === 'IN_PROGRESS'"
-                                      style="white-space: pre;">{{output.output}}</span>
-                                
+                                <div ng-hide="job.status === 'IN_PROGRESS'"
+                                     style="white-space: pre; overflow-x: scroll;">{{output.output}}
+                                </div>
+
                             </div>
                             <a href="#bottom" id="bottom" ng-click="followLog()"
                                class="btn btn-default btn-xs pull-right">
