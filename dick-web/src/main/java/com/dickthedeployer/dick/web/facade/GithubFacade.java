@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(url = "https://api.github.com/repos/dick-the-deployer/dick")
+@FeignClient(name = "github", url = "https://api.github.com/repos/dick-the-deployer/dick")
 public interface GithubFacade {
 
     @RequestMapping(value = "/commits", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

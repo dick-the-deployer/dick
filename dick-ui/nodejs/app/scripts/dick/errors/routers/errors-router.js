@@ -8,15 +8,20 @@ angular.module('dick.errors')
     ])
     .config(['$stateProvider', function ($stateProvider) {
         $stateProvider
-            .state('dick.403', {
+            .state('401', {
+                url: '/login',
+                templateUrl: '/views/login.html',
+                controller: 'AuthController'
+            })
+            .state('403', {
                 url: '/403',
                 templateUrl: '/views/errors/403.html'
             })
-            .state('dick.404', {
+            .state('404', {
                 url: '/404',
                 templateUrl: '/views/errors/404.html'
             })
-            .state('dick.500', {
+            .state('500', {
                 url: '/500',
                 templateUrl: '/views/errors/500.html'
             });

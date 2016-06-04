@@ -34,7 +34,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -65,6 +69,7 @@ public class WorkerService {
         return workerName;
     }
 
+    @Transactional
     public void onHeartbeat(String name) {
         Worker worker = workerDao.findByName(name)
                 .orElseGet(() -> Worker.builder()

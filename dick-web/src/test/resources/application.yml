@@ -5,4 +5,26 @@ dick.repos.dir: /tmp
 spring:
   datasource.url: jdbc:h2:file:${dick.db.file}
   jpa:
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: create-drop
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.web: DEBUG
+
+security:
+  schema: oauth2
+  sessions: ALWAYS
+  oauth2:
+    sso:
+      loginPath: /dashboard/login
+    client:
+      clientId: b61daa525d1345d7bddc
+      clientSecret: 440bd182849b76c25910e68dfe58cf44c6e68595
+      accessTokenUri: https://github.com/login/oauth/access_token
+      userAuthorizationUri: https://github.com/login/oauth/authorize
+      clientAuthenticationScheme: form
+    resource:
+      userInfoUri: https://api.github.com/user
+      preferTokenInfo: false

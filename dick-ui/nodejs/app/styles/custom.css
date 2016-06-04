@@ -153,3 +153,27 @@
     word-wrap: break-word;
     font-family: "Ubuntu Mono";
 }
+
+.full-page {
+    display: block;
+    position:absolute;
+    height:auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    margin-top:20px;
+    margin-bottom:20px;
+    margin-right:80px;
+    margin-left:80px;
+}
+.full-page .mid {
+    position:absolute;
+    width: 100%;
+    top:40%;
+}
+.full-page .form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}

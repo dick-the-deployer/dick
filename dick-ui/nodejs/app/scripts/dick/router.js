@@ -5,11 +5,16 @@ angular.module('dick')
                 $stateProvider
                         .state('dick', {
                             templateUrl: '/views/layout.html'
+                        })
+                        .state('loader', {
+                            url: '/',
+                            templateUrl: '/views/loader.html',
+                            controller: 'LoaderCtrl'
                         });
             }
         ])
-        .config(['$urlRouterProvider', '$locationProvider',
-            function ($urlRouterProvider, $locationProvider) {
+        .config(['$urlRouterProvider', '$locationProvider', '$httpProvider',
+            function ($urlRouterProvider, $locationProvider, $httpProvider) {
 
                 if (window.history && window.history.pushState) {
                     $locationProvider.html5Mode({
@@ -17,7 +22,8 @@ angular.module('dick')
                         requireBase: false
                     });
                 }
-
+                
+                $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
                 $urlRouterProvider.otherwise('/projects');
             }
         ])

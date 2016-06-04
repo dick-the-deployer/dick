@@ -5,7 +5,7 @@ module.exports = {
         livereload: 35729
     },
     proxies: [{
-        context: ['/api/'],
+        context: ['/api/', '/logout'],
         host: 'localhost',
         port: 8080,
         changeOrigin: true,
@@ -37,8 +37,9 @@ module.exports = {
                     '^/projects.*$ /index.html',
                     '^/workers.*$ /index.html',
                     '^/asd.*$ /index.html',
-                    '^/403$ /index.html',
+                    '^/login$ /index.html',
                     '^/help$ /index.html',
+                    '^/403$ /index.html',
                     '^/404$ /index.html',
                     '^/500$ /index.html'
                 ]));

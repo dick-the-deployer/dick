@@ -106,6 +106,7 @@ public class JobBuildService {
 
     @Transactional
     public Optional<BuildOrder> peekBuildFor(String workerName) {
+        workerService.onHeartbeat(workerName);
         Worker worker = workerDao.findByName(workerName).get();
         Optional<JobBuild> jobBuildOptional = jobBuildDao.findByStatusAndWorker(JobBuild.Status.READY, worker);
 
